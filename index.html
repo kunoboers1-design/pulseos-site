@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PulseOS</title>
+  <meta name="description" content="PulseOS builds focused, disciplined productivity apps for Apple platforms and beyond." />
+  <style>
+    :root {
+      --text: #eef4ff;
+      --muted: #a5b3c6;
+      --line: rgba(255,255,255,0.08);
+      --accent: #4da3ff;
+      --accent-2: #7fc0ff;
+      --shadow: 0 20px 60px rgba(0,0,0,0.28);
+      --radius: 18px;
+      --max-width: 1120px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(77,163,255,0.16), transparent 28%),
+        linear-gradient(180deg, #091018 0%, #0b1117 100%);
+      color: var(--text);
+      line-height: 1.65;
+    }
+    a { color: var(--accent-2); text-decoration: none; }
+    .container { width: min(calc(100% - 2rem), var(--max-width)); margin: 0 auto; }
+    .site-header {
+      position: sticky; top: 0; z-index: 20; backdrop-filter: blur(14px);
+      background: rgba(9,16,24,0.72); border-bottom: 1px solid var(--line);
+    }
+    .nav {
+      min-height: 74px; display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    }
+    .nav nav { display: flex; gap: 1.1rem; flex-wrap: wrap; }
+    .brand { font-weight: 800; letter-spacing: -0.03em; color: var(--text); font-size: 1.1rem; }
+    .hero { padding: 5rem 0 3rem; }
+    .hero-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 2rem; align-items: center; }
+    .eyebrow { color: var(--accent-2); text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.78rem; font-weight: 700; margin-bottom: 0.75rem; }
+    h1, h2, h3 { line-height: 1.1; letter-spacing: -0.04em; margin: 0 0 1rem; }
+    h1 { font-size: clamp(2.4rem, 6vw, 4.5rem); max-width: 12ch; }
+    h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); }
+    h3 { font-size: 1.25rem; }
+    .lead { color: var(--muted); font-size: 1.08rem; max-width: 60ch; }
+    .hero-actions { display: flex; gap: 0.9rem; flex-wrap: wrap; margin-top: 1.5rem; }
+    .button { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0.85rem 1.1rem; border-radius: 999px; border: 1px solid var(--line); color: var(--text); font-weight: 700; }
+    .button.primary { background: linear-gradient(180deg, var(--accent) 0%, #347fcb 100%); border-color: transparent; }
+    .button.secondary { background: rgba(255,255,255,0.03); }
+    .block { width: 100%; }
+    .hero-card, .card, .panel, .support-box, .legal-box { background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.025)); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .hero-card { padding: 1.2rem; }
+    .stat + .stat { border-top: 1px solid var(--line); margin-top: 1rem; padding-top: 1rem; }
+    .stat-label { display: block; color: var(--muted); margin-bottom: 0.2rem; font-size: 0.92rem; }
+    .section { padding: 3.5rem 0; }
+    .section-muted { background: rgba(255,255,255,0.025); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .section-heading p, .prose p, .prose li, .card p { color: var(--muted); }
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-top: 1.5rem; }
+    .card { padding: 1.35rem; }
+    .tag { display: inline-flex; margin-top: 0.5rem; padding: 0.45rem 0.7rem; border-radius: 999px; background: rgba(77,163,255,0.12); color: var(--accent-2); font-weight: 700; font-size: 0.85rem; }
+    .split { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 1.5rem; align-items: center; }
+    .panel { padding: 1rem; display: grid; gap: 0.85rem; }
+    .prose { max-width: 840px; }
+    .prose ul { padding-left: 1.2rem; }
+    .note { margin-top: 2rem; padding: 1rem 1.1rem; border-left: 3px solid var(--accent); background: rgba(77,163,255,0.08); border-radius: 10px; }
+    .support-box, .legal-box { padding: 1rem 1.1rem; margin: 1.5rem 0; }
+    .site-footer { border-top: 1px solid var(--line); padding: 2rem 0 3rem; }
+    .footer-grid { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+    .footer-links { display: flex; gap: 1rem; flex-wrap: wrap; }
+    @media (max-width: 900px) { .hero-grid, .cards, .split { grid-template-columns: 1fr; } h1 { max-width: none; } }
+    @media (max-width: 640px) { .nav { align-items: flex-start; padding: 1rem 0; flex-direction: column; } .hero { padding-top: 3rem; } .section { padding: 2.75rem 0; } }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="#top">PulseOS</a>
+      <nav>
+        <a href="#apps">Apps</a>
+        <a href="#privacy">Privacy</a>
+        <a href="#support">Support</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <p class="eyebrow">Focus • Discipline • Momentum</p>
+          <h1>Apps built to help you stay sharp, consistent, and intentional.</h1>
+          <p class="lead">PulseOS is a growing ecosystem of apps designed for productivity, focus, habit building, and decision-making across Apple platforms and beyond.</p>
+          <div class="hero-actions">
+            <a class="button primary" href="#apps">Explore apps</a>
+            <a class="button secondary" href="#support">Get support</a>
+          </div>
+        </div>
+        <div class="hero-card">
+          <div class="stat"><span class="stat-label">Platform</span><strong>Apple-first ecosystem</strong></div>
+          <div class="stat"><span class="stat-label">Design</span><strong>Clean, focused, minimal</strong></div>
+          <div class="stat"><span class="stat-label">Built for</span><strong>Habits, trading, productivity</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="apps" class="section">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Apps</p>
+          <h2>Current PulseOS apps</h2>
+          <p>Update these cards anytime as your product lineup grows.</p>
+        </div>
+        <div class="cards">
+          <article class="card"><h3>PulseHabits</h3><p>Build consistency, track streaks, and stay aligned with the identity you want to become.</p><span class="tag">Habits</span></article>
+          <article class="card"><h3>PulseFX</h3><p>Position sizing and trading tools designed to support clearer execution and stronger risk control.</p><span class="tag">Trading</span></article>
+          <article class="card"><h3>More coming</h3><p>PulseOS is expanding into a wider productivity ecosystem with shared design, logic, and structure.</p><span class="tag">Ecosystem</span></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="support" class="section section-muted">
+      <div class="container prose">
+        <p class="eyebrow">Support</p>
+        <h2>Get in touch</h2>
+        <p>Need help with one of our apps? Send a message and include the app name, device, OS version, and a short description of the issue.</p>
+        <div class="support-box">
+          <p><strong>General support:</strong> <a href="mailto:support@pulseos.eu">support@pulseos.eu</a></p>
+          <p><strong>Privacy questions:</strong> <a href="mailto:privacy@pulseos.eu">privacy@pulseos.eu</a></p>
+        </div>
+        <h3>Helpful details to include</h3>
+        <ul>
+          <li>App name and version</li>
+          <li>Device model</li>
+          <li>iOS, iPadOS, macOS, or Android version</li>
+          <li>Short explanation of what happened</li>
+          <li>Screenshots if relevant</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="privacy" class="section">
+      <div class="container prose">
+        <p class="eyebrow">Legal</p>
+        <h2>Privacy Policy</h2>
+        <div class="legal-box">
+          <p><strong>Last updated:</strong> March 11, 2026</p>
+          <p>PulseOS respects your privacy. This Privacy Policy explains how information may be collected, used, and protected when you use PulseOS apps, websites, and related services.</p>
+          <p><strong>Information we may collect:</strong> basic usage data, crash and diagnostics data, subscription status, and information you voluntarily send through support requests.</p>
+          <p><strong>How information is used:</strong> to operate and improve apps, fix bugs, provide support, and verify purchases or subscriptions.</p>
+          <p><strong>Data sharing:</strong> PulseOS does not sell personal data. Information may be shared only with trusted service providers when necessary to operate the apps or comply with legal obligations.</p>
+          <p><strong>Contact:</strong> <a href="mailto:privacy@pulseos.eu">privacy@pulseos.eu</a></p>
+        </div>
+        <p class="note">Replace this with your final legal text before submitting apps if you use analytics, accounts, ads, cloud sync, or third-party SDKs with specific privacy requirements.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div><strong>PulseOS</strong><p>Focused apps for disciplined people.</p></div>
+      <div class="footer-links"><a href="#top">Home</a><a href="#privacy">Privacy</a><a href="#support">Support</a></div>
+    </div>
+  </footer>
+</body>
+</html>
