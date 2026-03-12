@@ -1,157 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PulseOS</title>
-  <meta name="theme-color" content="#08111d">
-  <link rel="stylesheet" href="/styles.css">
-  <link rel="icon" type="image/png" href="/pulseos-logo.png">
+  <meta name="description" content="PulseOS builds clean apps for focus, discipline, and execution." />
+  <meta name="theme-color" content="#f5f5f7" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="icon" type="image/png" href="/pulseos-logo.png" />
 </head>
 <body>
-  <header class="nav-wrap">
-    <div class="container nav">
-      <a class="brand" href="/">
-        <span class="logo-dot">P</span>
-        <span>PulseOS</span>
-      </a>
-      <nav class="nav-links">
-        <a href="#apps">Apps</a>
-        <a href="/pulsefx/">PulseFX</a>
-        <a href="/pulsehabits/">Pulse Habits</a>
-        <a href="/pulserecipes/">Pulse Recipes</a>
-        <a href="/privacy/">Privacy</a>
-        <a href="/support/">Support</a>
-      </nav>
-    </div>
-  </header>
+  <div class="page-shell">
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
 
-  <main>
-    <section class="hero">
-      <div class="container hero-grid">
-        <div>
-          <div class="eyebrow">Apple-first apps • Focused tools</div>
-          <h1>Apps that hit with clarity and feel premium.</h1>
-          <p class="lead">
-            PulseOS is an ecosystem of focused apps for discipline, productivity, trading, and daily execution.
-            Clean design. Sharp utility. Zero fluff.
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="/" aria-label="PulseOS home">
+          <img src="/pulseos-logo.png" alt="PulseOS logo" class="brand-logo" />
+          <span>PulseOS</span>
+        </a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container hero-inner">
+          <p class="eyebrow">Focus. Discipline. Execution.</p>
+
+          <h1>Apps built to stay clean, fast, and useful.</h1>
+
+          <p class="hero-copy">
+            PulseOS is a growing ecosystem of thoughtfully designed apps for trading,
+            habits, and daily performance across Apple platforms.
           </p>
-          <div class="hero-actions">
-            <a class="btn primary" href="#apps">Explore apps</a>
-            <a class="btn secondary" href="/support/">Get support</a>
+
+          <a class="hero-link" href="#apps">Explore apps</a>
+        </div>
+      </section>
+
+      <section class="apps-section" id="apps">
+        <div class="container">
+          <div class="section-heading">
+            <p class="section-label">Apps</p>
+            <h2>The current lineup.</h2>
+          </div>
+
+          <div class="apps-grid">
+            <a class="app-card" href="/pulsefx/" aria-label="Open PulseFX page">
+              <div class="app-icon-wrap">
+                <img src="/pulsefx/pulsefx-logo.png" alt="PulseFX logo" class="app-icon" />
+              </div>
+
+              <div class="app-content">
+                <h3>PulseFX</h3>
+                <p>
+                  Lot size calculation, account tracking, notes, and clean tools for
+                  fast risk execution.
+                </p>
+                <span class="card-link">Open app page</span>
+              </div>
+            </a>
+
+            <a class="app-card" href="/pulsehabits/" aria-label="Open Pulse Habits page">
+              <div class="app-icon-wrap">
+                <img src="/pulsehabits/pulsehabits-logo.png" alt="Pulse Habits logo" class="app-icon" />
+              </div>
+
+              <div class="app-content">
+                <h3>Pulse Habits</h3>
+                <p>
+                  Build consistency, track momentum, and make your daily identity more visible.
+                </p>
+                <span class="card-link">Open app page</span>
+              </div>
+            </a>
+
+            <a class="app-card" href="/pulserecipes/" aria-label="Open Pulse Recipes page">
+              <div class="app-icon-wrap">
+                <img src="/pulserecipes/pulserecipes-logo.png" alt="Pulse Recipes logo" class="app-icon" />
+              </div>
+
+              <div class="app-content">
+                <h3>Pulse Recipes</h3>
+                <p>
+                  Clean recipes for consistency, macro awareness, and everyday nutrition.
+                </p>
+                <span class="card-link">Open app page</span>
+              </div>
+            </a>
           </div>
         </div>
+      </section>
+    </main>
 
-        <aside class="hero-panel">
-          <div class="metric">
-            <span class="label">Built around</span>
-            <strong>Focus, speed, execution</strong>
-          </div>
-          <div class="metric">
-            <span class="label">Current lineup</span>
-            <strong>PulseFX, Pulse Habits, Pulse Recipes</strong>
-          </div>
-          <div class="metric">
-            <span class="label">Platforms</span>
-            <strong>iPhone, iPad, Mac</strong>
-          </div>
-        </aside>
-      </div>
-    </section>
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <span class="footer-brand">PulseOS</span>
 
-    <section class="section topline">
-      <div class="container">
-        <div class="grid-3">
-          <article class="feature-card">
-            <span class="chip">Sharp design</span>
-            <h3>Premium feel without clutter</h3>
-            <p>Minimal surfaces, strong hierarchy, fast scanning, and pages that feel intentional instead of overloaded.</p>
-          </article>
-          <article class="feature-card">
-            <span class="chip">Useful tools</span>
-            <h3>Built to actually solve something</h3>
-            <p>Every app in PulseOS is built around a daily need: execution, discipline, organization, and momentum.</p>
-          </article>
-          <article class="feature-card">
-            <span class="chip">One ecosystem</span>
-            <h3>Consistent across products</h3>
-            <p>Shared design language, structure, and quality bar so every app feels like part of one clean system.</p>
-          </article>
+        <div class="footer-links">
+          <a href="/privacy/">Privacy</a>
+          <a href="/support/">Support</a>
         </div>
       </div>
-    </section>
-
-    <section id="apps" class="section">
-      <div class="container">
-        <div class="eyebrow">Apps</div>
-        <h2>Current PulseOS lineup</h2>
-        <p class="lead">Each app gets its own page, branding, and support flow — but still feels like it belongs to the same product family.</p>
-
-        <div class="grid-3" style="margin-top:22px;">
-          <article class="app-card">
-            <div class="icon-shell"><img src="/images/pulsefx.png" alt="PulseFX icon" onerror="this.style.display='none'; this.parentNode.textContent='FX';"></div>
-            <span class="chip">Trading</span>
-            <h3>PulseFX Calculator</h3>
-            <p>Lot size calculation, account tracking, trade notes, statistics, and widgets for traders who want faster risk execution.</p>
-            <div class="app-links">
-              <a class="btn primary" href="/pulsefx/">Open page</a>
-              <a class="btn secondary" href="https://apps.apple.com/nl/app/pulsefx-lot-size-calculator/id6751821638">App Store</a>
-            </div>
-          </article>
-
-          <article class="app-card">
-            <div class="icon-shell"><img src="/images/pulsehabits.png" alt="Pulse Habits icon" onerror="this.style.display='none'; this.parentNode.textContent='HB';"></div>
-            <span class="chip">Discipline</span>
-            <h3>Pulse Habits</h3>
-            <p>Build consistency, keep streaks visible, and reinforce the identity you want to live from every day.</p>
-            <div class="app-links">
-              <a class="btn primary" href="/pulsehabits/">Open page</a>
-            </div>
-          </article>
-
-          <article class="app-card">
-            <div class="icon-shell"><img src="/images/pulserecipes.png" alt="Pulse Recipes icon" onerror="this.style.display='none'; this.parentNode.textContent='RC';"></div>
-            <span class="chip">Nutrition</span>
-            <h3>Pulse Recipes</h3>
-            <p>Simple, clean recipes made for consistency, macro awareness, and everyday performance.</p>
-            <div class="app-links">
-              <a class="btn primary" href="/pulserecipes/">Open page</a>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section topline">
-      <div class="container split">
-        <div class="legal-card">
-          <div class="eyebrow">Support & legal</div>
-          <h3>Ready for real users</h3>
-          <p>Set up clear support and privacy pages so your apps feel trustworthy, complete, and App Store-ready.</p>
-          <div class="app-links">
-            <a class="btn secondary" href="/privacy/">Privacy</a>
-            <a class="btn secondary" href="/support/">Support</a>
-          </div>
-        </div>
-        <div class="cta-panel">
-          <div class="eyebrow">Why this hits</div>
-          <h3>One sharp brand. Multiple high-utility apps.</h3>
-          <p class="muted">That is what gives the site its wow factor: not random effects, but a strong product system with clean presentation and clear pages.</p>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container footer">
-      <div>
-        <strong>PulseOS</strong>
-        <div class="small">Focus. Discipline. Momentum.</div>
-      </div>
-      <div class="small">
-        <a href="/privacy/">Privacy</a> · <a href="/support/">Support</a>
-      </div>
-    </div>
-  </footer>
+    </footer>
+  </div>
 </body>
 </html>
