@@ -247,11 +247,62 @@ h3 {
   line-height: 1.7;
 }
 
-.card-link {
+.app-actions {
   margin-top: auto;
   padding-top: 28px;
+}
+
+.card-link {
+  display: inline-flex;
+  align-items: center;
   font-size: 0.95rem;
   font-weight: 600;
+}
+
+.card-link:hover {
+  opacity: 0.72;
+}
+
+.store-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.store-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.store-button-primary {
+  background: #111111;
+  border-color: #111111;
+  color: #ffffff;
+  transition:
+    transform 180ms ease,
+    opacity 180ms ease,
+    background-color 180ms ease;
+}
+
+.store-button-primary:hover {
+  transform: translateY(-1px);
+  opacity: 0.92;
+}
+
+.store-button-soon {
+  background: var(--surface-soft);
+  color: var(--muted);
+  cursor: default;
 }
 
 /* MARK: - Shared Footer */
@@ -1039,112 +1090,9 @@ h3 {
   font-weight: 650;
 }
 
-/* MARK: - Responsive */
+/* MARK: - Pulse Recipes */
 
-@media (max-width: 1100px) {
-  .fx-hero-grid,
-  .fx-feature-grid,
-  .fx-highlight-grid,
-  .fx-info-stack,
-  .fx-changelog,
-  .fx-contact-row,
-  .hb-hero-grid,
-  .hb-feature-grid,
-  .hb-highlight-grid,
-  .hb-info-stack,
-  .hb-changelog,
-  .hb-contact-row {
-    grid-template-columns: 1fr;
-  }
-
-  .fx-steps-grid,
-  .hb-steps-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .fx-meta-row,
-  .hb-meta-row {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 980px) {
-  .apps-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .app-card {
-    min-height: 0;
-  }
-
-  h1 {
-    max-width: none;
-  }
-}
-
-@media (max-width: 640px) {
-  .container {
-    width: min(calc(100% - 28px), var(--max-width));
-  }
-
-  .site-header {
-    padding-top: 18px;
-  }
-
-  .hero {
-    padding: 64px 0 48px;
-  }
-
-  .hero-copy {
-    font-size: 1rem;
-  }
-
-  .app-card {
-    padding: 22px;
-  }
-
-  .footer-inner {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .fx-hero,
-  .hb-hero {
-    padding: 52px 0 26px;
-  }
-
-  .fx-hero-copy h1,
-  .hb-hero-copy h1 {
-    max-width: none;
-    font-size: clamp(2.4rem, 12vw, 3.6rem);
-  }
-
-  .fx-showcase-card,
-  .fx-feature-card,
-  .fx-highlight-card,
-  .fx-step-card,
-  .fx-info-card,
-  .fx-changelog-card,
-  .fx-contact-card,
-  .fx-meta-card,
-  .hb-showcase-card,
-  .hb-feature-card,
-  .hb-highlight-card,
-  .hb-step-card,
-  .hb-info-card,
-  .hb-changelog-card,
-  .hb-contact-card,
-  .hb-meta-card {
-    padding: 20px;
-  }
-
-  .fx-stat-grid,
-  .fx-steps-grid,
-  .hb-stat-grid,
-  .hb-steps-grid {
-    grid-template-columns: 1fr;
-  }
-  .rc-page {
+.rc-page {
   padding-bottom: 24px;
 }
 
@@ -1507,51 +1455,9 @@ h3 {
   font-weight: 650;
 }
 
-@media (max-width: 1100px) {
-  .rc-hero-grid,
-  .rc-feature-grid,
-  .rc-highlight-grid,
-  .rc-info-stack,
-  .rc-changelog,
-  .rc-contact-row {
-    grid-template-columns: 1fr;
-  }
+/* MARK: - Legal / Support / Privacy */
 
-  .rc-steps-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .rc-meta-row {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 640px) {
-  .rc-hero {
-    padding: 52px 0 26px;
-  }
-
-  .rc-hero-copy h1 {
-    max-width: none;
-    font-size: clamp(2.4rem, 12vw, 3.6rem);
-  }
-
-  .rc-showcase-card,
-  .rc-feature-card,
-  .rc-highlight-card,
-  .rc-step-card,
-  .rc-info-card,
-  .rc-changelog-card,
-  .rc-contact-card,
-  .rc-meta-card {
-    padding: 20px;
-  }
-
-  .rc-stat-grid,
-  .rc-steps-grid {
-    grid-template-columns: 1fr;
-  }
-  .legal-page {
+.legal-page {
   padding-bottom: 24px;
 }
 
@@ -1607,12 +1513,144 @@ h3 {
   text-decoration: underline;
 }
 
+/* MARK: - Responsive */
+
+@media (max-width: 1100px) {
+  .fx-hero-grid,
+  .fx-feature-grid,
+  .fx-highlight-grid,
+  .fx-info-stack,
+  .fx-changelog,
+  .fx-contact-row,
+  .hb-hero-grid,
+  .hb-feature-grid,
+  .hb-highlight-grid,
+  .hb-info-stack,
+  .hb-changelog,
+  .hb-contact-row,
+  .rc-hero-grid,
+  .rc-feature-grid,
+  .rc-highlight-grid,
+  .rc-info-stack,
+  .rc-changelog,
+  .rc-contact-row {
+    grid-template-columns: 1fr;
+  }
+
+  .fx-steps-grid,
+  .hb-steps-grid,
+  .rc-steps-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .fx-meta-row,
+  .hb-meta-row,
+  .rc-meta-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 980px) {
+  .apps-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .app-card {
+    min-height: 0;
+  }
+
+  h1 {
+    max-width: none;
+  }
+}
+
 @media (max-width: 640px) {
+  .container {
+    width: min(calc(100% - 28px), var(--max-width));
+  }
+
+  .site-header {
+    padding-top: 18px;
+  }
+
+  .hero {
+    padding: 64px 0 48px;
+  }
+
+  .hero-copy {
+    font-size: 1rem;
+  }
+
+  .app-card {
+    padding: 22px;
+  }
+
+  .store-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .store-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .footer-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .fx-hero,
+  .hb-hero,
+  .rc-hero {
+    padding: 52px 0 26px;
+  }
+
   .legal-hero {
     padding: 52px 0 24px;
   }
 
+  .fx-hero-copy h1,
+  .hb-hero-copy h1,
+  .rc-hero-copy h1 {
+    max-width: none;
+    font-size: clamp(2.4rem, 12vw, 3.6rem);
+  }
+
+  .fx-showcase-card,
+  .fx-feature-card,
+  .fx-highlight-card,
+  .fx-step-card,
+  .fx-info-card,
+  .fx-changelog-card,
+  .fx-contact-card,
+  .fx-meta-card,
+  .hb-showcase-card,
+  .hb-feature-card,
+  .hb-highlight-card,
+  .hb-step-card,
+  .hb-info-card,
+  .hb-changelog-card,
+  .hb-contact-card,
+  .hb-meta-card,
+  .rc-showcase-card,
+  .rc-feature-card,
+  .rc-highlight-card,
+  .rc-step-card,
+  .rc-info-card,
+  .rc-changelog-card,
+  .rc-contact-card,
+  .rc-meta-card,
   .legal-card {
     padding: 20px;
+  }
+
+  .fx-stat-grid,
+  .fx-steps-grid,
+  .hb-stat-grid,
+  .hb-steps-grid,
+  .rc-stat-grid,
+  .rc-steps-grid {
+    grid-template-columns: 1fr;
   }
 }
