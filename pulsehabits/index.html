@@ -1,30 +1,358 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pulse Habits • PulseOS</title>
-  <link rel="stylesheet" href="../styles.css">
-  <link rel="icon" type="image/png" href="../pulseos-logo.png">
+  <meta
+    name="description"
+    content="Pulse Habits helps you build discipline, track momentum, and make consistency visible with a clean identity-first habit system."
+  />
+  <meta name="theme-color" content="#f5f5f7" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="icon" type="image/png" href="/pulseos-logo.png" />
 </head>
 <body>
-  <header class="nav-wrap">
-    <div class="container nav">
-      <a class="brand" href="/">
-        <span class="logo-dot">P</span>
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="/" aria-label="PulseOS home">
+        <img src="/pulseos-logo.png" alt="PulseOS logo" class="brand-logo" />
         <span>PulseOS</span>
       </a>
     </div>
   </header>
 
-  <main class="centered-page">
-    <div class="container prose" style="text-align:center;">
-      <div class="icon-shell" style="margin-inline:auto;"><img src="/images/pulsehabits.png" alt="Pulse Habits icon" onerror="this.style.display='none'; this.parentNode.textContent='HB';"></div>
-      <div class="eyebrow" style="justify-content:center;">Pulse Habits</div>
-      <h1>Build discipline. Track momentum.</h1>
-      <p class="lead" style="margin-inline:auto;">Pulse Habits is the identity-first habit app in the PulseOS ecosystem — designed to make consistency visible and momentum addictive.</p>
-      <div class="note" style="margin-top:22px;">Add your App Store link, screenshots, and premium details here later.</div>
-    </div>
+  <main class="hb-page">
+    <section class="hb-hero">
+      <div class="container hb-hero-grid">
+        <div class="hb-hero-copy">
+          <p class="eyebrow">Pulse Habits</p>
+          <h1>Build discipline. Track momentum. Stay consistent.</h1>
+          <p class="hb-lead">
+            Pulse Habits is the identity-first habit app in the PulseOS ecosystem —
+            built to make consistency visible, momentum addictive, and discipline easier to keep.
+          </p>
+
+          <div class="hb-hero-actions">
+            <a class="hero-button" href="#features">Explore features</a>
+            <a class="hero-button secondary" href="#how-it-works">How it works</a>
+          </div>
+
+          <div class="hb-meta-row">
+            <div class="hb-meta-card">
+              <span class="hb-meta-label">Release</span>
+              <span class="hb-meta-value">Q2 2026</span>
+            </div>
+            <div class="hb-meta-card">
+              <span class="hb-meta-label">Focus</span>
+              <span class="hb-meta-value">Discipline + momentum</span>
+            </div>
+            <div class="hb-meta-card">
+              <span class="hb-meta-label">Approach</span>
+              <span class="hb-meta-value">Identity-first habits</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hb-showcase-card">
+          <div class="hb-showcase-top">
+            <div class="hb-app-badge">
+              <img src="/images/PulseHB.png" alt="Pulse Habits logo" class="hb-app-badge-icon" />
+              <div>
+                <span class="hb-app-badge-title">Pulse Habits</span>
+                <span class="hb-app-badge-subtitle">Identity-first habit tracking</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hb-stat-grid">
+            <div class="hb-stat-card">
+              <span class="hb-stat-label">Momentum</span>
+              <span class="hb-stat-value">Visible</span>
+            </div>
+            <div class="hb-stat-card">
+              <span class="hb-stat-label">Focus</span>
+              <span class="hb-stat-value">Daily</span>
+            </div>
+            <div class="hb-stat-card">
+              <span class="hb-stat-label">System</span>
+              <span class="hb-stat-value">Simple</span>
+            </div>
+            <div class="hb-stat-card">
+              <span class="hb-stat-label">Release</span>
+              <span class="hb-stat-value">Q2 2026</span>
+            </div>
+          </div>
+
+          <div class="hb-mini-panel">
+            <span class="hb-mini-panel-label">Designed for consistency</span>
+            <p>
+              Build a system you can actually repeat, stay aware of your current momentum,
+              and make your habits feel real instead of abstract.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="hb-section" id="features">
+      <div class="container">
+        <div class="hb-section-heading">
+          <p class="section-label">Features</p>
+          <h2>What Pulse Habits gives you.</h2>
+        </div>
+
+        <div class="hb-feature-grid">
+          <article class="hb-feature-card feature-hb-accent">
+            <h3>Identity-first habit system</h3>
+            <p>
+              Build habits around the kind of person you want to become, not just a checklist.
+            </p>
+            <ul>
+              <li>Identity-based setup</li>
+              <li>Cleaner long-term motivation</li>
+              <li>More meaning behind daily repetition</li>
+            </ul>
+          </article>
+
+          <article class="hb-feature-card">
+            <h3>Momentum tracking</h3>
+            <p>
+              See your consistency clearly so you know when momentum is building,
+              holding, or slipping.
+            </p>
+            <ul>
+              <li>Track current momentum</li>
+              <li>Make consistency visible</li>
+              <li>Stay aware without clutter</li>
+            </ul>
+          </article>
+
+          <article class="hb-feature-card">
+            <h3>Focused daily flow</h3>
+            <p>
+              Keep daily actions simple and structured, so habits stay realistic and repeatable.
+            </p>
+            <ul>
+              <li>Clear daily habit view</li>
+              <li>Designed for low friction</li>
+              <li>Built around repetition</li>
+            </ul>
+          </article>
+
+          <article class="hb-feature-card feature-hb-dark">
+            <h3>Widgets & visibility</h3>
+            <p>
+              Bring your habits and progress closer to the surface with widgets and quick views.
+            </p>
+            <ul>
+              <li>Momentum widgets</li>
+              <li>Focus habit widgets</li>
+              <li>History and next-up visibility</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="hb-section">
+      <div class="container">
+        <div class="hb-section-heading">
+          <p class="section-label">Highlights</p>
+          <h2>Built for discipline that actually lasts.</h2>
+        </div>
+
+        <div class="hb-highlight-grid">
+          <div class="hb-highlight-card">
+            <span class="hb-highlight-kicker">Discipline</span>
+            <h3>Less motivation. More structure.</h3>
+            <p>Build habits around systems you can repeat, even when motivation drops.</p>
+          </div>
+
+          <div class="hb-highlight-card">
+            <span class="hb-highlight-kicker">Momentum</span>
+            <h3>See the streak beneath the day.</h3>
+            <p>Understand how your recent behavior compounds into momentum over time.</p>
+          </div>
+
+          <div class="hb-highlight-card">
+            <span class="hb-highlight-kicker">Clarity</span>
+            <h3>Clean enough to use every day.</h3>
+            <p>Minimal friction, simple feedback, and a calmer habit experience.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="hb-section" id="how-it-works">
+      <div class="container">
+        <div class="hb-section-heading">
+          <p class="section-label">How it works</p>
+          <h2>Simple from setup to streak.</h2>
+        </div>
+
+        <div class="hb-steps-grid">
+          <article class="hb-step-card">
+            <span class="hb-step-number">1</span>
+            <h3>Choose your direction</h3>
+            <p>Start with the kind of person you want to become and the habits that support that identity.</p>
+          </article>
+
+          <article class="hb-step-card">
+            <span class="hb-step-number">2</span>
+            <h3>Build your daily system</h3>
+            <p>Add habits you can repeat consistently and keep the setup clear and realistic.</p>
+          </article>
+
+          <article class="hb-step-card">
+            <span class="hb-step-number">3</span>
+            <h3>Track today</h3>
+            <p>Move through your habits each day with less friction and more awareness.</p>
+          </article>
+
+          <article class="hb-step-card">
+            <span class="hb-step-number">4</span>
+            <h3>Watch momentum build</h3>
+            <p>See streaks, history, and daily consistency turn into visible momentum.</p>
+          </article>
+
+          <article class="hb-step-card">
+            <span class="hb-step-number">5</span>
+            <h3>Stay in motion</h3>
+            <p>Use feedback, widgets, and structure to stay aligned over time.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="hb-section hb-section-tight">
+      <div class="container">
+        <div class="hb-section-heading">
+          <p class="section-label">About</p>
+          <h2>Why Pulse Habits exists.</h2>
+        </div>
+
+        <div class="hb-info-stack">
+          <article class="hb-info-card">
+            <h3>Overview</h3>
+            <p>
+              Pulse Habits is designed for people who want to become more disciplined
+              without turning habit tracking into noise.
+            </p>
+            <p>
+              It focuses on identity, momentum, and repeatability — helping habits feel
+              more meaningful and more sustainable over time.
+            </p>
+          </article>
+
+          <article class="hb-info-card">
+            <h3>Who it’s for</h3>
+            <p>
+              It’s built for people who care about consistency, self-discipline,
+              focus, structure, and daily execution.
+            </p>
+            <p>
+              Whether you’re building routines, protecting momentum, or trying to become
+              more reliable, Pulse Habits is made to support that process.
+            </p>
+          </article>
+
+          <article class="hb-info-card">
+            <h3>Release</h3>
+            <p>
+              Pulse Habits is currently planned for release in <strong>Q2 2026</strong>.
+            </p>
+            <p>
+              App Store links, premium details, and final screenshots can be added here later.
+            </p>
+          </article>
+
+          <article class="hb-info-card">
+            <h3>PulseOS fit</h3>
+            <p>
+              Pulse Habits is part of the broader PulseOS ecosystem — a family of apps
+              focused on focus, discipline, productivity, and execution.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="hb-section hb-section-tight">
+      <div class="container">
+        <div class="hb-section-heading">
+          <p class="section-label">Status</p>
+          <h2>What’s next.</h2>
+        </div>
+
+        <div class="hb-changelog">
+          <article class="hb-changelog-card">
+            <span class="hb-changelog-version">Current</span>
+            <h3>In development</h3>
+            <ul>
+              <li>Pulse Habits page is now live on the PulseOS site</li>
+              <li>Release target is Q2 2026</li>
+              <li>App Store links and final marketing content can be added later</li>
+            </ul>
+          </article>
+
+          <article class="hb-changelog-card">
+            <span class="hb-changelog-version">Planned</span>
+            <h3>Before release</h3>
+            <ul>
+              <li>Add screenshots and app previews</li>
+              <li>Add premium details if needed</li>
+              <li>Add final App Store badge and release links</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="hb-section hb-section-tight">
+      <div class="container">
+        <div class="hb-section-heading">
+          <p class="section-label">Contact</p>
+          <h2>Follow the release.</h2>
+        </div>
+
+        <div class="hb-contact-row">
+          <div class="hb-contact-card">
+            <span class="hb-contact-label">Release window</span>
+            <span class="hb-contact-value">Q2 2026</span>
+          </div>
+
+          <div class="hb-contact-card">
+            <span class="hb-contact-label">Brand</span>
+            <span class="hb-contact-value">PulseOS</span>
+          </div>
+
+          <div class="hb-contact-card">
+            <span class="hb-contact-label">Instagram</span>
+            <span class="hb-contact-value">PulseOS</span>
+          </div>
+
+          <div class="hb-contact-card">
+            <span class="hb-contact-label">Threads</span>
+            <span class="hb-contact-value">PulseOS</span>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span>PulseOS</span>
+        <span class="footer-year">2026</span>
+      </div>
+
+      <div class="footer-links">
+        <a href="/privacy/">Privacy</a>
+        <a href="/support/">Support</a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>
