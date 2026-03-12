@@ -1,88 +1,443 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PulseFX Calculator • PulseOS</title>
-  <link rel="stylesheet" href="../styles.css">
-  <link rel="icon" type="image/png" href="../pulseos-logo.png">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PulseFX • PulseOS</title>
+  <meta
+    name="description"
+    content="PulseFX - Lot Size Calculator is built for traders who want faster lot size calculations, cleaner account tracking, and structured trading statistics."
+  />
+  <meta name="theme-color" content="#f5f5f7" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="icon" type="image/png" href="/pulseos-logo.png" />
 </head>
 <body>
-  <header class="nav-wrap">
-    <div class="container nav">
-      <a class="brand" href="/">
-        <span class="logo-dot">P</span>
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="/" aria-label="PulseOS home">
+        <img src="/pulseos-logo.png" alt="PulseOS logo" class="brand-logo" />
         <span>PulseOS</span>
       </a>
-      <nav class="nav-links">
-        <a href="/#apps">Apps</a>
-        <a href="/privacy/">Privacy</a>
-        <a href="/support/">Support</a>
-      </nav>
     </div>
   </header>
 
-  <main class="page-hero">
-    <div class="container prose">
-      <div class="eyebrow">PulseFX</div>
-      <div class="icon-shell" style="margin-bottom:20px;"><img src="/images/pulsefx.png" alt="PulseFX icon" onerror="this.style.display='none'; this.parentNode.textContent='FX';"></div>
-      <h1>PulseFX Calculator</h1>
-      <p class="lead">A lot size calculator built for traders who want faster execution, cleaner risk control, and more structure around every trade.</p>
-      <div class="hero-actions">
-        <a class="store-badge" href="https://apps.apple.com/nl/app/pulsefx-lot-size-calculator/id6751821638"><strong></strong><div><span>Download on the</span><br>App Store</div></a>
+  <main class="product-page">
+    <section class="product-hero">
+      <div class="container product-hero-inner">
+        <div class="product-icon-wrap">
+          <img src="/images/PulseFX.png" alt="PulseFX logo" class="product-icon" />
+        </div>
+
+        <p class="eyebrow">PulseFX</p>
+
+        <h1>PulseFX - Lot Size Calculator</h1>
+
+        <p class="product-subtitle">
+          A mobile app designed to simplify lot size management while providing
+          notifications and clear trading statistics.
+        </p>
+
+        <p class="product-copy">
+          PulseFX is built for traders who want to calculate position sizes quickly
+          and keep their accounts organized.
+        </p>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <div class="container content-stack">
+        <div class="content-block">
+          <h2>Overview</h2>
+          <div class="info-grid">
+            <div class="info-card">
+              <span class="info-label">App Name</span>
+              <span class="info-value">PulseFX - Lot Size Calculator</span>
+            </div>
+
+            <div class="info-card">
+              <span class="info-label">Target Audience</span>
+              <span class="info-value">Traders</span>
+            </div>
+
+            <div class="info-card">
+              <span class="info-label">Short Description</span>
+              <span class="info-value">
+                A mobile app designed to simplify lot size management while providing
+                notifications and clear trading statistics.
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-block">
+          <h2>Description</h2>
+          <p>
+            PulseFX is built for traders who want to calculate position sizes quickly
+            and keep their accounts organized.
+          </p>
+          <p>
+            With a simple yet powerful lot size calculator, account tracking, and widgets
+            for instant insights, the app saves time and keeps your trading structured.
+          </p>
+          <p>
+            Whether you’re managing phase accounts, funded accounts, or your own capital,
+            you can monitor balances, set goals, and link trades to notes and photos.
+            Automatic daily and weekly summaries help you stay clear on your progress.
+          </p>
+        </div>
+
+        <div class="content-block">
+          <h2>Key Features</h2>
+
+          <div class="feature-grid">
+            <article class="feature-card">
+              <h3>Lot Size Calculator</h3>
+              <ul>
+                <li>Instantly calculate the correct lot size based on your chosen risk</li>
+                <li>Compact mode for quick calculations</li>
+                <li>Open MetaTrader within the app</li>
+              </ul>
+            </article>
+
+            <article class="feature-card">
+              <h3>Account Management</h3>
+              <ul>
+                <li>Add multiple accounts, track balances, mark favorites, and set optional goals</li>
+                <li>Free up to 5 accounts; more than 5 requires Premium</li>
+                <li>View equity curve (Premium)</li>
+              </ul>
+            </article>
+
+            <article class="feature-card">
+              <h3>Trade Notes</h3>
+              <ul>
+                <li>Link trades to notes, screenshots, or photos for a structured journal</li>
+              </ul>
+            </article>
+
+            <article class="feature-card">
+              <h3>Mini Statistics Dashboard</h3>
+              <ul>
+                <li>Win rate, best and worst trades, average lot size, P/L since reset, most used pairs, and more</li>
+              </ul>
+            </article>
+
+            <article class="feature-card">
+              <h3>Daily &amp; Weekly Reports</h3>
+              <ul>
+                <li>Automatic notifications with your risk/reward overview</li>
+                <li>Daily reports are free; weekly reports are available with Premium</li>
+              </ul>
+            </article>
+
+            <article class="feature-card">
+              <h3>Widgets</h3>
+              <ul>
+                <li>Last Lot Size</li>
+                <li>Account Overview (Premium)</li>
+                <li>Upcoming Alerts (Premium)</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+
+        <div class="content-block">
+          <h2>How the App Works</h2>
+
+          <div class="steps-list">
+            <div class="step-card">
+              <span class="step-number">1</span>
+              <div>
+                <h3>Download &amp; Setup</h3>
+                <p>Available in the App Store.</p>
+              </div>
+            </div>
+
+            <div class="step-card">
+              <span class="step-number">2</span>
+              <div>
+                <h3>Add Account</h3>
+                <ul>
+                  <li>Select account type: funded, own capital, or phase</li>
+                  <li>Enter your starting balance</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="step-card">
+              <span class="step-number">3</span>
+              <div>
+                <h3>Risk Calculator</h3>
+                <ul>
+                  <li>Select trading pair, entry, and stop loss</li>
+                  <li>The app instantly calculates your lot size and risk</li>
+                  <li>Open your trade in MetaTrader with one tap</li>
+                  <li>After closing your trade, return to the app and enter your P/L</li>
+                  <li>Add your notes about the trade</li>
+                  <li>Repeat with your updated balance</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="step-card">
+              <span class="step-number">4</span>
+              <div>
+                <h3>Statistics</h3>
+                <ul>
+                  <li>View your equity curve</li>
+                  <li>Track daily and weekly results</li>
+                  <li>Access a mini statistics dashboard</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="step-card">
+              <span class="step-number">5</span>
+              <div>
+                <h3>Notifications</h3>
+                <ul>
+                  <li>Receive a daily notification at 20:00 with your R/R update</li>
+                  <li>Customize reminders for trading sessions, goals, or news events</li>
+                  <li>Get notified when you reach the goal set for your account</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-block">
+          <h2>Disclaimer</h2>
+          <p>
+            PulseFX is provided for educational and informational purposes only.
+            The app does not provide financial advice, investment recommendations,
+            or guarantees of trading performance.
+          </p>
+          <p>
+            Users remain fully responsible for their own trading decisions and risk
+            management. Always trade responsibly and only with capital you can afford to lose.
+          </p>
+        </div>
+
+        <div class="content-block">
+          <h2>Terms of Use</h2>
+
+          <h3>Introduction</h3>
+          <p>
+            These Terms of Use govern your use of the PulseFX app (“the App”).
+            By downloading or using the App, you agree to these Terms.
+            If you do not agree, please do not use the App.
+          </p>
+
+          <h3>Use of the App</h3>
+          <ul>
+            <li>The App is provided for informational and educational purposes only.</li>
+            <li>The App does not provide financial, investment, or trading advice.</li>
+            <li>
+              You are solely responsible for any trading decisions you make based on
+              the calculations or information provided by the App.
+            </li>
+          </ul>
+
+          <h3>License</h3>
+          <ul>
+            <li>We grant you a personal, non-transferable, non-exclusive license to use the App.</li>
+            <li>
+              You may not copy, modify, distribute, or resell the App without written consent.
+            </li>
+          </ul>
+
+          <h3>Privacy</h3>
+          <p>Your use of the App is also subject to our Privacy Policy.</p>
+
+          <h3>Disclaimer of Liability</h3>
+          <ul>
+            <li>The App is provided “as is” without warranties of any kind.</li>
+            <li>
+              We are not responsible for any financial loss, damages, or consequences
+              resulting from your use of the App.
+            </li>
+            <li>You use the App at your own risk.</li>
+          </ul>
+
+          <h3>Termination</h3>
+          <p>
+            We may suspend or terminate your access to the App if you violate these Terms.
+          </p>
+
+          <h3>Changes to These Terms</h3>
+          <p>
+            We may update these Terms of Use from time to time.
+            Any changes will be posted here with an updated revision date.
+          </p>
+
+          <h3>Governing Law</h3>
+          <p>
+            These Terms are governed by the laws of The Netherlands,
+            regardless of conflict of law principles.
+          </p>
+        </div>
+
+        <div class="content-block">
+          <h2>Privacy Policy</h2>
+
+          <h3>Introduction</h3>
+          <p>
+            At PulseFX, we respect your privacy. This Privacy Policy explains how the app
+            handles your data. To keep things simple: the app is designed to work entirely
+            on your device, without sending personal information to external servers.
+          </p>
+
+          <h3>Information We Collect</h3>
+          <ul>
+            <li>
+              Personal Data: We do not collect, store, or share personal information such
+              as your name, email address, or payment details.
+            </li>
+            <li>
+              App Data: All data you enter, such as account information, trade risk,
+              and lot size settings, is stored locally on your device only.
+            </li>
+            <li>
+              Automatic Data: We do not use analytics, tracking tools, or advertising networks.
+            </li>
+          </ul>
+
+          <h3>How We Use Your Data</h3>
+          <p>
+            Since no personal data is collected, there is no usage beyond providing
+            the app’s functionality. All calculations, statistics, and notifications
+            are generated locally on your device.
+          </p>
+
+          <h3>Notifications</h3>
+          <p>
+            If you enable notifications, they are scheduled and handled directly on your device.
+            No notification data is sent to external services.
+          </p>
+
+          <h3>Data Sharing</h3>
+          <p>We do not share or sell any data to third parties.</p>
+
+          <h3>Data Retention</h3>
+          <p>
+            All data remains on your device. If you uninstall the app, all data is permanently removed.
+          </p>
+
+          <h3>Your Rights</h3>
+          <p>
+            Because no personal data is collected or stored, there is no data to access,
+            export, or delete.
+          </p>
+
+          <h3>Security</h3>
+          <p>
+            We ensure that all features of the app run locally and securely on your device.
+            There are no external servers involved in processing your data.
+          </p>
+
+          <h3>Changes to This Policy</h3>
+          <p>
+            We may update this Privacy Policy from time to time.
+            Any changes will be published here with an updated revision date.
+          </p>
+        </div>
+
+        <div class="content-block">
+          <h2>Change Log</h2>
+
+          <div class="changelog-list">
+            <article class="changelog-card">
+              <h3>Version 1.1 · February 2026</h3>
+              <ul>
+                <li>PulseFX is now available on Mac</li>
+                <li>Removed Notion advertisement</li>
+                <li>Added capital movements for funded and personal accounts (Premium)</li>
+                <li>Added support for Turkish and Arabic</li>
+              </ul>
+            </article>
+
+            <article class="changelog-card">
+              <h3>Version 1.0.3 · October 28, 2025</h3>
+              <ul>
+                <li>Fixed some lot size issues</li>
+                <li>Fixed incorrect lot size calculations in some cases</li>
+                <li>Improved localization across all supported languages</li>
+                <li>Resolved the iOS 18 keyboard button issue</li>
+              </ul>
+            </article>
+
+            <article class="changelog-card">
+              <h3>Version 1.0.2 · October 15, 2025</h3>
+              <ul>
+                <li>Added full support for pips input in Settings</li>
+                <li>Added support for custom contract sizes for non-forex instruments</li>
+                <li>Free users now see account and alert limits directly in Settings</li>
+                <li>Minor performance and design improvements</li>
+              </ul>
+            </article>
+
+            <article class="changelog-card">
+              <h3>Version 1.0.1 · October 12, 2025</h3>
+              <ul>
+                <li>Improved notification flow and permission timing</li>
+                <li>Smoother onboarding experience and better control over alerts</li>
+                <li>Fixed currency handling in lot size calculations</li>
+                <li>Fixed a bug causing incorrect or missing data in widgets</li>
+                <li>Minor improvements for performance and stability</li>
+                <li>Added localization support for Chinese, French, and German</li>
+              </ul>
+            </article>
+
+            <article class="changelog-card">
+              <h3>Version 1.0 · October 2, 2025</h3>
+              <ul>
+                <li>Official release</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+
+        <div class="content-block">
+          <h2>Feedback and Suggestions</h2>
+          <p>Email: <a href="mailto:kunoboers@gmail.com">kunoboers@gmail.com</a></p>
+        </div>
+
+        <div class="content-block">
+          <h2>Contact</h2>
+          <div class="contact-grid">
+            <a class="contact-card" href="https://instagram.com/" target="_blank" rel="noreferrer">
+              <span class="contact-label">Instagram</span>
+              <span class="contact-value">PulseOS</span>
+            </a>
+
+            <a class="contact-card" href="https://threads.net/" target="_blank" rel="noreferrer">
+              <span class="contact-label">Threads</span>
+              <span class="contact-value">PulseOS</span>
+            </a>
+
+            <a class="contact-card" href="https://tiktok.com/" target="_blank" rel="noreferrer">
+              <span class="contact-label">TikTok</span>
+              <span class="contact-value">PulseOS</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span>PulseOS</span>
+        <span class="footer-year">2026</span>
       </div>
 
-      <section class="section">
-        <div class="grid-2">
-          <article class="feature-card">
-            <h3>Built for fast execution</h3>
-            <p>PulseFX combines lot size calculation, account tracking, trade notes, statistics, and widgets in one focused iOS trading workflow. ~~~~~~~~~~~~~~~~~~~~~~</p>
-          </article>
-          <article class="feature-card">
-            <h3>Cross-device availability</h3>
-            <p>The current App Store listing shows support for iPhone, iPad, and Mac, and recent version notes mention macOS availability. ~~~~~~~~~~~~~~~~~~~~~~</p>
-          </article>
-        </div>
-      </section>
-
-      <section class="section topline">
-        <h2>Key features</h2>
-        <div class="grid-2" style="margin-top:18px;">
-          <article class="support-card">
-            <h3>Lot size & accounts</h3>
-            <ul>
-              <li>Calculate lot size based on chosen risk</li>
-              <li>Compact mode for quick calculations</li>
-              <li>Add multiple accounts and track balances</li>
-              <li>Goals, favorites, and account overview</li>
-            </ul>
-          </article>
-          <article class="support-card">
-            <h3>Notes, reports & widgets</h3>
-            <ul>
-              <li>Link trades to notes, screenshots, or photos</li>
-              <li>Statistics dashboard with key metrics</li>
-              <li>Daily and weekly summaries</li>
-              <li>Widgets for quick trading information on iOS</li>
-            </ul>
-          </article>
-        </div>
-        <p class="small" style="margin-top:12px;">These feature groups are drawn from the current App Store description. ~~~~~~~~~~~~~~~~~~~~~~</p>
-      </section>
-
-      <section class="section topline">
-        <div class="grid-2">
-          <article class="legal-card">
-            <h3>Pricing</h3>
-            <p>The listing currently shows lifetime access plus monthly, weekly, and yearly purchase options. ~~~~~~~~~~~~~~~~~~~~~~</p>
-          </article>
-          <article class="legal-card">
-            <h3>Privacy</h3>
-            <p>The App Store privacy section currently states that the developer reports no data collected by the app. ~~~~~~~~~~~~~~~~~~~~~~</p>
-          </article>
-        </div>
-      </section>
+      <div class="footer-links">
+        <a href="/privacy/">Privacy</a>
+        <a href="/support/">Support</a>
+      </div>
     </div>
-  </main>
+  </footer>
 </body>
 </html>
