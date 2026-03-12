@@ -10,100 +10,95 @@
   <link rel="icon" type="image/png" href="/pulseos-logo.png" />
 </head>
 <body>
-  <div class="page-shell">
-    <div class="ambient ambient-one"></div>
-    <div class="ambient ambient-two"></div>
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="/" aria-label="PulseOS home">
+        <img src="/pulseos-logo.png" alt="PulseOS logo" class="brand-logo" />
+        <span>PulseOS</span>
+      </a>
+    </div>
+  </header>
 
-    <header class="site-header">
-      <div class="container header-inner">
-        <a class="brand" href="/" aria-label="PulseOS home">
-          <img src="/pulseos-logo.png" alt="PulseOS logo" class="brand-logo" />
-          <span>PulseOS</span>
-        </a>
+  <main>
+    <section class="hero">
+      <div class="container hero-inner">
+        <p class="eyebrow">Focus. Discipline. Execution.</p>
+
+        <h1>Clean apps for people who want less noise.</h1>
+
+        <p class="hero-copy">
+          PulseOS is a growing ecosystem of thoughtfully designed apps for trading,
+          habits, and everyday performance across Apple platforms.
+        </p>
+
+        <a class="hero-button" href="#apps">Explore apps</a>
       </div>
-    </header>
+    </section>
 
-    <main>
-      <section class="hero">
-        <div class="container hero-inner">
-          <p class="eyebrow">Focus. Discipline. Execution.</p>
-
-          <h1>Apps built to stay clean, fast, and useful.</h1>
-
-          <p class="hero-copy">
-            PulseOS is a growing ecosystem of thoughtfully designed apps for trading,
-            habits, and daily performance across Apple platforms.
-          </p>
-
-          <a class="hero-link" href="#apps">Explore apps</a>
+    <section class="apps-section" id="apps">
+      <div class="container">
+        <div class="section-heading">
+          <p class="section-label">Apps</p>
+          <h2>The current lineup.</h2>
         </div>
-      </section>
 
-      <section class="apps-section" id="apps">
-        <div class="container">
-          <div class="section-heading">
-            <p class="section-label">Apps</p>
-            <h2>The current lineup.</h2>
-          </div>
+        <div class="apps-grid">
+          <a class="app-card" href="/pulsefx/" aria-label="Open PulseFX page">
+            <div class="app-icon-wrap">
+              <img src="/pulsefx/pulsefx-logo.png" alt="PulseFX logo" class="app-icon" />
+            </div>
 
-          <div class="apps-grid">
-            <a class="app-card" href="/pulsefx/" aria-label="Open PulseFX page">
-              <div class="app-icon-wrap">
-                <img src="/pulsefx/pulsefx-logo.png" alt="PulseFX logo" class="app-icon" />
-              </div>
+            <div class="app-content">
+              <h3>PulseFX</h3>
+              <p>
+                Lot size calculation, account tracking, notes, and clean tools for
+                fast risk execution.
+              </p>
+              <span class="card-link">Open app page</span>
+            </div>
+          </a>
 
-              <div class="app-content">
-                <h3>PulseFX</h3>
-                <p>
-                  Lot size calculation, account tracking, notes, and clean tools for
-                  fast risk execution.
-                </p>
-                <span class="card-link">Open app page</span>
-              </div>
-            </a>
+          <a class="app-card" href="/pulsehabits/" aria-label="Open Pulse Habits page">
+            <div class="app-icon-wrap">
+              <img src="/pulsehabits/pulsehabits-logo.png" alt="Pulse Habits logo" class="app-icon" />
+            </div>
 
-            <a class="app-card" href="/pulsehabits/" aria-label="Open Pulse Habits page">
-              <div class="app-icon-wrap">
-                <img src="/pulsehabits/pulsehabits-logo.png" alt="Pulse Habits logo" class="app-icon" />
-              </div>
+            <div class="app-content">
+              <h3>Pulse Habits</h3>
+              <p>
+                Build consistency, track momentum, and make your daily identity more visible.
+              </p>
+              <span class="card-link">Open app page</span>
+            </div>
+          </a>
 
-              <div class="app-content">
-                <h3>Pulse Habits</h3>
-                <p>
-                  Build consistency, track momentum, and make your daily identity more visible.
-                </p>
-                <span class="card-link">Open app page</span>
-              </div>
-            </a>
+          <a class="app-card" href="/pulserecipes/" aria-label="Open Pulse Recipes page">
+            <div class="app-icon-wrap">
+              <img src="/pulserecipes/pulserecipes-logo.png" alt="Pulse Recipes logo" class="app-icon" />
+            </div>
 
-            <a class="app-card" href="/pulserecipes/" aria-label="Open Pulse Recipes page">
-              <div class="app-icon-wrap">
-                <img src="/pulserecipes/pulserecipes-logo.png" alt="Pulse Recipes logo" class="app-icon" />
-              </div>
-
-              <div class="app-content">
-                <h3>Pulse Recipes</h3>
-                <p>
-                  Clean recipes for consistency, macro awareness, and everyday nutrition.
-                </p>
-                <span class="card-link">Open app page</span>
-              </div>
-            </a>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <footer class="site-footer">
-      <div class="container footer-inner">
-        <span class="footer-brand">PulseOS</span>
-
-        <div class="footer-links">
-          <a href="/privacy/">Privacy</a>
-          <a href="/support/">Support</a>
+            <div class="app-content">
+              <h3>Pulse Recipes</h3>
+              <p>
+                Clean recipes for consistency, macro awareness, and everyday nutrition.
+              </p>
+              <span class="card-link">Open app page</span>
+            </div>
+          </a>
         </div>
       </div>
-    </footer>
-  </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span class="footer-brand">PulseOS</span>
+
+      <div class="footer-links">
+        <a href="/privacy/">Privacy</a>
+        <a href="/support/">Support</a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>
