@@ -8,51 +8,105 @@
     name="description"
     content="PulseOS builds clean apps for trading, habits, and daily performance across Apple platforms."
   />
-  <meta name="theme-color" content="#f5f5f7" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles.css" />
   <link rel="icon" type="image/png" href="/pulseos-logo.png" />
 </head>
 <body>
   <header class="site-header">
     <div class="container">
-      <a class="brand" href="/" aria-label="PulseOS home">
-        <img src="/pulseos-logo.png" alt="PulseOS logo" class="brand-logo" />
-        <span>PulseOS</span>
-      </a>
+      <nav class="nav-inner">
+        <a class="brand" href="/" aria-label="PulseOS home">
+          <img src="/pulseos-logo.png" alt="PulseOS logo" class="brand-logo" />
+          <span>PulseOS</span>
+        </a>
+        <div class="nav-links">
+          <a href="#apps">Apps</a>
+          <a href="/support/">Support</a>
+        </div>
+      </nav>
     </div>
   </header>
 
   <main>
     <section class="hero">
+      <div class="hero-glow"></div>
       <div class="container hero-inner">
-        <p class="eyebrow">Focus. Discipline. Execution.</p>
+        <div class="hero-badge">
+          <span class="badge-dot"></span>
+          Focus. Discipline. Execution.
+        </div>
 
-        <h1>Clean apps for people who want less noise.</h1>
+        <h1>Apps built for people who mean business.</h1>
 
         <p class="hero-copy">
-          PulseOS is a growing ecosystem of thoughtfully designed apps for trading,
-          habits, and everyday performance across Apple platforms.
+          PulseOS is a growing ecosystem of thoughtfully crafted apps for trading,
+          habits, and everyday performance — designed for Apple platforms.
         </p>
 
-        <p class="hero-trust">
-          Built for iPhone and Mac. Designed with privacy and simplicity in mind.
-        </p>
+        <div class="hero-actions">
+          <a class="hero-button" href="#apps">Explore apps</a>
+          <a class="hero-button secondary" href="/pulsefx/">View PulseFX</a>
+        </div>
 
-        <a class="hero-button" href="#apps">Explore apps</a>
+        <div class="hero-stats">
+          <div class="stat">
+            <span class="stat-value">3</span>
+            <span class="stat-label">Apps</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat">
+            <span class="stat-value">iOS</span>
+            <span class="stat-label">Platform</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat">
+            <span class="stat-value">0</span>
+            <span class="stat-label">Trackers</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pillars-section">
+      <div class="container">
+        <div class="pillars-grid">
+          <div class="pillar">
+            <p class="pillar-number">01</p>
+            <h3>Fast &amp; focused</h3>
+            <p>No bloat. Every feature exists for a reason. PulseOS apps are built to get you in and out quickly.</p>
+          </div>
+          <div class="pillar">
+            <p class="pillar-number">02</p>
+            <h3>Privacy first</h3>
+            <p>Your data stays on your device. No accounts, no trackers, no nonsense. Just you and your tools.</p>
+          </div>
+          <div class="pillar">
+            <p class="pillar-number">03</p>
+            <h3>Designed for Apple</h3>
+            <p>Built natively for iPhone and Mac, following Apple design principles for a seamless experience.</p>
+          </div>
+        </div>
       </div>
     </section>
 
     <section class="apps-section" id="apps">
       <div class="container">
         <div class="section-heading">
-          <p class="section-label">Apps</p>
-          <h2>The current lineup.</h2>
+          <p class="section-label">The lineup</p>
+          <h2>Apps that get things done.</h2>
         </div>
 
         <div class="apps-grid">
-          <article class="app-card">
-            <div class="app-icon-wrap">
-              <img src="/images/PulseFX.png" alt="PulseFX logo" class="app-icon" />
+          <article class="app-card app-card--fx">
+            <div class="app-card-top">
+              <div class="app-icon-wrap">
+                <img src="/images/PulseFX.png" alt="PulseFX logo" class="app-icon" />
+              </div>
+              <span class="app-live-badge">Live on App Store</span>
             </div>
 
             <div class="app-content">
@@ -63,32 +117,28 @@
               </p>
 
               <div class="app-actions">
+                <a
+                  class="store-button store-button-primary"
+                  href="https://apps.apple.com/nl/app/pulsefx-lot-size-calculator/id6751821638"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Download PulseFX on the App Store"
+                >
+                  Download on iOS
+                </a>
                 <a class="card-link" href="/pulsefx/" aria-label="View PulseFX details">
                   View app details
                 </a>
-
-                <div class="store-buttons">
-                  <a
-                    class="store-button store-button-primary"
-                    href="https://apps.apple.com/nl/app/pulsefx-lot-size-calculator/id6751821638"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Download PulseFX on the App Store"
-                  >
-                    iOS · Download now
-                  </a>
-
-                  <span class="store-button store-button-soon" aria-label="PulseFX Android coming soon">
-                    Android · Coming soon
-                  </span>
-                </div>
               </div>
             </div>
           </article>
 
-          <article class="app-card">
-            <div class="app-icon-wrap">
-              <img src="/images/PulseHB.png" alt="Pulse Habits logo" class="app-icon" />
+          <article class="app-card app-card--habits">
+            <div class="app-card-top">
+              <div class="app-icon-wrap">
+                <img src="/images/PulseHB.png" alt="Pulse Habits logo" class="app-icon" />
+              </div>
+              <span class="app-soon-badge">Coming soon</span>
             </div>
 
             <div class="app-content">
@@ -98,26 +148,22 @@
               </p>
 
               <div class="app-actions">
+                <span class="store-button store-button-soon" aria-label="Pulse Habits iOS coming soon">
+                  iOS · Coming soon
+                </span>
                 <a class="card-link" href="/pulsehabits/" aria-label="View Pulse Habits details">
                   View app details
                 </a>
-
-                <div class="store-buttons">
-                  <span class="store-button store-button-soon" aria-label="Pulse Habits iOS coming soon">
-                    iOS · Coming soon
-                  </span>
-
-                  <span class="store-button store-button-soon" aria-label="Pulse Habits Android coming soon">
-                    Android · Coming soon
-                  </span>
-                </div>
               </div>
             </div>
           </article>
 
-          <article class="app-card">
-            <div class="app-icon-wrap">
-              <img src="/images/PulseRC.png" alt="Pulse Recipes logo" class="app-icon" />
+          <article class="app-card app-card--recipes">
+            <div class="app-card-top">
+              <div class="app-icon-wrap">
+                <img src="/images/PulseRC.png" alt="Pulse Recipes logo" class="app-icon" />
+              </div>
+              <span class="app-soon-badge">Coming soon</span>
             </div>
 
             <div class="app-content">
@@ -127,22 +173,33 @@
               </p>
 
               <div class="app-actions">
+                <span class="store-button store-button-soon" aria-label="Pulse Recipes iOS coming soon">
+                  iOS · Coming soon
+                </span>
                 <a class="card-link" href="/pulserecipes/" aria-label="View Pulse Recipes details">
                   View app details
                 </a>
-
-                <div class="store-buttons">
-                  <span class="store-button store-button-soon" aria-label="Pulse Recipes iOS coming soon">
-                    iOS · Coming soon
-                  </span>
-
-                  <span class="store-button store-button-soon" aria-label="Pulse Recipes Android coming soon">
-                    Android · Coming soon
-                  </span>
-                </div>
               </div>
             </div>
           </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-section">
+      <div class="container">
+        <div class="cta-card">
+          <p class="eyebrow">Ready to start?</p>
+          <h2>Less noise. More execution.</h2>
+          <p class="cta-copy">PulseFX is available now on the App Store. More apps launching soon.</p>
+          <a
+            class="hero-button cta-button"
+            href="https://apps.apple.com/nl/app/pulsefx-lot-size-calculator/id6751821638"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Download PulseFX
+          </a>
         </div>
       </div>
     </section>
@@ -150,21 +207,27 @@
 
   <footer class="site-footer">
     <div class="container footer-inner">
-      <div class="footer-brand">
-        <span>PulseOS</span>
-        <span class="footer-year">2026</span>
+      <div class="footer-left">
+        <a class="brand" href="/" aria-label="PulseOS home">
+          <img src="/pulseos-logo.png" alt="PulseOS logo" class="brand-logo" />
+          <span>PulseOS</span>
+        </a>
+        <p class="footer-tagline">Clean apps for focused people.</p>
       </div>
 
-      <div class="footer-links">
-        <a href="/privacy/">Privacy</a>
-        <a href="/support/">Support</a>
-        <a
-          href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Terms of Use
-        </a>
+      <div class="footer-right">
+        <div class="footer-links">
+          <a href="/privacy/">Privacy</a>
+          <a href="/support/">Support</a>
+          <a
+            href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Terms of Use
+          </a>
+        </div>
+        <p class="footer-copy">© 2026 PulseOS. All rights reserved.</p>
       </div>
     </div>
   </footer>
