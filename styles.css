@@ -2602,3 +2602,237 @@ h3 {
     grid-template-columns: 1fr;
   }
 }
+
+/* ═══════════════════════════════════════════════════
+   MARK: - About Page
+═══════════════════════════════════════════════════ */
+
+.about-hero {
+  padding: 6rem 0 4rem;
+  border-bottom: 1px solid var(--line);
+}
+.about-hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 4rem;
+  align-items: center;
+}
+.about-title {
+  font-size: clamp(2.8rem, 7vw, 5rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin: 0.5rem 0 1.25rem;
+}
+.about-lead {
+  font-size: 1.15rem;
+  color: var(--muted);
+  line-height: 1.65;
+  max-width: 520px;
+  margin: 0 0 2rem;
+}
+.about-meta-row {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+.about-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.about-meta-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  opacity: 0.6;
+}
+.about-meta-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+.about-photo-wrap {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+  background: var(--surface);
+}
+.about-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  filter: brightness(0.92);
+}
+
+/* Story */
+.about-story-section { padding: 5rem 0; }
+.about-story-grid {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 4rem;
+  align-items: start;
+}
+.about-story-left h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  margin: 0.5rem 0 0;
+}
+.about-story-right {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+.about-chapter {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+.about-chapter-year {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding-top: 0.35rem;
+  white-space: nowrap;
+}
+.about-chapter-body h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.4rem;
+}
+.about-chapter-body p {
+  font-size: 0.95rem;
+  color: var(--muted);
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* Drive / Quote */
+.about-drive-section { padding: 5rem 0; }
+.about-drive-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 3.5rem;
+  max-width: 780px;
+  margin: 0 auto;
+  text-align: center;
+}
+.about-quote {
+  font-size: clamp(1.2rem, 2.5vw, 1.55rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.45;
+  color: var(--text);
+  margin: 1rem 0 1.5rem;
+  font-style: italic;
+}
+.about-quote-sub {
+  font-size: 0.95rem;
+  color: var(--muted);
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* Apps row */
+.about-apps-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 2.5rem;
+}
+.about-app-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+  text-decoration: none;
+  color: var(--text);
+  transition: border-color 180ms ease, transform 180ms ease;
+}
+.about-app-link:hover {
+  border-color: var(--accent);
+  transform: translateX(4px);
+}
+.about-app-link img {
+  width: 44px;
+  height: 44px;
+  border-radius: 11px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.about-app-link div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.about-app-link strong {
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.about-app-link span {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+/* Contact CTA */
+.about-contact-section { padding: 5rem 0; }
+.about-contact-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 3rem;
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.about-contact-card h2 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  margin: 0 0 0.75rem;
+}
+.about-contact-card p {
+  color: var(--muted);
+  line-height: 1.65;
+  margin: 0 0 1.75rem;
+}
+
+/* Responsive */
+@media (max-width: 860px) {
+  .about-hero-grid {
+    grid-template-columns: 1fr;
+  }
+  .about-photo-wrap {
+    aspect-ratio: 4 / 3;
+    max-height: 380px;
+    order: -1;
+  }
+  .about-story-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .about-story-left h2 { display: none; }
+  .about-drive-card { padding: 2rem 1.5rem; }
+}
+
+@media (max-width: 560px) {
+  .about-meta-row { gap: 1.25rem; }
+  .about-chapter { grid-template-columns: 48px 1fr; gap: 0.75rem; }
+  .about-contact-card { padding: 2rem 1.25rem; }
+}
