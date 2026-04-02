@@ -332,7 +332,9 @@ h3 {
   display: flex;
   gap: 28px;
   width: max-content;
-  animation: marquee 28s linear infinite;
+  animation: marquee 18s linear infinite;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 .icon-scroll:hover .icon-track {
@@ -340,8 +342,8 @@ h3 {
 }
 
 @keyframes marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
+  from { transform: translateZ(0) translateX(0); }
+  to   { transform: translateZ(0) translateX(var(--mq-w, -50%)); }
 }
 
 .icon-item {

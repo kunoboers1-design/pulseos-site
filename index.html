@@ -282,6 +282,7 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // Scroll animations
       const observer = new IntersectionObserver(
         entries => entries.forEach(e => {
           if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
@@ -289,6 +290,20 @@
         { threshold: 0.07, rootMargin: '0px 0px -40px 0px' }
       );
       document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+      // Marquee: fill screen and use exact pixel loop
+      const track = document.querySelector('.icon-track');
+      if (track) {
+        const seeds = [...track.children];
+        const seedWidth = track.scrollWidth;
+        // Clone until we have at least 3× viewport width
+        const copies = Math.ceil((window.innerWidth * 3) / seedWidth) + 1;
+        for (let i = 0; i < copies; i++) {
+          seeds.forEach(el => track.appendChild(el.cloneNode(true)));
+        }
+        // Use exact pixel value so the loop is perfectly seamless
+        track.style.setProperty('--mq-w', `-${seedWidth}px`);
+      }
     });
   </script>
 
