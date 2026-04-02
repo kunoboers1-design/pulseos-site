@@ -967,15 +967,198 @@ h3 {
   padding-bottom: 24px;
 }
 
+/* ── iPhone Hero Mockup ── */
+
+.fx-phone-hero-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 8px;
+}
+
+.fx-iphone {
+  position: relative;
+  width: 260px;
+  flex-shrink: 0;
+  animation: fx-float 5s ease-in-out infinite;
+}
+
+@keyframes fx-float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-14px); }
+}
+
+.fx-iphone::after {
+  content: '';
+  position: absolute;
+  bottom: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 55%;
+  height: 48px;
+  background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.35), transparent 70%);
+  pointer-events: none;
+}
+
+.fx-iphone-frame {
+  background: #1c1c1e;
+  border-radius: 46px;
+  padding: 10px;
+  position: relative;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.13),
+    0 0 0 2px rgba(0, 0, 0, 0.6),
+    0 56px 120px rgba(0, 0, 0, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.fx-iphone-island {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 82px;
+  height: 26px;
+  background: #000;
+  border-radius: 16px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.fx-iphone-screen {
+  border-radius: 36px;
+  overflow: hidden;
+  background: #000;
+  position: relative;
+}
+
+.fx-iphone-screen img {
+  width: 100%;
+  display: block;
+}
+
+/* ── Screenshots Section ── */
+
+.fx-screenshots-section {
+  padding: 80px 0 100px;
+  overflow: hidden;
+  position: relative;
+}
+
+.fx-screenshots-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(16, 185, 129, 0.07), transparent);
+  pointer-events: none;
+}
+
+.fx-screenshots-header {
+  text-align: center;
+  margin-bottom: 56px;
+  position: relative;
+}
+
+.fx-screenshots-header h2 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  margin: 12px 0 12px;
+}
+
+.fx-screenshots-header p {
+  color: var(--muted);
+  font-size: 1rem;
+  margin: 0;
+}
+
+.fx-screenshots-track {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding: 16px 80px 48px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 7%, black 93%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, black 7%, black 93%, transparent 100%);
+}
+
+.fx-screenshots-track::-webkit-scrollbar {
+  display: none;
+}
+
+.fx-screenshot-item {
+  flex-shrink: 0;
+  width: 190px;
+  scroll-snap-align: center;
+}
+
+.fx-screenshot-frame {
+  background: #1c1c1e;
+  border-radius: 38px;
+  padding: 8px;
+  position: relative;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 24px 60px rgba(0, 0, 0, 0.55);
+  transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 300ms ease;
+}
+
+.fx-screenshot-frame:hover {
+  transform: translateY(-10px) scale(1.03);
+  box-shadow:
+    0 0 0 1px rgba(16, 185, 129, 0.3),
+    0 40px 80px rgba(0, 0, 0, 0.65);
+}
+
+.fx-screenshot-island {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 62px;
+  height: 19px;
+  background: #000;
+  border-radius: 12px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.fx-screenshot-screen {
+  border-radius: 30px;
+  overflow: hidden;
+  background: #000;
+}
+
+.fx-screenshot-screen img {
+  width: 100%;
+  display: block;
+}
+
+.fx-screenshot-label {
+  margin-top: 14px;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.fx-screenshots-cta {
+  text-align: center;
+  margin-top: 48px;
+  position: relative;
+}
+
 .fx-hero {
   padding: 64px 0 36px;
 }
 
 .fx-hero-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
-  gap: 28px;
-  align-items: stretch;
+  grid-template-columns: 1fr auto;
+  gap: 48px;
+  align-items: center;
 }
 
 .fx-hero-copy {
