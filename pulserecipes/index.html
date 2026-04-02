@@ -31,8 +31,17 @@
     </div>
   </header>
 
+  <div class="app-bar" id="appBar" aria-hidden="true">
+    <div class="container">
+      <div class="app-bar-inner">
+        <img class="app-bar-icon" src="/images/PulseRC.png" alt="" />
+        <span class="app-bar-name">Pulse Recipes</span>
+      </div>
+    </div>
+  </div>
+
   <main class="rc-page">
-    <section class="rc-hero">
+    <section class="rc-hero" id="appHero">
       <div class="container rc-hero-grid">
         <div class="rc-hero-copy">
           <p class="eyebrow">Pulse Recipes</p>
@@ -382,6 +391,19 @@
         { threshold: 0.07, rootMargin: '0px 0px -40px 0px' }
       );
       document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+      const appBar = document.getElementById('appBar');
+      const hero = document.getElementById('appHero');
+      if (appBar && hero) {
+        const heroObserver = new IntersectionObserver(
+          ([entry]) => {
+            appBar.classList.toggle('visible', !entry.isIntersecting);
+            appBar.removeAttribute('aria-hidden');
+          },
+          { threshold: 0 }
+        );
+        heroObserver.observe(hero);
+      }
     });
   </script>
 </body>

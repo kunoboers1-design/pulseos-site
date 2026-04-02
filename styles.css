@@ -115,6 +115,43 @@ a {
   object-fit: cover;
 }
 
+/* MARK: - App Bar */
+
+.app-bar {
+  position: sticky;
+  top: 60px;
+  z-index: 99;
+  background: rgba(8, 9, 14, 0.88);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border-bottom: 1px solid var(--line);
+  padding: 0.55rem 0;
+  transform: translateY(-110%);
+  transition: transform 280ms cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+.app-bar.visible {
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.app-bar-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+.app-bar-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  object-fit: cover;
+}
+.app-bar-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
 /* MARK: - Shared Typography */
 
 .eyebrow {
@@ -2265,6 +2302,10 @@ h3 {
   .site-header {
     background: rgba(245, 245, 247, 0.85);
     border-bottom-color: rgba(17, 17, 17, 0.08);
+  }
+
+  .app-bar {
+    background: rgba(245, 245, 247, 0.9);
   }
 
   .hero-title {
