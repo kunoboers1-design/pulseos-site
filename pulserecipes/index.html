@@ -8,17 +8,26 @@
     name="description"
     content="Pulse Recipes helps you simplify meals, track clean macros, and build better nutritional consistency with practical repeatable recipes."
   />
-  <meta name="theme-color" content="#f5f5f7" />
+  <meta name="theme-color" content="#08090e" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles.css" />
   <link rel="icon" type="image/png" href="/pulseos-logo.png" />
 </head>
 <body>
   <header class="site-header">
     <div class="container">
-      <a class="brand" href="/" aria-label="PulseOS home">
-        <img src="/pulseos-logo.png" alt="PulseOS logo" class="brand-logo" />
-        <span>PulseOS</span>
-      </a>
+      <nav class="nav-inner">
+        <a class="brand" href="/" aria-label="PulseOS home">
+          <img src="/pulseos-logo.png" alt="PulseOS logo" class="brand-logo" />
+          <span>PulseOS</span>
+        </a>
+        <div class="nav-links">
+          <a href="/#apps">Apps</a>
+          <a href="/support/">Support</a>
+        </div>
+      </nav>
     </div>
   </header>
 
@@ -346,16 +355,34 @@
 
   <footer class="site-footer">
     <div class="container footer-inner">
-      <div class="footer-brand">
-        <span>PulseOS</span>
-        <span class="footer-year">2026</span>
+      <div class="footer-left">
+        <a class="brand" href="/" aria-label="PulseOS home">
+          <img src="/pulseos-logo.png" alt="PulseOS logo" class="brand-logo" />
+          <span>PulseOS</span>
+        </a>
+        <p class="footer-tagline">Clean apps for focused people.</p>
       </div>
-
-      <div class="footer-links">
-        <a href="/privacy/">Privacy</a>
-        <a href="/support/">Support</a>
+      <div class="footer-right">
+        <div class="footer-links">
+          <a href="/privacy/">Privacy</a>
+          <a href="/support/">Support</a>
+          <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/" target="_blank" rel="noopener noreferrer">Terms of Use</a>
+        </div>
+        <p class="footer-copy">© 2026 PulseOS. All rights reserved.</p>
       </div>
     </div>
   </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const observer = new IntersectionObserver(
+        entries => entries.forEach(e => {
+          if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+        }),
+        { threshold: 0.07, rootMargin: '0px 0px -40px 0px' }
+      );
+      document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+    });
+  </script>
 </body>
 </html>
