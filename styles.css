@@ -1,17 +1,21 @@
 :root {
-  --bg: #f5f5f7;
-  --surface: #ffffff;
-  --surface-soft: #fbfbfd;
-  --text: #111111;
-  --muted: #6e6e73;
-  --line: rgba(17, 17, 17, 0.08);
-  --line-strong: rgba(17, 17, 17, 0.14);
-  --shadow: 0 12px 40px rgba(15, 23, 42, 0.06);
-  --shadow-hover: 0 18px 48px rgba(15, 23, 42, 0.08);
+  --bg: #08090e;
+  --bg-2: #0c0d14;
+  --surface: #0f1119;
+  --surface-soft: #131521;
+  --text: #edf0f7;
+  --muted: #7c8899;
+  --line: rgba(255, 255, 255, 0.06);
+  --line-strong: rgba(255, 255, 255, 0.11);
+  --shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+  --shadow-hover: 0 24px 60px rgba(0, 0, 0, 0.6);
+  --accent: #6366f1;
+  --accent-bright: #818cf8;
+  --accent-dim: rgba(99, 102, 241, 0.12);
   --max-width: 1120px;
-  --radius-xl: 28px;
-  --radius-lg: 22px;
-  --radius-md: 18px;
+  --radius-xl: 24px;
+  --radius-lg: 20px;
+  --radius-md: 16px;
 }
 
 * {
@@ -24,7 +28,10 @@ html {
 
 body {
   margin: 0;
-  background: var(--bg);
+  background:
+    radial-gradient(circle at top left, rgba(83, 166, 255, 0.07), transparent 30%),
+    radial-gradient(circle at top right, rgba(99, 102, 241, 0.07), transparent 30%),
+    var(--bg);
   color: var(--text);
   font-family:
     Inter,
@@ -62,9 +69,9 @@ a {
   top: 0;
   z-index: 100;
   padding: 0;
-  background: rgba(245, 245, 247, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(8, 9, 14, 0.82);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   border-bottom: 1px solid var(--line);
 }
 
