@@ -3028,36 +3028,46 @@ h3 {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  background: #000;
-  color: #fff;
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 12px;
-  padding: 10px 20px;
+  background: #fff;
+  color: #000;
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 14px;
+  padding: 10px 22px;
   text-decoration: none;
   transition: opacity 200ms ease, transform 200ms ease;
   line-height: 1;
 }
 .appstore-badge:hover {
   opacity: 0.85;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 }
 .appstore-badge svg {
   flex-shrink: 0;
+  fill: #000;
 }
 .appstore-badge-text {
   display: flex;
   flex-direction: column;
+  gap: 2px;
 }
 .appstore-badge-text span:first-child {
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   font-weight: 400;
-  letter-spacing: 0.03em;
-  opacity: 0.85;
+  letter-spacing: 0.02em;
 }
 .appstore-badge-text span:last-child {
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
+}
+
+@media (prefers-color-scheme: light) {
+  .appstore-badge {
+    background: #000;
+    color: #fff;
+    border-color: transparent;
+  }
+  .appstore-badge svg { fill: #fff; }
 }
 
 /* ─── Back to Top ─── */
