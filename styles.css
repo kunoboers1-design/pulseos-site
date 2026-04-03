@@ -3043,7 +3043,9 @@ h3 {
 }
 .appstore-badge svg {
   flex-shrink: 0;
-  fill: #000;
+  fill: currentColor;
+  width: 22px;
+  height: 26px;
 }
 .appstore-badge-text {
   display: flex;
@@ -3067,7 +3069,7 @@ h3 {
     color: #fff;
     border-color: transparent;
   }
-  .appstore-badge svg { fill: #fff; }
+  .appstore-badge svg { fill: currentColor; }
 }
 
 /* ─── Back to Top ─── */
