@@ -3022,3 +3022,76 @@ h3 {
   margin: 0 0 0.5rem;
 }
 .privacy-card p:last-child { margin-bottom: 0; }
+
+/* ─── App Store Badge ─── */
+.appstore-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #000;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  padding: 10px 20px;
+  text-decoration: none;
+  transition: opacity 200ms ease, transform 200ms ease;
+  line-height: 1;
+}
+.appstore-badge:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+.appstore-badge svg {
+  flex-shrink: 0;
+}
+.appstore-badge-text {
+  display: flex;
+  flex-direction: column;
+}
+.appstore-badge-text span:first-child {
+  font-size: 0.65rem;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  opacity: 0.85;
+}
+.appstore-badge-text span:last-child {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* ─── Back to Top ─── */
+.back-to-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 200;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 250ms ease, transform 250ms ease, background 150ms ease;
+  pointer-events: none;
+}
+.back-to-top.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.back-to-top:hover {
+  background: var(--surface-soft);
+}
+
+/* ─── Active nav link ─── */
+.nav-links a.active {
+  color: var(--text);
+}

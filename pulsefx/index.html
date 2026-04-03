@@ -14,6 +14,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles.css" />
   <link rel="icon" type="image/png" href="/pulseos-logo.png" />
+  <link rel="apple-touch-icon" href="/pulseos-logo.png" />
+  <meta name="apple-mobile-web-app-title" content="PulseOS" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://pulseos.eu/pulsefx/" />
+  <meta property="og:title" content="PulseFX — Lot size calculator &amp; trading tracker" />
+  <meta property="og:description" content="PulseFX helps traders calculate lot size faster, track accounts, manage alerts, and review progress across iPhone and Mac." />
+  <meta property="og:image" content="https://pulseos.eu/images/PulseFX.png" />
+  <meta name="twitter:card" content="summary" />
 </head>
 <body>
   <header class="site-header">
@@ -159,7 +167,13 @@
         </div>
       </div>
       <div class="fx-screenshots-cta">
-        <a class="btn btn-primary" href="https://apps.apple.com/nl/app/pulsefx-lot-size-calculator/id6751821638" target="_blank" rel="noopener noreferrer">Download on the App Store</a>
+        <a class="appstore-badge" href="https://apps.apple.com/nl/app/pulsefx-lot-size-calculator/id6751821638" target="_blank" rel="noopener noreferrer">
+          <svg width="22" height="26" viewBox="0 0 814 1000" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-37.5-155.5-127.4C46.5 720 0 556.5 0 535.7c0-125.7 83.2-190.8 164.8-190.8 44.8 0 82.2 29.5 110.4 29.5 27.1 0 69.2-31.2 123.4-31.2 19.9 0 108.1 1.9 165.9 81.5zm-127.3-327.3c-28.5 36.4-72.4 64.4-117.5 64.4-5.8 0-11.6-.6-17.4-1.9 .6-52.5 41.5-107.5 78.6-140.7 45.8-40.2 100.9-66 152.3-67.3 .6 6.5 1.3 13 1.3 18.6 0 52.5-35.2 115.6-97.3 126.9z"/></svg>
+          <span class="appstore-badge-text">
+            <span>Download on the</span>
+            <span>App Store</span>
+          </span>
+        </a>
       </div>
     </section>
 
@@ -458,6 +472,10 @@
     </div>
   </footer>
 
+  <button class="back-to-top" id="backToTop" aria-label="Back to top">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+  </button>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const observer = new IntersectionObserver(
@@ -480,6 +498,23 @@
         );
         heroObserver.observe(hero);
       }
+
+      const btt = document.getElementById('backToTop');
+      if (btt) {
+        window.addEventListener('scroll', () => {
+          btt.classList.toggle('visible', window.scrollY > 400);
+        }, { passive: true });
+        btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+      }
+
+      // Active nav link
+      const path = window.location.pathname;
+      document.querySelectorAll('.nav-links a').forEach(a => {
+        const href = a.getAttribute('href');
+        if (href === path || (href !== '/' && path.startsWith(href))) {
+          a.classList.add('active');
+        }
+      });
     });
   </script>
 </body>
