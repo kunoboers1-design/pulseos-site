@@ -2882,7 +2882,8 @@ h3 {
   padding: 1.25rem 1.5rem;
   text-decoration: none;
   color: var(--text);
-  transition: border-color 180ms ease, transform 180ms ease, background 180ms ease;
+  box-shadow: var(--shadow);
+  transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
 }
 .contact-channel:hover {
   border-color: var(--accent);
