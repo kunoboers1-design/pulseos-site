@@ -1118,9 +1118,9 @@ h3 {
 }
 
 .fx-screenshots-cta {
-  text-align: center;
+  display: flex;
+  justify-content: center;
   margin-top: 48px;
-  position: relative;
 }
 
 .fx-hero {
@@ -3028,6 +3028,7 @@ h3 {
   display: inline-flex;
   align-items: center;
   gap: 10px;
+  width: fit-content;
   background: #fff;
   color: #000;
   border: 1px solid rgba(0,0,0,0.12);
