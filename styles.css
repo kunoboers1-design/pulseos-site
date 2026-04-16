@@ -3112,6 +3112,38 @@ h3 {
 
 /* MARK: - PulseLifts */
 
+.lf-rex-section {
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.lf-rex-inner {
+  display: flex;
+  align-items: center;
+  gap: 64px;
+}
+
+.lf-rex-img {
+  width: 220px;
+  flex-shrink: 0;
+  drop-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+.lf-rex-copy h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-bottom: 16px;
+}
+
+.lf-rex-copy p {
+  font-size: 1rem;
+  color: var(--muted);
+  line-height: 1.75;
+  max-width: 480px;
+}
+
 .lf-page { padding-bottom: 24px; }
 
 .lf-section {
