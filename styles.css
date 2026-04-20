@@ -54,6 +54,29 @@ body {
   color: var(--text);
 }
 
+.subpage-dark-content {
+  position: relative;
+  z-index: 1;
+}
+
+.subpage-dark .site-header {
+  background: rgba(6, 8, 14, 0.86);
+  border-bottom-color: rgba(240, 240, 242, 0.1);
+}
+
+.subpage-dark .site-footer {
+  background: linear-gradient(180deg, rgba(9, 11, 18, 0.35), rgba(8, 8, 10, 0.78));
+}
+
+.subpage-dark .fx-section,
+.subpage-dark .hb-section,
+.subpage-dark .rc-section,
+.subpage-dark .lf-section,
+.subpage-dark .rf-section,
+.subpage-dark .section {
+  background-color: transparent;
+}
+
 /* ── SUBPAGE AMBIENT ORB ── */
 .subpage-dark::before {
   content: '';
