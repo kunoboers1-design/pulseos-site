@@ -2633,15 +2633,34 @@ h3 {
    MARK: - About Page
 ═══════════════════════════════════════════════════ */
 
+.about-page {
+  --page-accent: #007AFF;
+  position: relative;
+  z-index: 1;
+}
+
 .about-hero {
+  position: relative;
   padding: 6rem 0 4rem;
   border-bottom: 1px solid var(--line);
+  overflow: hidden;
 }
+
+.about-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 110% 80% at 50% -10%, rgba(0, 122, 255, 0.1), transparent 65%);
+  pointer-events: none;
+}
+
 .about-hero-grid {
   display: grid;
   grid-template-columns: 1fr 420px;
   gap: 4rem;
   align-items: center;
+  position: relative;
+  z-index: 1;
 }
 .about-title {
   font-size: clamp(2.8rem, 7vw, 5rem);
@@ -2668,12 +2687,12 @@ h3 {
   gap: 0.2rem;
 }
 .about-meta-label {
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 400;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--muted);
-  opacity: 0.6;
 }
 .about-meta-value {
   font-size: 1rem;
@@ -2687,6 +2706,7 @@ h3 {
   overflow: hidden;
   aspect-ratio: 3 / 4;
   background: var(--surface);
+  box-shadow: 0 0 0 1px var(--line), 0 40px 80px rgba(0, 0, 0, 0.5);
 }
 .about-photo {
   width: 100%;
@@ -2694,7 +2714,7 @@ h3 {
   object-fit: cover;
   object-position: center top;
   display: block;
-  filter: brightness(0.92);
+  filter: brightness(0.88) saturate(0.95);
 }
 
 /* Story */
@@ -2714,18 +2734,39 @@ h3 {
 .about-story-right {
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
+  gap: 0;
 }
 .about-chapter {
   display: grid;
   grid-template-columns: 56px 1fr;
   gap: 1.25rem;
   align-items: start;
+  padding: 2rem 0 2rem 1.5rem;
+  border-left: 1px solid var(--line);
+  position: relative;
 }
+
+.about-chapter:last-child {
+  border-left-color: transparent;
+}
+
+.about-chapter::before {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: 2.3rem;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 10px rgba(0, 122, 255, 0.5);
+}
+
 .about-chapter-year {
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 400;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--accent);
   padding-top: 0.35rem;
@@ -2747,13 +2788,16 @@ h3 {
 /* Drive / Quote */
 .about-drive-section { padding: 5rem 0; }
 .about-drive-card {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 20px;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0, 122, 255, 0.08), transparent 70%),
+    var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 24px;
   padding: 3.5rem;
   max-width: 780px;
   margin: 0 auto;
   text-align: center;
+  box-shadow: 0 0 0 1px rgba(0, 122, 255, 0.06) inset;
 }
 .about-quote {
   font-size: clamp(1.2rem, 2.5vw, 1.55rem);
@@ -2788,10 +2832,11 @@ h3 {
   padding: 1rem 1.25rem;
   text-decoration: none;
   color: var(--text);
-  transition: border-color 180ms ease, transform 180ms ease;
+  transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
 }
 .about-app-link:hover {
-  border-color: var(--accent);
+  border-color: rgba(0, 122, 255, 0.3);
+  background: var(--surface-soft);
   transform: translateX(4px);
 }
 .about-app-link img {
@@ -2817,15 +2862,18 @@ h3 {
 }
 
 /* Contact CTA */
-.about-contact-section { padding: 5rem 0; }
+.about-contact-section { padding: 5rem 0 6rem; }
 .about-contact-card {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 20px;
-  padding: 3rem;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0, 122, 255, 0.08), transparent 70%),
+    var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 24px;
+  padding: 3.5rem;
   text-align: center;
   max-width: 600px;
   margin: 0 auto;
+  box-shadow: 0 0 0 1px rgba(0, 122, 255, 0.06) inset;
 }
 .about-contact-card h2 {
   font-size: 1.8rem;
