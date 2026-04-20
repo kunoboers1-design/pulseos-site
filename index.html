@@ -227,13 +227,13 @@ nav::after {
   white-space: nowrap;
 }
 .hero-h1 .line { overflow: hidden; display: block; }
-.hero-h1 .line span {
+.hero-h1 .line > span {
   display: block;
   animation: slideU .9s cubic-bezier(.23,1,.32,1) both;
 }
-.hero-h1 .line:nth-child(1) span { animation-delay: .3s; }
-.hero-h1 .line:nth-child(2) span { animation-delay: .45s; }
-.hero-h1 .line:nth-child(3) span { animation-delay: .6s; }
+.hero-h1 .line:nth-child(1) > span { animation-delay: .3s; }
+.hero-h1 .line:nth-child(2) > span { animation-delay: .45s; }
+.hero-h1 .line:nth-child(3) > span { animation-delay: .6s; }
 
 .hero-h1 .ital { font-style: normal; font-weight: 300; color: var(--accent); transition: color .8s ease; }
 
@@ -936,7 +936,8 @@ footer a:hover { color: var(--white); }
 /* ── ORBIT HERO ── */
 #orbitCanvas {
   width: min(560px, 100%) !important;
-  height: 560px;
+  height: auto;
+  aspect-ratio: 1;
   display: block;
   margin: 0 auto;
   cursor: default;
