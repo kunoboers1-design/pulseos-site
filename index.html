@@ -218,13 +218,12 @@ nav::after {
 
 .hero-h1 {
   font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: clamp(36px, 12vw, 148px);
+  font-size: clamp(32px, 10vw, 148px);
   line-height: 0.92;
   font-weight: 800;
   letter-spacing: -4px;
   max-width: 900px;
   margin-bottom: 48px;
-  white-space: nowrap;
 }
 .hero-h1 .line { overflow: hidden; display: block; }
 .hero-h1 .line > span {
@@ -1670,8 +1669,11 @@ document.querySelectorAll('.cta-h, .cta-r').forEach(el => obs.observe(el));
     const cv = document.getElementById('orbitCanvas');
     if (!cv) return;
     const ctx = cv.getContext('2d');
+    const DPR = window.devicePixelRatio || 1;
     const SIZE = Math.min(cv.parentElement.offsetWidth, 560);
-    cv.width = SIZE; cv.height = SIZE;
+    cv.width = SIZE * DPR; cv.height = SIZE * DPR;
+    cv.style.width = SIZE + 'px'; cv.style.height = SIZE + 'px';
+    ctx.scale(DPR, DPR);
     const CX = SIZE/2, CY = SIZE/2;
 
     const APPS = [
