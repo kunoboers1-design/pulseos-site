@@ -1024,7 +1024,7 @@ h3 {
 /* MARK: - PulseFX */
 
 /* ── PER-PAGE ACCENT COLOURS ── */
-.fx-page { --page-accent: #2BB54B; }
+.fx-page { --page-accent: #2f7fff; }
 .rc-page { --page-accent: #E8512A; }
 .hb-page { --page-accent: #D95C3A; }
 .lf-page { --page-accent: #FF7A00; }
@@ -1040,7 +1040,48 @@ h3 {
 }
 
 .fx-page {
+  position: relative;
   padding-bottom: 24px;
+  isolation: isolate;
+}
+
+.fx-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 80% 58% at 16% 6%, rgba(65, 137, 255, 0.2), transparent 60%),
+    radial-gradient(ellipse 55% 40% at 86% 4%, rgba(31, 101, 255, 0.14), transparent 68%);
+}
+
+.fx-page > * {
+  position: relative;
+  z-index: 1;
+}
+
+.fx-page .eyebrow {
+  color: rgba(173, 208, 255, 0.78);
+}
+
+.fx-page .hero-button {
+  background: linear-gradient(140deg, #1a7dff, #4a9eff);
+  box-shadow: 0 16px 34px rgba(24, 110, 255, 0.32);
+}
+
+.fx-page .hero-button:hover {
+  box-shadow: 0 22px 44px rgba(24, 110, 255, 0.4);
+}
+
+.fx-page .hero-button.secondary {
+  background: rgba(240, 244, 255, 0.03);
+  border-color: rgba(207, 223, 255, 0.24);
+}
+
+.fx-page .hero-button.secondary:hover {
+  background: rgba(84, 145, 255, 0.1);
+  border-color: rgba(180, 208, 255, 0.42);
 }
 
 /* ── iPhone Hero Mockup ── */
@@ -1125,7 +1166,7 @@ h3 {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(16, 185, 129, 0.07), transparent);
+  background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(63, 134, 255, 0.12), transparent);
   pointer-events: none;
 }
 
@@ -1236,7 +1277,9 @@ h3 {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 110% 80% at 50% -10%, color-mix(in srgb, var(--page-accent, #007AFF) 14%, transparent), transparent 65%);
+  background:
+    radial-gradient(ellipse 110% 80% at 50% -10%, color-mix(in srgb, var(--page-accent, #007AFF) 22%, transparent), transparent 65%),
+    radial-gradient(ellipse 70% 50% at 100% 0%, rgba(54, 121, 255, 0.12), transparent 72%);
   pointer-events: none;
 }
 
@@ -1288,10 +1331,11 @@ h3 {
   flex-direction: column;
   gap: 6px;
   padding: 18px;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(183, 207, 255, 0.18);
   border-radius: 20px;
-  background: var(--surface);
-  box-shadow: var(--shadow);
+  background: linear-gradient(180deg, rgba(16, 20, 34, 0.88), rgba(13, 16, 26, 0.88));
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.48);
+  backdrop-filter: blur(8px);
 }
 
 .fx-meta-label {
@@ -1416,10 +1460,10 @@ h3 {
 
 .fx-feature-card {
   padding: 24px;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(180, 203, 255, 0.12);
   border-radius: 28px;
-  background: var(--surface);
-  box-shadow: var(--shadow);
+  background: linear-gradient(180deg, rgba(18, 21, 31, 0.95), rgba(13, 16, 24, 0.95));
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.42);
 }
 
 .fx-feature-card h3,
@@ -1459,14 +1503,14 @@ h3 {
 
 .feature-green {
   background:
-    radial-gradient(circle at top right, rgba(49, 214, 91, 0.14), transparent 34%),
-    var(--surface);
+    radial-gradient(circle at top right, rgba(49, 214, 91, 0.12), transparent 36%),
+    linear-gradient(180deg, rgba(18, 25, 30, 0.96), rgba(12, 18, 24, 0.96));
 }
 
 .feature-dark {
   background:
-    linear-gradient(180deg, rgba(17, 17, 17, 0.96), rgba(30, 32, 38, 0.96));
-  border-color: rgba(17, 17, 17, 0.04);
+    linear-gradient(180deg, rgba(13, 16, 24, 0.98), rgba(20, 24, 35, 0.98));
+  border-color: rgba(168, 196, 255, 0.14);
 }
 
 .feature-dark h3,
@@ -1488,10 +1532,10 @@ h3 {
 
 .fx-highlight-card {
   padding: 22px;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(180, 203, 255, 0.12);
   border-radius: 24px;
-  background: var(--surface);
-  box-shadow: var(--shadow);
+  background: linear-gradient(180deg, rgba(17, 20, 31, 0.95), rgba(12, 15, 23, 0.95));
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.4);
 }
 
 .fx-highlight-card p {
@@ -1518,10 +1562,10 @@ h3 {
 
 .fx-step-card {
   padding: 22px;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(180, 203, 255, 0.12);
   border-radius: 24px;
-  background: var(--surface);
-  box-shadow: var(--shadow);
+  background: linear-gradient(180deg, rgba(17, 20, 31, 0.95), rgba(12, 15, 23, 0.95));
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.4);
 }
 
 .fx-step-card p {
@@ -1550,10 +1594,10 @@ h3 {
 
 .fx-info-card {
   padding: 24px;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(180, 203, 255, 0.12);
   border-radius: 26px;
-  background: var(--surface);
-  box-shadow: var(--shadow);
+  background: linear-gradient(180deg, rgba(17, 20, 31, 0.95), rgba(12, 15, 23, 0.95));
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.4);
 }
 
 .fx-info-card p {
@@ -1568,10 +1612,10 @@ h3 {
 
 .fx-changelog-card {
   padding: 24px;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(180, 203, 255, 0.12);
   border-radius: 26px;
-  background: var(--surface);
-  box-shadow: var(--shadow);
+  background: linear-gradient(180deg, rgba(17, 20, 31, 0.95), rgba(12, 15, 23, 0.95));
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.4);
 }
 
 .fx-contact-row {
@@ -1585,10 +1629,10 @@ h3 {
   flex-direction: column;
   gap: 6px;
   padding: 20px;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(180, 203, 255, 0.12);
   border-radius: 22px;
-  background: var(--surface);
-  box-shadow: var(--shadow);
+  background: linear-gradient(180deg, rgba(17, 20, 31, 0.95), rgba(12, 15, 23, 0.95));
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.4);
   transition:
     transform 180ms ease,
     box-shadow 180ms ease,
@@ -1597,8 +1641,8 @@ h3 {
 
 .fx-contact-card:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-hover);
-  border-color: var(--line-strong);
+  box-shadow: 0 24px 56px rgba(0, 0, 0, 0.48);
+  border-color: rgba(173, 204, 255, 0.26);
 }
 
 .fx-contact-value {
