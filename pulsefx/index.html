@@ -48,51 +48,353 @@
     </div>
   </div>
 
+  <style>
+  /* ── PulseFX Hero ── */
+  .fxh {
+    background: #0D0F0E;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 80px 0 60px;
+  }
+  .fxh-inner {
+    width: 100%;
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 0 40px;
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 80px;
+    align-items: center;
+  }
+
+  /* Badge */
+  .fxh-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Mono', 'Courier New', monospace;
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    color: #00C850;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+  .fxh-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #00C850;
+    flex-shrink: 0;
+  }
+
+  /* Headline */
+  .fxh-title {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: clamp(52px, 7vw, 96px);
+    font-weight: 800;
+    line-height: 0.92;
+    letter-spacing: -3px;
+    color: #fff;
+    margin: 0 0 14px;
+  }
+  .fxh-accent { color: #00C850; }
+  .fxh-sub {
+    font-family: 'DM Mono', 'Courier New', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,0.35);
+    margin: 0 0 20px;
+    text-transform: uppercase;
+  }
+  .fxh-body {
+    font-size: 16px;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.55);
+    max-width: 460px;
+    margin: 0 0 32px;
+  }
+
+  /* Calculator */
+  .fxh-calc {
+    background: rgba(255,255,255,0.04);
+    border: 0.5px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 32px;
+  }
+  .fxh-calc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .fxh-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .fxh-field label {
+    font-family: 'DM Mono', 'Courier New', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: rgba(255,255,255,0.35);
+    text-transform: uppercase;
+  }
+  .fxh-field input,
+  .fxh-field select {
+    background: rgba(255,255,255,0.06);
+    border: 0.5px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: #fff;
+    font-family: 'DM Mono', 'Courier New', monospace;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.15s;
+    -webkit-appearance: none;
+  }
+  .fxh-field select option { background: #1a1c1b; }
+  .fxh-field input:focus,
+  .fxh-field select:focus {
+    border-color: #00C850;
+  }
+  .fxh-result {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding-top: 20px;
+    border-top: 0.5px solid rgba(255,255,255,0.06);
+  }
+  .fxh-lot {
+    font-family: 'DM Mono', 'Courier New', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    color: #00C850;
+    line-height: 1;
+  }
+  .fxh-lot-label,
+  .fxh-risk-label {
+    font-family: 'DM Mono', 'Courier New', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: rgba(255,255,255,0.25);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  .fxh-divider {
+    width: 0.5px;
+    height: 36px;
+    background: rgba(255,255,255,0.1);
+    flex-shrink: 0;
+  }
+  .fxh-risk-val {
+    font-family: 'DM Mono', 'Courier New', monospace;
+    font-size: 16px;
+    font-weight: 600;
+    color: rgba(0,200,80,0.6);
+  }
+
+  /* CTA */
+  .fxh-cta {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .fxh-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    padding: 13px 28px;
+    background: #00C850;
+    color: #0D0F0E;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    transition: opacity 0.15s;
+  }
+  .fxh-btn-primary:hover { opacity: 0.85; }
+  .fxh-btn-ghost {
+    font-size: 14px;
+    color: rgba(255,255,255,0.5);
+    text-decoration: none;
+    font-family: 'DM Mono', 'Courier New', monospace;
+    transition: color 0.15s;
+  }
+  .fxh-btn-ghost:hover { color: #fff; }
+
+  /* Phones */
+  .fxh-right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .fxh-phones {
+    position: relative;
+    width: 200px;
+    height: 380px;
+  }
+  .phone {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border-radius: 28px;
+    border: 1.5px solid rgba(255,255,255,0.12);
+    background: #111;
+    overflow: hidden;
+  }
+  .phone img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .phone-main {
+    width: 168px;
+    height: 340px;
+    z-index: 2;
+    transform: translate(-50%, -50%) rotate(-3deg);
+  }
+  .phone-island {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 18px;
+    background: #000;
+    border-radius: 12px;
+    z-index: 10;
+    pointer-events: none;
+  }
+  .phone-back {
+    width: 148px;
+    height: 300px;
+    z-index: 1;
+    transform: translate(-50%, -50%) rotate(6deg);
+    opacity: 0.55;
+  }
+
+  /* Responsive */
+  @media (max-width: 860px) {
+    .fxh { padding: 100px 0 60px; min-height: auto; }
+    .fxh-inner {
+      grid-template-columns: 1fr;
+      gap: 48px;
+      padding: 0 24px;
+    }
+    .fxh-right { order: -1; }
+    .fxh-phones { width: 160px; height: 320px; }
+    .phone-main { width: 138px; height: 280px; }
+    .phone-back { width: 122px; height: 248px; }
+    .fxh-title { letter-spacing: -2px; }
+  }
+  </style>
+
   <main class="fx-page">
-    <section class="fx-hero" id="appHero">
-      <div class="container fx-hero-grid">
-        <div class="fx-hero-copy">
-          <p class="eyebrow">PulseFX</p>
-          <h1>Lot size, account tracking, alerts, and trading structure in one place.</h1>
-          <p class="fx-lead">
-            PulseFX is built for traders who want fast lot size calculations,
-            clean account tracking, useful reminders, notes per account, and a
-            clearer view of performance.
-          </p>
+    <section class="fxh" id="appHero">
+      <div class="fxh-inner">
 
-          <div class="fx-hero-actions">
-            <a class="hero-button" href="#features">Explore features</a>
-            <a class="hero-button secondary" href="#how-it-works">How it works</a>
+        <!-- LEFT: copy + calculator -->
+        <div class="fxh-left">
+          <div class="fxh-badge">
+            <span class="fxh-dot"></span>
+            Live on App Store
           </div>
 
-          <div class="fx-meta-row">
-            <div class="fx-meta-card">
-              <span class="fx-meta-label">Audience</span>
-              <span class="fx-meta-value">Forex traders</span>
-            </div>
-            <div class="fx-meta-card">
-              <span class="fx-meta-label">Platforms</span>
-              <span class="fx-meta-value">iPhone + Mac</span>
-            </div>
-            <div class="fx-meta-card">
-              <span class="fx-meta-label">Focus</span>
-              <span class="fx-meta-value">Risk + execution</span>
-            </div>
-          </div>
-        </div>
+          <h1 class="fxh-title">Pulse<span class="fxh-accent">FX</span></h1>
+          <p class="fxh-sub">Your edge, calculated.</p>
+          <p class="fxh-body">Lot sizing, risk management, and a full trade log — exactly what you need, nothing you don't.</p>
 
-        <div class="fx-phone-hero-wrap">
-          <div class="fx-iphone">
-            <div class="fx-iphone-frame">
-              <div class="fx-iphone-island" aria-hidden="true"></div>
-              <div class="fx-iphone-screen">
-                <img src="/pulsefx/1.%20lotsize%20(1290%20x%202796%20px).png" alt="PulseFX lot size calculator" />
+          <div class="fxh-calc">
+            <div class="fxh-calc-grid">
+              <div class="fxh-field">
+                <label for="fxh-account">Account size</label>
+                <input type="number" id="fxh-account" value="10000" min="0" step="100" />
+              </div>
+              <div class="fxh-field">
+                <label for="fxh-risk">Risk %</label>
+                <input type="number" id="fxh-risk" value="1" min="0.1" max="100" step="0.1" />
+              </div>
+              <div class="fxh-field">
+                <label for="fxh-sl">Stop loss (pips)</label>
+                <input type="number" id="fxh-sl" value="20" min="1" step="1" />
+              </div>
+              <div class="fxh-field">
+                <label for="fxh-pair">Pair</label>
+                <select id="fxh-pair">
+                  <option value="10">EUR/USD</option>
+                  <option value="10">GBP/USD</option>
+                  <option value="9.1">USD/JPY</option>
+                  <option value="1">XAU/USD</option>
+                </select>
+              </div>
+            </div>
+            <div class="fxh-result">
+              <div>
+                <div class="fxh-lot" id="fxh-lotsize">0.50</div>
+                <div class="fxh-lot-label">Lot size</div>
+              </div>
+              <div class="fxh-divider"></div>
+              <div>
+                <div class="fxh-risk-val" id="fxh-risk-val">€100 at risk</div>
+                <div class="fxh-risk-label">Dollar at risk</div>
               </div>
             </div>
           </div>
+
+          <div class="fxh-cta">
+            <a class="fxh-btn-primary" href="https://apps.apple.com/nl/app/pulsefx-lot-size-calculator/id6751821638" target="_blank" rel="noopener">Download free</a>
+            <a class="fxh-btn-ghost" href="#features">Explore features →</a>
+          </div>
         </div>
+
+        <!-- RIGHT: two iPhones -->
+        <div class="fxh-right">
+          <div class="fxh-phones">
+            <div class="phone phone-back">
+              <img src="/pulsefx/3.%20Overzicht%20accounts%20(1290%20x%202796%20px).png" alt="PulseFX account overview" />
+            </div>
+            <div class="phone phone-main">
+              <div class="phone-island" aria-hidden="true"></div>
+              <img src="/pulsefx/1.%20lotsize%20(1290%20x%202796%20px).png" alt="PulseFX lot size calculator" />
+            </div>
+          </div>
+        </div>
+
       </div>
     </section>
+
+    <script>
+    (function() {
+      var account = document.getElementById('fxh-account');
+      var risk    = document.getElementById('fxh-risk');
+      var sl      = document.getElementById('fxh-sl');
+      var pair    = document.getElementById('fxh-pair');
+      var lotEl   = document.getElementById('fxh-lotsize');
+      var riskEl  = document.getElementById('fxh-risk-val');
+
+      function calc() {
+        var a  = parseFloat(account.value) || 0;
+        var r  = parseFloat(risk.value)    || 0;
+        var s  = parseFloat(sl.value)      || 1;
+        var pv = parseFloat(pair.value)    || 10;
+        var riskAmount = a * (r / 100);
+        var lot = riskAmount / (s * pv);
+        lotEl.textContent  = isFinite(lot) ? lot.toFixed(2) : '—';
+        riskEl.textContent = '€' + Math.round(riskAmount) + ' at risk';
+      }
+
+      [account, risk, sl, pair].forEach(function(el) {
+        el.addEventListener('input', calc);
+      });
+
+      calc();
+    })();
+    </script>
+
 
     <!-- ─── Screenshots ─── -->
     <section class="fx-screenshots-section">
