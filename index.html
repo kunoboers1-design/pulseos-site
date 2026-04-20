@@ -1671,9 +1671,12 @@ document.querySelectorAll('.cta-h, .cta-r').forEach(el => obs.observe(el));
     const ctx = cv.getContext('2d');
     const DPR = window.devicePixelRatio || 1;
     const SIZE = Math.min(cv.parentElement.offsetWidth, 560);
-    cv.width = SIZE * DPR; cv.height = SIZE * DPR;
-    cv.style.width = SIZE + 'px'; cv.style.height = SIZE + 'px';
+    const PAD = Math.round(SIZE * 0.1);
+    const CVSIZE = SIZE + PAD * 2;
+    cv.width = CVSIZE * DPR; cv.height = CVSIZE * DPR;
+    cv.style.width = CVSIZE + 'px'; cv.style.height = CVSIZE + 'px';
     ctx.scale(DPR, DPR);
+    ctx.translate(PAD, PAD);
     const CX = SIZE/2, CY = SIZE/2;
 
     const APPS = [
@@ -1767,7 +1770,7 @@ document.querySelectorAll('.cta-h, .cta-r').forEach(el => obs.observe(el));
     }
 
     function draw() {
-      ctx.clearRect(0,0,SIZE,SIZE);
+      ctx.clearRect(-PAD,-PAD,CVSIZE,CVSIZE);
       const t = Date.now()/1000;
 
       // orbit tracks
