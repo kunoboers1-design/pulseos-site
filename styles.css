@@ -44,6 +44,33 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* ── SUBPAGE AMBIENT ORB ── */
+body::before {
+  content: '';
+  position: fixed;
+  width: 900px;
+  height: 900px;
+  border-radius: 50%;
+  filter: blur(180px);
+  opacity: 0.06;
+  background: var(--page-accent, #007AFF);
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── NOISE TEXTURE ── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 999;
+}
+
 img {
   display: block;
   max-width: 100%;
@@ -343,6 +370,11 @@ h3 {
 @keyframes marquee {
   from { transform: translateZ(0) translateX(0); }
   to   { transform: translateZ(0) translateX(var(--mq-w, -50%)); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.35; transform: scale(0.65); }
 }
 
 .icon-item {
@@ -937,6 +969,22 @@ h3 {
 
 /* MARK: - PulseFX */
 
+/* ── PER-PAGE ACCENT COLOURS ── */
+.fx-page { --page-accent: #2BB54B; }
+.rc-page { --page-accent: #E8512A; }
+.hb-page { --page-accent: #D95C3A; }
+.lf-page { --page-accent: #FF7A00; }
+.rf-page { --page-accent: #38A9D9; }
+
+.fx-page,
+.rc-page,
+.hb-page,
+.lf-page,
+.rf-page {
+  position: relative;
+  z-index: 1;
+}
+
 .fx-page {
   padding-bottom: 24px;
 }
@@ -1125,7 +1173,17 @@ h3 {
 }
 
 .fx-hero {
+  position: relative;
   padding: 64px 0 36px;
+  overflow: hidden;
+}
+
+.fx-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 110% 80% at 50% -10%, color-mix(in srgb, var(--page-accent, #007AFF) 14%, transparent), transparent 65%);
+  pointer-events: none;
 }
 
 .fx-hero-grid {
@@ -1133,6 +1191,8 @@ h3 {
   grid-template-columns: 1fr auto;
   gap: 48px;
   align-items: center;
+  position: relative;
+  z-index: 1;
 }
 
 .fx-hero-copy {
