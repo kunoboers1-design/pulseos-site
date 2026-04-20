@@ -1084,6 +1084,132 @@ footer a:hover { color: var(--white); }
   <div class="color-bar reflect"></div>
 </div>
 
+<!-- PULSEFX FEATURE -->
+<section class="fxh" id="pulsefx-feature">
+  <style>
+  .fxh{background:#0D0F0E;padding:100px 0 80px}
+  .fxh-inner{width:100%;max-width:1160px;margin:0 auto;padding:0 52px;display:grid;grid-template-columns:1fr 420px;gap:80px;align-items:center}
+  .fxh-badge{display:inline-flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2.5px;color:#00C850;text-transform:uppercase;margin-bottom:28px}
+  .fxh-dot{width:7px;height:7px;border-radius:50%;background:#00C850;flex-shrink:0}
+  .fxh-title{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(52px,7vw,96px);font-weight:800;line-height:.92;letter-spacing:-3px;color:#fff;margin:0 0 14px}
+  .fxh-accent{color:#00C850}
+  .fxh-sub{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:3px;color:rgba(255,255,255,.35);margin:0 0 20px;text-transform:uppercase}
+  .fxh-body{font-size:16px;line-height:1.7;color:rgba(255,255,255,.55);max-width:460px;margin:0 0 32px}
+  .fxh-calc{background:rgba(255,255,255,.04);border:.5px solid rgba(255,255,255,.08);border-radius:16px;padding:24px;margin-bottom:32px}
+  .fxh-calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+  .fxh-field{display:flex;flex-direction:column;gap:6px}
+  .fxh-field label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1.5px;color:rgba(255,255,255,.35);text-transform:uppercase}
+  .fxh-field input,.fxh-field select{background:rgba(255,255,255,.06);border:.5px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 12px;color:#fff;font-family:'DM Mono',monospace;font-size:14px;outline:none;transition:border-color .15s;-webkit-appearance:none}
+  .fxh-field select option{background:#1a1c1b}
+  .fxh-field input:focus,.fxh-field select:focus{border-color:#00C850}
+  .fxh-result{display:flex;align-items:center;gap:24px;padding-top:20px;border-top:.5px solid rgba(255,255,255,.06)}
+  .fxh-lot{font-family:'DM Mono',monospace;font-size:28px;font-weight:700;color:#00C850;line-height:1}
+  .fxh-lot-label,.fxh-risk-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;color:rgba(255,255,255,.25);text-transform:uppercase;margin-top:4px}
+  .fxh-divider{width:.5px;height:36px;background:rgba(255,255,255,.1);flex-shrink:0}
+  .fxh-risk-val{font-family:'DM Mono',monospace;font-size:16px;font-weight:600;color:rgba(0,200,80,.6)}
+  .fxh-cta{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+  .fxh-btn-primary{display:inline-flex;align-items:center;padding:13px 28px;background:#00C850;color:#0D0F0E;border-radius:100px;font-size:14px;font-weight:700;text-decoration:none;font-family:'Bricolage Grotesque',sans-serif;transition:opacity .15s}
+  .fxh-btn-primary:hover{opacity:.85}
+  .fxh-btn-ghost{font-size:14px;color:rgba(255,255,255,.5);text-decoration:none;font-family:'DM Mono',monospace;transition:color .15s}
+  .fxh-btn-ghost:hover{color:#fff}
+  .fxh-right{display:flex;justify-content:center;align-items:center}
+  .fxh-phones{position:relative;width:200px;height:380px}
+  .fxh-phone{position:absolute;top:50%;left:50%;border-radius:28px;border:1.5px solid rgba(255,255,255,.12);background:#111;overflow:hidden}
+  .fxh-phone img{width:100%;height:100%;object-fit:cover;display:block}
+  .fxh-phone-main{width:168px;height:340px;z-index:2;transform:translate(-50%,-50%) rotate(-3deg)}
+  .fxh-phone-island{position:absolute;top:12px;left:50%;transform:translateX(-50%);width:60px;height:18px;background:#000;border-radius:12px;z-index:10;pointer-events:none}
+  .fxh-phone-back{width:148px;height:300px;z-index:1;transform:translate(-50%,-50%) rotate(6deg);opacity:.55}
+  @media(max-width:860px){
+    .fxh{padding:80px 0 60px}
+    .fxh-inner{grid-template-columns:1fr;gap:40px;padding:0 24px}
+    .fxh-right{order:-1}
+    .fxh-phones{width:160px;height:300px}
+    .fxh-phone-main{width:138px;height:276px}
+    .fxh-phone-back{width:122px;height:244px}
+  }
+  </style>
+
+  <div class="fxh-inner">
+    <div class="fxh-left">
+      <div class="fxh-badge"><span class="fxh-dot"></span>Live on App Store</div>
+      <h2 class="fxh-title">Pulse<span class="fxh-accent">FX</span></h2>
+      <p class="fxh-sub">Your edge, calculated.</p>
+      <p class="fxh-body">Lot sizing, risk management, and a full trade log — exactly what you need, nothing you don't.</p>
+
+      <div class="fxh-calc">
+        <div class="fxh-calc-grid">
+          <div class="fxh-field">
+            <label for="fxh-account">Account size</label>
+            <input type="number" id="fxh-account" value="10000" min="0" step="100" />
+          </div>
+          <div class="fxh-field">
+            <label for="fxh-risk">Risk %</label>
+            <input type="number" id="fxh-risk" value="1" min="0.1" max="100" step="0.1" />
+          </div>
+          <div class="fxh-field">
+            <label for="fxh-sl">Stop loss (pips)</label>
+            <input type="number" id="fxh-sl" value="20" min="1" step="1" />
+          </div>
+          <div class="fxh-field">
+            <label for="fxh-pair">Pair</label>
+            <select id="fxh-pair">
+              <option value="10">EUR/USD</option>
+              <option value="10">GBP/USD</option>
+              <option value="9.1">USD/JPY</option>
+              <option value="1">XAU/USD</option>
+            </select>
+          </div>
+        </div>
+        <div class="fxh-result">
+          <div>
+            <div class="fxh-lot" id="fxh-lotsize">0.50</div>
+            <div class="fxh-lot-label">Lot size</div>
+          </div>
+          <div class="fxh-divider"></div>
+          <div>
+            <div class="fxh-risk-val" id="fxh-risk-val">€100 at risk</div>
+            <div class="fxh-risk-label">Dollar at risk</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fxh-cta">
+        <a class="fxh-btn-primary" href="https://apps.apple.com/nl/app/pulsefx-lot-size-calculator/id6751821638" target="_blank" rel="noopener">Download free</a>
+        <a class="fxh-btn-ghost" href="/pulsefx/">App page →</a>
+      </div>
+    </div>
+
+    <div class="fxh-right">
+      <div class="fxh-phones">
+        <div class="fxh-phone fxh-phone-back">
+          <img src="/pulsefx/3.%20Overzicht%20accounts%20(1290%20x%202796%20px).png" alt="PulseFX account overview" />
+        </div>
+        <div class="fxh-phone fxh-phone-main">
+          <div class="fxh-phone-island" aria-hidden="true"></div>
+          <img src="/pulsefx/1.%20lotsize%20(1290%20x%202796%20px).png" alt="PulseFX lot size calculator" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    var a=document.getElementById('fxh-account'),r=document.getElementById('fxh-risk'),
+        s=document.getElementById('fxh-sl'),p=document.getElementById('fxh-pair'),
+        lo=document.getElementById('fxh-lotsize'),ri=document.getElementById('fxh-risk-val');
+    function calc(){
+      var av=parseFloat(a.value)||0,rv=parseFloat(r.value)||0,
+          sv=parseFloat(s.value)||1,pv=parseFloat(p.value)||10;
+      var ra=av*(rv/100),lot=ra/(sv*pv);
+      lo.textContent=isFinite(lot)?lot.toFixed(2):'—';
+      ri.textContent='€'+Math.round(ra)+' at risk';
+    }
+    [a,r,s,p].forEach(function(el){el.addEventListener('input',calc);});
+    calc();
+  })();
+  </script>
+</section>
+
 <!-- APPS -->
 <div class="apps-wrap" id="apps">
 
@@ -1727,8 +1853,8 @@ document.querySelectorAll('.cta-h, .cta-r').forEach(el => obs.observe(el));
       const x = app.px, y = app.py;
 
       // orbit trail glow
-      ctx.beginPath(); ctx.arc(x,y,r*2.2,0,Math.PI*2);
-      const gr=ctx.createRadialGradient(x,y,0,x,y,r*2.2);
+      ctx.beginPath(); ctx.arc(x,y,r*1.5,0,Math.PI*2);
+      const gr=ctx.createRadialGradient(x,y,0,x,y,r*1.5);
       gr.addColorStop(0,hexA(app.col,isHov?0.2:0.08));
       gr.addColorStop(1,hexA(app.col,0));
       ctx.fillStyle=gr; ctx.fill();
