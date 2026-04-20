@@ -44,8 +44,18 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* ── SUBPAGE DARK THEME ── */
+.subpage-dark {
+  position: relative;
+  background:
+    radial-gradient(ellipse 110% 70% at 50% -12%, rgba(0, 122, 255, 0.1), transparent 62%),
+    radial-gradient(ellipse 70% 52% at 85% 18%, rgba(0, 122, 255, 0.05), transparent 66%),
+    linear-gradient(180deg, #07080b 0%, #08090e 45%, #08080a 100%);
+  color: var(--text);
+}
+
 /* ── SUBPAGE AMBIENT ORB ── */
-body::before {
+.subpage-dark::before {
   content: '';
   position: fixed;
   width: 900px;
@@ -62,13 +72,34 @@ body::before {
 }
 
 /* ── NOISE TEXTURE ── */
-body::after {
+.subpage-dark::after {
   content: '';
   position: fixed;
   inset: 0;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
   pointer-events: none;
   z-index: 999;
+}
+
+.subpage-dark-hero {
+  position: relative;
+  isolation: isolate;
+}
+
+.subpage-dark-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 78% 68% at 50% -18%, rgba(51, 149, 255, 0.16), transparent 62%),
+    radial-gradient(ellipse 35% 25% at 78% 14%, rgba(0, 122, 255, 0.08), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.subpage-dark-hero > * {
+  position: relative;
+  z-index: 1;
 }
 
 img {
