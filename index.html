@@ -1533,11 +1533,11 @@ document.querySelectorAll('.cta-h, .cta-r').forEach(el => obs.observe(el));
     window.addEventListener('resize', resize);
 
     const APPS = [
-      { label:'FX',  sub:'PulseFX',       col:'#2BB54B', orbit:110, speed:0.006,  angle:0.2,  url:'https://pulseos.eu/pulsefx/' },
-      { label:'RC',  sub:'PulseRecipes',  col:'#E8512A', orbit:150, speed:0.0045, angle:1.8,  url:'https://pulseos.eu/pulserecipes/' },
-      { label:'HB',  sub:'PulseHabits',   col:'#D95C3A', orbit:188, speed:0.0032, angle:3.5,  url:'https://pulseos.eu/pulsehabits/' },
-      { label:'LF',  sub:'PulseLift',     col:'#FF7A00', orbit:224, speed:0.0024, angle:5.1,  url:'https://pulseos.eu/pulselift/' },
-      { label:'RF',  sub:'PulseReflect',  col:'#38A9D9', orbit:258, speed:0.0018, angle:2.8,  url:'https://pulseos.eu/pulsereflect/' },
+      { label:'FX',  sub:'PulseFX',       col:'#2BB54B', orbit:110, speed:0.0045,  angle:0.2,  url:'https://pulseos.eu/pulsefx/' },
+      { label:'RC',  sub:'PulseRecipes',  col:'#E8512A', orbit:150, speed:0.00337, angle:1.8,  url:'https://pulseos.eu/pulserecipes/' },
+      { label:'HB',  sub:'PulseHabits',   col:'#D95C3A', orbit:188, speed:0.0024, angle:3.5,  url:'https://pulseos.eu/pulsehabits/' },
+      { label:'LF',  sub:'PulseLift',     col:'#FF7A00', orbit:224, speed:0.0018, angle:5.1,  url:'https://pulseos.eu/pulselift/' },
+      { label:'RF',  sub:'PulseReflect',  col:'#38A9D9', orbit:258, speed:0.00135, angle:2.8,  url:'https://pulseos.eu/pulsereflect/' },
     ];
 
     let mouse = {x:-999,y:-999}, hovered = null;
@@ -1676,11 +1676,11 @@ document.querySelectorAll('.cta-h, .cta-r').forEach(el => obs.observe(el));
     const CX = SIZE/2, CY = SIZE/2;
 
     const APPS = [
-      { label:'FX', col:'#2BB54B', img:'/images/PulseFX.png', url:'https://pulseos.eu/pulsefx/',      orbit: SIZE*0.22, speed:0.008,  angle:0 },
-      { label:'RC', col:'#E8512A', img:'/images/PulseRC.png', url:'https://pulseos.eu/pulserecipes/', orbit: SIZE*0.29, speed:0.006,  angle:1.26 },
-      { label:'HB', col:'#D95C3A', img:'/images/PulseHB.png', url:'https://pulseos.eu/pulsehabits/', orbit: SIZE*0.35, speed:0.006,  angle:3.77 },
-      { label:'LF', col:'#FF7A00', img:'/images/PulseLF.png', url:'https://pulseos.eu/pulselift/',   orbit: SIZE*0.38, speed:0.004,  angle:2.51 },
-      { label:'RF', col:'#38A9D9', img:'/images/PulseRF.png', url:'https://pulseos.eu/pulsereflect/',orbit: SIZE*0.42, speed:0.004,  angle:5.03 },
+      { label:'FX', col:'#2BB54B', img:'/images/PulseFX.png', url:'https://pulseos.eu/pulsefx/',      orbit: SIZE*0.22, speed:0.006,  angle:0 },
+      { label:'RC', col:'#E8512A', img:'/images/PulseRC.png', url:'https://pulseos.eu/pulserecipes/', orbit: SIZE*0.29, speed:0.0045,  angle:1.26 },
+      { label:'HB', col:'#D95C3A', img:'/images/PulseHB.png', url:'https://pulseos.eu/pulsehabits/', orbit: SIZE*0.35, speed:0.0045,  angle:3.77 },
+      { label:'LF', col:'#FF7A00', img:'/images/PulseLF.png', url:'https://pulseos.eu/pulselift/',   orbit: SIZE*0.38, speed:0.003,  angle:2.51 },
+      { label:'RF', col:'#38A9D9', img:'/images/PulseRF.png', url:'https://pulseos.eu/pulsereflect/',orbit: SIZE*0.42, speed:0.003,  angle:5.03 },
     ];
     const imgs = APPS.map(a=>{ const i=new Image(); i.src=a.img; return i; });
     const ICON_R = SIZE * 0.072;
@@ -1771,7 +1771,7 @@ document.querySelectorAll('.cta-h, .cta-r').forEach(el => obs.observe(el));
 
       // orbit tracks
       APPS.forEach(a=>{
-        ctx.beginPath(); ctx.arc(CX,CY,a.orbit,0,Math.PI*2);
+        ctx.beginPath(); ctx.ellipse(CX,CY,a.orbit,a.orbit*0.55,0,0,Math.PI*2);
         ctx.strokeStyle='rgba(255,255,255,0.05)';
         ctx.lineWidth=1; ctx.setLineDash([4,10]); ctx.stroke(); ctx.setLineDash([]);
       });
@@ -1783,7 +1783,7 @@ document.querySelectorAll('.cta-h, .cta-r').forEach(el => obs.observe(el));
       APPS.forEach((a,i)=>{
         a.angle+=a.speed;
         a.px=CX+Math.cos(a.angle)*a.orbit;
-        a.py=CY+Math.sin(a.angle)*a.orbit;
+        a.py=CY+Math.sin(a.angle)*a.orbit*0.55;
         if(Math.hypot(mouse.x-a.px,mouse.y-a.py)<ICON_R+10) hovered=a;
       });
 
