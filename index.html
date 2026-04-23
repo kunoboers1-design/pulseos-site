@@ -1676,11 +1676,11 @@ document.querySelectorAll('.cta-h, .cta-r').forEach(el => obs.observe(el));
     const CX = SIZE/2, CY = SIZE/2;
 
     const APPS = [
-      { label:'FX', col:'#2BB54B', img:'/images/PulseFX.png', url:'https://pulseos.eu/pulsefx/',      orbit: SIZE*0.19, speed:0.008,  angle:0 },
-      { label:'RC', col:'#E8512A', img:'/images/PulseRC.png', url:'https://pulseos.eu/pulserecipes/', orbit: SIZE*0.23, speed:0.006,  angle:1.26 },
-      { label:'HB', col:'#D95C3A', img:'/images/PulseHB.png', url:'https://pulseos.eu/pulsehabits/', orbit: SIZE*0.27, speed:0.006,  angle:3.77 },
-      { label:'LF', col:'#FF7A00', img:'/images/PulseLF.png', url:'https://pulseos.eu/pulselift/',   orbit: SIZE*0.31, speed:0.004,  angle:2.51 },
-      { label:'RF', col:'#38A9D9', img:'/images/PulseRF.png', url:'https://pulseos.eu/pulsereflect/',orbit: SIZE*0.34, speed:0.004,  angle:5.03 },
+      { label:'FX', col:'#2BB54B', img:'/images/PulseFX.png', url:'https://pulseos.eu/pulsefx/',      orbit: SIZE*0.22, speed:0.006,  angle:0 },
+      { label:'RC', col:'#E8512A', img:'/images/PulseRC.png', url:'https://pulseos.eu/pulserecipes/', orbit: SIZE*0.29, speed:0.0045,  angle:1.26 },
+      { label:'HB', col:'#D95C3A', img:'/images/PulseHB.png', url:'https://pulseos.eu/pulsehabits/', orbit: SIZE*0.35, speed:0.0045,  angle:3.77 },
+      { label:'LF', col:'#FF7A00', img:'/images/PulseLF.png', url:'https://pulseos.eu/pulselift/',   orbit: SIZE*0.38, speed:0.003,  angle:2.51 },
+      { label:'RF', col:'#38A9D9', img:'/images/PulseRF.png', url:'https://pulseos.eu/pulsereflect/',orbit: SIZE*0.42, speed:0.003,  angle:5.03 },
     ];
     const imgs = APPS.map(a=>{ const i=new Image(); i.src=a.img; return i; });
     const ICON_R = SIZE * 0.072;
@@ -1756,15 +1756,12 @@ document.querySelectorAll('.cta-h, .cta-r').forEach(el => obs.observe(el));
       if(isHov) {
         ctx.beginPath(); ctx.arc(x,y,r+6,0,Math.PI*2);
         ctx.strokeStyle=hexA(app.col,0.25); ctx.lineWidth=1; ctx.stroke();
-        // label — flip side if too close to canvas edge
-        let side = x>CX?1:-1;
-        let lx = x + side*(r+14);
-        if (lx < SIZE*0.1) { side=1; lx=x+side*(r+14); }
-        if (lx > SIZE*0.9) { side=-1; lx=x+side*(r+14); }
+        // label
+        const side = x>CX?1:-1;
         ctx.font=`600 ${Math.floor(SIZE*0.024)}px 'Bricolage Grotesque',sans-serif`;
         ctx.fillStyle=hexA(app.col,0.95);
         ctx.textAlign=side>0?'left':'right';
-        ctx.fillText(app.label, lx, y);
+        ctx.fillText(app.label, x+side*(r+14), y);
       }
     }
 
