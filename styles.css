@@ -2915,13 +2915,33 @@ h3 {
    MARK: - Contact Page
 ═══════════════════════════════════════════════════ */
 
-.contact-hero {
-  padding: 5rem 0 3.5rem;
-  border-bottom: 1px solid var(--line);
+.contact-page {
+  --page-accent: #007AFF;
+  position: relative;
+  z-index: 1;
 }
+
+.contact-hero {
+  position: relative;
+  padding: 6rem 0 4rem;
+  border-bottom: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.contact-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 110% 80% at 50% -10%, rgba(0, 122, 255, 0.1), transparent 65%);
+  pointer-events: none;
+}
+
 .contact-hero-inner {
   max-width: 640px;
+  position: relative;
+  z-index: 1;
 }
+
 .contact-title {
   font-size: clamp(2.8rem, 7vw, 5rem);
   font-weight: 900;
@@ -2981,12 +3001,12 @@ h3 {
   flex: 1;
 }
 .contact-channel-label {
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 400;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--muted);
-  opacity: 0.6;
 }
 .contact-channel-value {
   font-size: 1rem;
@@ -3011,12 +3031,14 @@ h3 {
 }
 
 /* Tips */
-.contact-tips-section { padding: 1rem 0 5rem; }
+.contact-tips-section { padding: 1rem 0 6rem; }
 .contact-tips-card {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 2rem 2rem 2rem;
+  background:
+    radial-gradient(ellipse 80% 60% at 0% 50%, rgba(0, 122, 255, 0.06), transparent 70%),
+    var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 20px;
+  padding: 2rem 2.25rem;
   max-width: 640px;
 }
 .contact-tips-card h2 {
