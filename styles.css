@@ -3651,28 +3651,19 @@ h3 {
   color: #fff;
 }
 
-/* hero screen placeholder */
+/* hero screen — icon centered */
 .ww-hero-screen {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(ellipse at center, rgba(192, 196, 212, 0.15), rgba(8, 8, 10, 0.6));
+  background: radial-gradient(ellipse at center, rgba(192, 196, 212, 0.08), rgba(8, 8, 10, 0.7));
 }
-.ww-hero-icon-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 18px;
-  color: rgba(192, 196, 212, 0.7);
-}
-.ww-hero-icon-wrap p {
-  margin: 0;
-  font-size: 0.78rem;
-  font-family: 'DM Mono', monospace;
-  color: rgba(240, 240, 242, 0.3);
-  text-align: center;
-  line-height: 1.6;
-  letter-spacing: 0.04em;
+.ww-hero-screen img {
+  width: 108px;
+  height: 108px;
+  border-radius: 24px;
+  object-fit: cover;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
 }
 
 /* feature cards */
