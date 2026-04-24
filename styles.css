@@ -3656,7 +3656,7 @@ h3 {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(ellipse at center, rgba(192, 196, 212, 0.08), rgba(8, 8, 10, 0.7));
+  background: #08080A;
 }
 .ww-hero-screen img {
   width: 108px;
