@@ -21,6 +21,7 @@
   --lift:    #FF7A00;
   --reflect: #38A9D9;
   --habits:  #D95C3A;
+  --wiish:   #A855F7;
 
   /* live accent — updated by JS on scroll */
   --accent: #007AFF;
@@ -561,6 +562,7 @@ nav::after {
 .lift-section { --app-color: var(--lift); --app-rgb: 255, 122, 0; }
 .reflect-section { --app-color: var(--reflect); --app-rgb: 56, 169, 217; }
 .habits-section { --app-color: var(--habits); --app-rgb: 217, 92, 58; }
+.wiish-section  { --app-color: var(--wiish);  --app-rgb: 168, 85, 247; }
 
 .fx-section .app-section-bg {
   background: radial-gradient(ellipse 60% 80% at 70% 50%, rgba(0,122,255,0.05), transparent 70%);
@@ -1288,6 +1290,47 @@ footer a:hover { color: var(--white); }
     </div>
   </section>
 
+  <!-- PulseWiish -->
+  <section class="app-section wiish-section" data-color="#A855F7" data-rgb="168,85,247">
+    <div class="app-section-bg"></div>
+    <div class="app-left">
+      <div class="app-num">06 · PulseWiish</div>
+      <h2 class="app-big-name">Pulse<span class="col">Wiish</span></h2>
+      <p class="app-tagline">Your wishlist, without the noise.</p>
+      <div class="status-chip">
+        <div class="status-dot"></div>
+        Coming Soon
+      </div>
+      <p class="app-body">Add anything you want — via link, photo, or text. Organize in lists. Share with anyone. Free up to 20 items, unlimited for a one-time payment of €4,99.</p>
+      <div class="app-meta">
+        <div class="meta-item">
+          <div class="meta-label">Free</div>
+          <div class="meta-val">20 items</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Unlimited</div>
+          <div class="meta-val">€4,99 once</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Platform</div>
+          <div class="meta-val">iOS 17+</div>
+        </div>
+      </div>
+      <a href="/pulsewiish/" class="app-link">App page →</a>
+    </div>
+    <div class="app-visual">
+      <div class="phone-ring"><div class="ring-dot"></div></div>
+      <div class="phone-ring phone-ring-2"></div>
+      <div class="phone-frame">
+        <div class="phone-glow"></div>
+        <div class="phone-notch"></div>
+        <div class="phone-icon">⭐</div>
+        <div class="phone-label">WIISH</div>
+        <div class="phone-sub">Your Wishlist</div>
+      </div>
+    </div>
+  </section>
+
 <!-- ── ROADMAP ── -->
 <section class="roadmap-section" id="roadmap">
   <div class="roadmap-inner">
@@ -1676,11 +1719,12 @@ document.querySelectorAll('.cta-h, .cta-r').forEach(el => obs.observe(el));
     const CX = SIZE/2, CY = SIZE/2;
 
     const APPS = [
-      { label:'FX', col:'#2BB54B', img:'/images/PulseFX.png', url:'https://pulseos.eu/pulsefx/',      orbit: SIZE*0.22, speed:0.006,  angle:0 },
-      { label:'RC', col:'#E8512A', img:'/images/PulseRC.png', url:'https://pulseos.eu/pulserecipes/', orbit: SIZE*0.29, speed:0.0045,  angle:1.26 },
-      { label:'HB', col:'#D95C3A', img:'/images/PulseHB.png', url:'https://pulseos.eu/pulsehabits/', orbit: SIZE*0.35, speed:0.0045,  angle:3.77 },
-      { label:'LF', col:'#FF7A00', img:'/images/PulseLF.png', url:'https://pulseos.eu/pulselift/',   orbit: SIZE*0.38, speed:0.003,  angle:2.51 },
-      { label:'RF', col:'#38A9D9', img:'/images/PulseRF.png', url:'https://pulseos.eu/pulsereflect/',orbit: SIZE*0.42, speed:0.003,  angle:5.03 },
+      { label:'FX', col:'#2BB54B', img:'/images/PulseFX.png', url:'https://pulseos.eu/pulsefx/',       orbit: SIZE*0.16, speed:0.008,  angle:0 },
+      { label:'RC', col:'#E8512A', img:'/images/PulseRC.png', url:'https://pulseos.eu/pulserecipes/',  orbit: SIZE*0.20, speed:0.006,  angle:1.26 },
+      { label:'HB', col:'#D95C3A', img:'/images/PulseHB.png', url:'https://pulseos.eu/pulsehabits/',  orbit: SIZE*0.24, speed:0.005,  angle:3.77 },
+      { label:'LF', col:'#FF7A00', img:'/images/PulseLF.png', url:'https://pulseos.eu/pulselift/',    orbit: SIZE*0.28, speed:0.004,  angle:2.51 },
+      { label:'RF', col:'#38A9D9', img:'/images/PulseRF.png', url:'https://pulseos.eu/pulsereflect/', orbit: SIZE*0.32, speed:0.003,  angle:5.03 },
+      { label:'WW', col:'#A855F7', img:'/images/PulseWW.png', url:'https://pulseos.eu/pulsewiish/',   orbit: SIZE*0.36, speed:0.003,  angle:0.78 },
     ];
     const imgs = APPS.map(a=>{ const i=new Image(); i.src=a.img; return i; });
     const ICON_R = SIZE * 0.072;
