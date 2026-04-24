@@ -21,7 +21,7 @@
   --lift:    #FF7A00;
   --reflect: #38A9D9;
   --habits:  #D95C3A;
-  --wiish:   #A855F7;
+  --wiish:   #C0C4D4;
 
   /* live accent — updated by JS on scroll */
   --accent: #007AFF;
@@ -562,7 +562,7 @@ nav::after {
 .lift-section { --app-color: var(--lift); --app-rgb: 255, 122, 0; }
 .reflect-section { --app-color: var(--reflect); --app-rgb: 56, 169, 217; }
 .habits-section { --app-color: var(--habits); --app-rgb: 217, 92, 58; }
-.wiish-section  { --app-color: var(--wiish);  --app-rgb: 168, 85, 247; }
+.wiish-section  { --app-color: var(--wiish);  --app-rgb: 192, 196, 212; }
 
 .fx-section .app-section-bg {
   background: radial-gradient(ellipse 60% 80% at 70% 50%, rgba(0,122,255,0.05), transparent 70%);
@@ -1291,7 +1291,7 @@ footer a:hover { color: var(--white); }
   </section>
 
   <!-- PulseWiish -->
-  <section class="app-section wiish-section" data-color="#A855F7" data-rgb="168,85,247">
+  <section class="app-section wiish-section" data-color="#C0C4D4" data-rgb="192,196,212">
     <div class="app-section-bg"></div>
     <div class="app-left">
       <div class="app-num">06 · PulseWiish</div>
@@ -1724,7 +1724,7 @@ document.querySelectorAll('.cta-h, .cta-r').forEach(el => obs.observe(el));
       { label:'HB', col:'#D95C3A', img:'/images/PulseHB.png', url:'https://pulseos.eu/pulsehabits/',  orbit: SIZE*0.24, speed:0.005,  angle:3.77 },
       { label:'LF', col:'#FF7A00', img:'/images/PulseLF.png', url:'https://pulseos.eu/pulselift/',    orbit: SIZE*0.28, speed:0.004,  angle:2.51 },
       { label:'RF', col:'#38A9D9', img:'/images/PulseRF.png', url:'https://pulseos.eu/pulsereflect/', orbit: SIZE*0.32, speed:0.003,  angle:5.03 },
-      { label:'WW', col:'#A855F7', img:'/images/PulseWW.png', url:'https://pulseos.eu/pulsewiish/',   orbit: SIZE*0.36, speed:0.003,  angle:0.78 },
+      { label:'WW', col:'#C0C4D4', img:'/images/PulseWW.png', url:'https://pulseos.eu/pulsewiish/',   orbit: SIZE*0.36, speed:0.003,  angle:0.78 },
     ];
     const imgs = APPS.map(a=>{ const i=new Image(); i.src=a.img; return i; });
     const ICON_R = SIZE * 0.072;
