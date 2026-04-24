@@ -3620,3 +3620,203 @@ h3 {
   position: absolute;
   left: 0;
 }
+
+/* ══════════════════════════════════════
+   PULSEWIISH
+══════════════════════════════════════ */
+
+.ww-page { --page-accent: #A855F7; position: relative; z-index: 1; }
+
+.ww-page .fx-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 110% 80% at 50% -10%, color-mix(in srgb, #A855F7 12%, transparent), transparent 65%);
+  pointer-events: none;
+}
+
+.ww-page .hero-button {
+  background: #A855F7;
+  color: #fff;
+  border-color: #A855F7;
+}
+.ww-page .hero-button:hover { background: #9333ea; border-color: #9333ea; }
+.ww-page .hero-button.secondary {
+  background: transparent;
+  color: rgba(240, 240, 242, 0.85);
+  border-color: rgba(168, 85, 247, 0.4);
+}
+.ww-page .hero-button.secondary:hover {
+  border-color: rgba(168, 85, 247, 0.8);
+  color: #fff;
+}
+
+/* hero screen placeholder */
+.ww-hero-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at center, rgba(168, 85, 247, 0.15), rgba(8, 8, 10, 0.6));
+}
+.ww-hero-icon-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  color: rgba(168, 85, 247, 0.7);
+}
+.ww-hero-icon-wrap p {
+  margin: 0;
+  font-size: 0.78rem;
+  font-family: 'DM Mono', monospace;
+  color: rgba(240, 240, 242, 0.3);
+  text-align: center;
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+}
+
+/* feature cards */
+.feature-ww-accent {
+  background:
+    radial-gradient(circle at top right, rgba(168, 85, 247, 0.14), transparent 36%),
+    var(--surface);
+}
+.feature-ww-dark {
+  background: linear-gradient(180deg, rgba(18, 8, 32, 0.98), rgba(28, 12, 48, 0.98));
+  border-color: rgba(168, 85, 247, 0.12);
+}
+.feature-ww-dark h3,
+.feature-ww-dark p,
+.feature-ww-dark li { color: rgba(255, 255, 255, 0.92); }
+.feature-ww-dark p,
+.feature-ww-dark li { opacity: 0.88; }
+
+/* highlight kicker */
+.ww-highlight-kicker {
+  display: inline-block;
+  margin-bottom: 10px;
+  color: #A855F7;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* step number */
+.ww-step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  margin-bottom: 14px;
+  border-radius: 999px;
+  background: #A855F7;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+/* pricing */
+.ww-pricing-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 20px;
+  max-width: 640px;
+}
+.ww-pricing-card {
+  padding: 32px 28px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+}
+.ww-pricing-featured {
+  border-color: rgba(168, 85, 247, 0.35);
+  background: linear-gradient(160deg, rgba(28, 10, 50, 0.96), rgba(16, 8, 28, 0.96));
+}
+.ww-pricing-badge {
+  position: absolute;
+  top: -12px;
+  left: 24px;
+  background: #A855F7;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 12px;
+  border-radius: 999px;
+}
+.ww-pricing-tier {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.ww-pricing-featured .ww-pricing-tier { color: rgba(168, 85, 247, 0.8); }
+.ww-pricing-price {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 2.6rem;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 2px;
+}
+.ww-pricing-cents {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+.ww-pricing-note {
+  font-size: 0.78rem;
+  font-family: 'DM Mono', monospace;
+  color: var(--muted);
+  margin-bottom: 18px;
+}
+.ww-pricing-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+.ww-pricing-list li {
+  font-size: 0.88rem;
+  color: var(--muted);
+  padding-left: 20px;
+  position: relative;
+}
+.ww-pricing-list li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #A855F7;
+  font-weight: 700;
+}
+.ww-appstore-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: #A855F7;
+  color: #fff;
+  border-radius: 12px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.2s;
+  margin-top: auto;
+}
+.ww-appstore-btn:hover { background: #9333ea; }
+
+@media (max-width: 600px) {
+  .ww-pricing-grid { grid-template-columns: 1fr; max-width: 100%; }
+}
