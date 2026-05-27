@@ -3850,3 +3850,75 @@ h3 {
 @media (max-width: 600px) {
   .ww-pricing-grid { grid-template-columns: 1fr; max-width: 100%; }
 }
+
+/* ═══════════════════════════════════════════════
+   MARK: - Light / Dark mode
+   ═══════════════════════════════════════════════ */
+
+/* ── Light mode variables (system preference) ── */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg:           #f4f4f6;
+    --bg-2:         #ffffff;
+    --surface:      #ffffff;
+    --surface-soft: #eaeaec;
+    --text:         #1a1a1c;
+    --muted:        rgba(26, 26, 28, 0.52);
+    --line:         rgba(0, 0, 0, 0.09);
+    --line-strong:  rgba(0, 0, 0, 0.18);
+    --shadow:       0 4px 18px rgba(0, 0, 0, 0.07);
+    --shadow-hover: 0 12px 36px rgba(0, 0, 0, 0.13);
+    --accent-dim:   rgba(0, 122, 255, 0.1);
+  }
+}
+
+/* ── Light mode variables (manual toggle) ── */
+:root[data-theme="light"] {
+  --bg:           #f4f4f6;
+  --bg-2:         #ffffff;
+  --surface:      #ffffff;
+  --surface-soft: #eaeaec;
+  --text:         #1a1a1c;
+  --muted:        rgba(26, 26, 28, 0.52);
+  --line:         rgba(0, 0, 0, 0.09);
+  --line-strong:  rgba(0, 0, 0, 0.18);
+  --shadow:       0 4px 18px rgba(0, 0, 0, 0.07);
+  --shadow-hover: 0 12px 36px rgba(0, 0, 0, 0.13);
+  --accent-dim:   rgba(0, 122, 255, 0.1);
+}
+
+/* ── Light mode: specific element overrides ── */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .site-header           { background: rgba(244, 244, 246, 0.88); }
+  :root:not([data-theme="dark"]) .hero-button           { background: #1a1a1c; }
+  :root:not([data-theme="dark"]) .hero-button.secondary { background: transparent; color: var(--text); }
+  :root:not([data-theme="dark"]) .feature-dark          { background: linear-gradient(180deg, #1a1a1c, #2a2a2e); }
+  :root:not([data-theme="dark"]) .fx-mini-panel         { background: #1a1a1c; }
+}
+:root[data-theme="light"] .site-header            { background: rgba(244, 244, 246, 0.88); }
+:root[data-theme="light"] .hero-button            { background: #1a1a1c; }
+:root[data-theme="light"] .hero-button.secondary  { background: transparent; color: var(--text); }
+:root[data-theme="light"] .feature-dark           { background: linear-gradient(180deg, #1a1a1c, #2a2a2e); }
+:root[data-theme="light"] .fx-mini-panel          { background: #1a1a1c; }
+
+/* ── Theme toggle button ── */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 180ms ease, color 180ms ease, background 180ms ease;
+  padding: 0;
+}
+.theme-toggle:hover {
+  border-color: var(--line-strong);
+  color: var(--text);
+  background: rgba(128, 128, 128, 0.08);
+}

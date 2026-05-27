@@ -1065,6 +1065,47 @@ footer a:hover { color: var(--white); }
   .footer-cols { grid-template-columns: repeat(2, 1fr); }
 }
 
+
+/* ═══════════════════════════════════════
+   LIGHT MODE
+   ═══════════════════════════════════════ */
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) {
+  --bg:     #f4f4f6;
+  --white:  #1a1a1c;
+  --muted:  rgba(26,26,28,0.5);
+  --border: rgba(0,0,0,0.09);
+}}
+:root[data-theme="light"] {
+  --bg:     #f4f4f6;
+  --white:  #1a1a1c;
+  --muted:  rgba(26,26,28,0.5);
+  --border: rgba(0,0,0,0.09);
+}
+/* Hero stays dark — canvas is dark-optimised */
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .hero { background: #08080a; } }
+:root[data-theme="light"] .hero { background: #08080a; }
+/* Fix white-rgba hard-coded backgrounds in light mode */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .roadmap-card           { background: #ffffff; }
+  :root:not([data-theme="dark"]) .roadmap-card:hover     { border-color: rgba(0,0,0,0.16); }
+  :root:not([data-theme="dark"]) .principle:hover        { background: rgba(0,0,0,0.03); }
+  :root:not([data-theme="dark"]) .idea-btn-outline       { color: var(--white); border-color: var(--border); }
+}
+:root[data-theme="light"] .roadmap-card           { background: #ffffff; }
+:root[data-theme="light"] .roadmap-card:hover     { border-color: rgba(0,0,0,0.16); }
+:root[data-theme="light"] .principle:hover        { background: rgba(0,0,0,0.03); }
+:root[data-theme="light"] .idea-btn-outline       { color: var(--white); border-color: var(--border); }
+/* Theme toggle button (homepage variant — uses --border not --line) */
+.theme-toggle {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent; color: var(--muted);
+  cursor: none; flex-shrink: 0;
+  transition: border-color 180ms, color 180ms, background 180ms;
+  padding: 0;
+}
+.theme-toggle:hover { border-color: rgba(var(--accent-rgb),.4); color: var(--white); }
 </style>
 </head>
 <body>
@@ -1085,6 +1126,8 @@ footer a:hover { color: var(--white); }
   <div class="nav-r">
     <a href="/about/">About</a>
     <a href="/support/" class="pill-btn">Contact</a>
+  
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button>
   </div>
 </nav>
 
@@ -1931,5 +1974,6 @@ document.querySelectorAll('.cta-h, .cta-r').forEach(el => obs.observe(el));
 })();
 
 </script>
+  <script src="/theme.js"></script>
 </body>
 </html>
