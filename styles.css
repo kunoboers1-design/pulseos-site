@@ -1576,6 +1576,10 @@ h3 {
   gap: 16px;
 }
 
+.fx-steps-grid-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .fx-step-card {
   padding: 22px;
   border: 1px solid var(--line);
@@ -2482,6 +2486,7 @@ h3 {
   }
 
   .fx-steps-grid,
+  .fx-steps-grid-3,
   .hb-steps-grid,
   .rc-steps-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2623,6 +2628,7 @@ h3 {
 
   .fx-stat-grid,
   .fx-steps-grid,
+  .fx-steps-grid-3,
   .hb-stat-grid,
   .hb-steps-grid,
   .rc-stat-grid,
