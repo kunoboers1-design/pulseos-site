@@ -2905,6 +2905,33 @@ h3 {
   font-size: 0.82rem;
   color: var(--muted);
 }
+.about-app-status {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 0.3em 0.75em;
+  border-radius: 99px;
+  border: 1px solid transparent;
+}
+.about-app-status--live {
+  color: #30a84a;
+  background: rgba(48, 168, 74, 0.1);
+  border-color: rgba(48, 168, 74, 0.25);
+}
+.about-app-status--review {
+  color: #f5a623;
+  background: rgba(245, 166, 35, 0.1);
+  border-color: rgba(245, 166, 35, 0.25);
+}
+.about-app-status--soon {
+  color: var(--muted);
+  background: rgba(240, 240, 242, 0.06);
+  border-color: var(--line);
+}
 
 /* Contact CTA */
 .about-contact-section { padding: 5rem 0 6rem; }
