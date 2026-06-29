@@ -1,0 +1,13 @@
+name: Refresh downloads cache
+
+on:
+  schedule:
+    - cron: '0 3 * * *'  # every night at 03:00 UTC
+  workflow_dispatch:      # allow manual trigger
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping downloads endpoint
+        run: curl -sf https://pulseos.eu/api/downloads

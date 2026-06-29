@@ -120,7 +120,8 @@ export async function onRequestGet({ request, env, waitUntil }) {
 
     const now = new Date();
     const currentYear = now.getFullYear();
-    const currentMonth = now.getMonth(); // 0-indexed; last complete month = currentMonth - 1
+    const currentMonth = now.getMonth(); // 0-indexed; last complete month index = currentMonth - 1
+    const currentDay = now.getDate();
     let total = 0;
 
     // Past complete years via YEARLY reports
@@ -128,10 +129,22 @@ export async function onRequestGet({ request, env, waitUntil }) {
       total += await fetchReport(token, env.VENDOR_NUMBER, 'YEARLY', String(year));
     }
 
-    // Current year via MONTHLY reports (Jan → last complete month)
+    // Current year: complete past months via MONTHLY
     for (let month = 1; month <= currentMonth; month++) {
       const reportDate = `${currentYear}-${String(month).padStart(2, '0')}`;
       total += await fetchReport(token, env.VENDOR_NUMBER, 'MONTHLY', reportDate);
+    }
+
+    // Current month: fetch each day up to yesterday in parallel
+    if (currentDay > 1) {
+      const monthStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`;
+      const dailyFetches = [];
+      for (let day = 1; day < currentDay; day++) {
+        const reportDate = `${monthStr}-${String(day).padStart(2, '0')}`;
+        dailyFetches.push(fetchReport(token, env.VENDOR_NUMBER, 'DAILY', reportDate));
+      }
+      const dailyTotals = await Promise.all(dailyFetches);
+      total += dailyTotals.reduce((sum, n) => sum + n, 0);
     }
 
     const body = JSON.stringify({ total, updatedAt: now.toISOString().split('T')[0] });
