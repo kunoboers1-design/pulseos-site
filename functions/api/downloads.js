@@ -63,24 +63,9 @@ async function generateJWT(issuerId, keyId, privateKeyPem) {
 
 // ── Sales Reports ─────────────────────────────────────────────────────────────
 
-async function fetchYearlyDownloads(token, vendorNumber, year) {
-  const url = new URL('https://api.appstoreconnect.apple.com/v1/salesReports');
-  url.searchParams.set('filter[frequency]', 'YEARLY');
-  url.searchParams.set('filter[reportDate]', String(year));
-  url.searchParams.set('filter[reportType]', 'SALES');
-  url.searchParams.set('filter[reportSubType]', 'SUMMARY');
-  url.searchParams.set('filter[vendorNumber]', vendorNumber);
-
-  const res = await fetch(url.toString(), {
-    headers: { Authorization: `Bearer ${token}`, Accept: 'application/a-gzip' },
-  });
-
-  if (res.status === 404) return 0;
-  if (!res.ok) throw new Error(`App Store Connect ${res.status} for ${year}`);
-
+async function parseTSV(res) {
   const stream = res.body.pipeThrough(new DecompressionStream('gzip'));
   const text = await new Response(stream).text();
-
   const lines = text.trim().split('\n');
   if (lines.length < 2) return 0;
 
@@ -99,6 +84,23 @@ async function fetchYearlyDownloads(token, vendorNumber, year) {
   return total;
 }
 
+async function fetchReport(token, vendorNumber, frequency, reportDate) {
+  const url = new URL('https://api.appstoreconnect.apple.com/v1/salesReports');
+  url.searchParams.set('filter[frequency]', frequency);
+  url.searchParams.set('filter[reportDate]', reportDate);
+  url.searchParams.set('filter[reportType]', 'SALES');
+  url.searchParams.set('filter[reportSubType]', 'SUMMARY');
+  url.searchParams.set('filter[vendorNumber]', vendorNumber);
+
+  const res = await fetch(url.toString(), {
+    headers: { Authorization: `Bearer ${token}`, Accept: 'application/a-gzip' },
+  });
+
+  if (res.status === 404) return 0;
+  if (!res.ok) throw new Error(`App Store Connect ${res.status} (${frequency} ${reportDate})`);
+  return parseTSV(res);
+}
+
 // ── Handler ───────────────────────────────────────────────────────────────────
 
 export async function onRequestGet({ request, env, waitUntil }) {
@@ -112,13 +114,23 @@ export async function onRequestGet({ request, env, waitUntil }) {
 
     const token = await generateJWT(env.ISSUER_ID, env.KEY_ID, env.PRIVATE_KEY);
 
-    const currentYear = new Date().getFullYear();
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth(); // 0-indexed; last complete month = currentMonth - 1
     let total = 0;
-    for (let year = LAUNCH_YEAR; year <= currentYear; year++) {
-      total += await fetchYearlyDownloads(token, env.VENDOR_NUMBER, year);
+
+    // Past complete years via YEARLY reports
+    for (let year = LAUNCH_YEAR; year < currentYear; year++) {
+      total += await fetchReport(token, env.VENDOR_NUMBER, 'YEARLY', String(year));
     }
 
-    const body = JSON.stringify({ total, updatedAt: new Date().toISOString().split('T')[0] });
+    // Current year via MONTHLY reports (Jan → last complete month)
+    for (let month = 1; month <= currentMonth; month++) {
+      const reportDate = `${currentYear}-${String(month).padStart(2, '0')}`;
+      total += await fetchReport(token, env.VENDOR_NUMBER, 'MONTHLY', reportDate);
+    }
+
+    const body = JSON.stringify({ total, updatedAt: now.toISOString().split('T')[0] });
 
     if (env.DOWNLOADS_KV) {
       waitUntil(env.DOWNLOADS_KV.put('total', body, { expirationTtl: CACHE_TTL }));
