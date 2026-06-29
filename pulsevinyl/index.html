@@ -21,7 +21,7 @@
   <link rel="icon" type="image/png" href="/pulseos-logo.png" />
   <style>
     /* ── PulseVinyl accent ── */
-    :root { --vinyl: #C46EFF; }
+    :root { --vinyl: #C46EFF; --page-accent: #C46EFF; }
 
     /* ── Hero phone: vinyl glow ── */
     .vinyl-page .fx-iphone::after {
@@ -230,10 +230,19 @@
     </div>
   </header>
 
+  <div class="app-bar" id="appBar" aria-hidden="true">
+    <div class="container">
+      <div class="app-bar-inner">
+        <img class="app-bar-icon" src="/images/PulseVN.png" alt="" />
+        <span class="app-bar-name">PulseVinyl</span>
+      </div>
+    </div>
+  </div>
+
   <main class="fx-page vinyl-page">
 
     <!-- ─── Hero ─── -->
-    <section class="fx-hero">
+    <section class="fx-hero" id="appHero">
       <div class="container fx-hero-grid">
         <div class="fx-hero-copy">
           <p class="eyebrow">PulseVinyl</p>
@@ -620,6 +629,19 @@
         { threshold: 0.07, rootMargin: '0px 0px -40px 0px' }
       );
       document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+      const appBar = document.getElementById('appBar');
+      const hero = document.getElementById('appHero');
+      if (appBar && hero) {
+        const heroObserver = new IntersectionObserver(
+          ([entry]) => {
+            appBar.classList.toggle('visible', !entry.isIntersecting);
+            appBar.removeAttribute('aria-hidden');
+          },
+          { threshold: 0 }
+        );
+        heroObserver.observe(hero);
+      }
     });
   </script>
   <script src="/theme.js"></script>
