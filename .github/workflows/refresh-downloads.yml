@@ -9,5 +9,5 @@ jobs:
   refresh:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping downloads endpoint
-        run: curl -sf https://pulseos.eu/api/downloads
+      - name: Refresh downloads cache
+        run: curl -sf -H "Cache-Control: no-store" https://pulseos.eu/api/downloads

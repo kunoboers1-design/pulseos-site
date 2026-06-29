@@ -8,8 +8,9 @@
  *   PRIVATE_KEY    Contents of the .p8 private key file
  *   VENDOR_NUMBER  Your vendor number (Payments & Financial Reports)
  *
- * KV binding (Pages → Settings → Functions → KV namespace bindings):
- *   DOWNLOADS_KV   KV namespace for 24h caching
+ * Caching: uses Cloudflare's edge cache (no KV setup needed).
+ * The nightly GitHub Actions cron warms the cache so real visitors
+ * always get a sub-100ms response.
  */
 
 const APP_IDS = new Set([
@@ -22,6 +23,7 @@ const APP_IDS = new Set([
 
 const LAUNCH_YEAR = 2024;
 const CACHE_TTL = 86400; // 24 hours
+const CACHE_KEY = 'https://pulseos.eu/_internal/downloads-cache';
 
 // ── JWT ──────────────────────────────────────────────────────────────────────
 
@@ -42,17 +44,11 @@ async function generateJWT(issuerId, keyId, privateKeyPem) {
   const der = Uint8Array.from(atob(pemBody), c => c.charCodeAt(0));
 
   const key = await crypto.subtle.importKey(
-    'pkcs8',
-    der,
-    { name: 'ECDSA', namedCurve: 'P-256' },
-    false,
-    ['sign']
+    'pkcs8', der, { name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign']
   );
 
   const sig = await crypto.subtle.sign(
-    { name: 'ECDSA', hash: 'SHA-256' },
-    key,
-    new TextEncoder().encode(unsigned)
+    { name: 'ECDSA', hash: 'SHA-256' }, key, new TextEncoder().encode(unsigned)
   );
 
   const sigB64 = btoa(String.fromCharCode(...new Uint8Array(sig)))
@@ -63,7 +59,7 @@ async function generateJWT(issuerId, keyId, privateKeyPem) {
 
 // ── Sales Reports ─────────────────────────────────────────────────────────────
 
-// Only count first-time downloads; exclude updates (type 7 / F7) and in-app purchases
+// Only count first-time downloads; exclude updates (7/F7) and in-app purchases
 const DOWNLOAD_TYPES = new Set(['1', '1F', 'F1', 'F1A']);
 
 async function parseTSV(res) {
@@ -105,56 +101,78 @@ async function fetchReport(token, vendorNumber, frequency, reportDate) {
   return parseTSV(res);
 }
 
+async function fetchTotal(token, vendorNumber) {
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth(); // 0-indexed; last complete month = currentMonth
+  const currentDay = now.getDate();
+
+  // Build list of all report fetches and run them all in parallel
+  const fetches = [];
+
+  // Past complete years (YEARLY)
+  for (let year = LAUNCH_YEAR; year < currentYear; year++) {
+    fetches.push(fetchReport(token, vendorNumber, 'YEARLY', String(year)));
+  }
+
+  // Current year: complete past months (MONTHLY)
+  for (let month = 1; month <= currentMonth; month++) {
+    fetches.push(fetchReport(token, vendorNumber, 'MONTHLY',
+      `${currentYear}-${String(month).padStart(2, '0')}`));
+  }
+
+  // Current month: each day up to yesterday (DAILY)
+  if (currentDay > 1) {
+    const monthStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`;
+    for (let day = 1; day < currentDay; day++) {
+      fetches.push(fetchReport(token, vendorNumber, 'DAILY',
+        `${monthStr}-${String(day).padStart(2, '0')}`));
+    }
+  }
+
+  const results = await Promise.all(fetches);
+  return results.reduce((sum, n) => sum + n, 0);
+}
+
 // ── Handler ───────────────────────────────────────────────────────────────────
 
 export async function onRequestGet({ request, env, waitUntil }) {
-  const headers = { 'Content-Type': 'application/json' };
+  const jsonHeaders = {
+    'Content-Type': 'application/json',
+    'Cache-Control': `public, max-age=${CACHE_TTL}`,
+  };
+
+  // Serve from Cloudflare edge cache (instant for real visitors)
+  const edgeCache = caches.default;
+  const cached = await edgeCache.match(CACHE_KEY);
+  if (cached) {
+    const body = await cached.text();
+    return new Response(body, { headers: { 'Content-Type': 'application/json' } });
+  }
+
+  // KV fallback if configured
+  if (env.DOWNLOADS_KV) {
+    const kv = await env.DOWNLOADS_KV.get('total');
+    if (kv) return new Response(kv, { headers: { 'Content-Type': 'application/json' } });
+  }
 
   try {
-    if (env.DOWNLOADS_KV) {
-      const cached = await env.DOWNLOADS_KV.get('total');
-      if (cached) return new Response(cached, { headers });
-    }
-
     const token = await generateJWT(env.ISSUER_ID, env.KEY_ID, env.PRIVATE_KEY);
+    const total = await fetchTotal(token, env.VENDOR_NUMBER);
+    const body = JSON.stringify({ total, updatedAt: new Date().toISOString().split('T')[0] });
 
-    const now = new Date();
-    const currentYear = now.getFullYear();
-    const currentMonth = now.getMonth(); // 0-indexed; last complete month index = currentMonth - 1
-    const currentDay = now.getDate();
-    let total = 0;
-
-    // Past complete years via YEARLY reports
-    for (let year = LAUNCH_YEAR; year < currentYear; year++) {
-      total += await fetchReport(token, env.VENDOR_NUMBER, 'YEARLY', String(year));
-    }
-
-    // Current year: complete past months via MONTHLY
-    for (let month = 1; month <= currentMonth; month++) {
-      const reportDate = `${currentYear}-${String(month).padStart(2, '0')}`;
-      total += await fetchReport(token, env.VENDOR_NUMBER, 'MONTHLY', reportDate);
-    }
-
-    // Current month: fetch each day up to yesterday in parallel
-    if (currentDay > 1) {
-      const monthStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`;
-      const dailyFetches = [];
-      for (let day = 1; day < currentDay; day++) {
-        const reportDate = `${monthStr}-${String(day).padStart(2, '0')}`;
-        dailyFetches.push(fetchReport(token, env.VENDOR_NUMBER, 'DAILY', reportDate));
-      }
-      const dailyTotals = await Promise.all(dailyFetches);
-      total += dailyTotals.reduce((sum, n) => sum + n, 0);
-    }
-
-    const body = JSON.stringify({ total, updatedAt: now.toISOString().split('T')[0] });
-
+    // Store in edge cache + KV (background, doesn't block response)
+    const toCache = new Response(body, { headers: jsonHeaders });
+    waitUntil(edgeCache.put(CACHE_KEY, toCache));
     if (env.DOWNLOADS_KV) {
       waitUntil(env.DOWNLOADS_KV.put('total', body, { expirationTtl: CACHE_TTL }));
     }
 
-    return new Response(body, { headers });
+    return new Response(body, { headers: { 'Content-Type': 'application/json' } });
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), { status: 500, headers });
+    return new Response(JSON.stringify({ error: err.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 }
