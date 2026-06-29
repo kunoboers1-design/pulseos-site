@@ -63,6 +63,9 @@ async function generateJWT(issuerId, keyId, privateKeyPem) {
 
 // ── Sales Reports ─────────────────────────────────────────────────────────────
 
+// Only count first-time downloads; exclude updates (type 7 / F7) and in-app purchases
+const DOWNLOAD_TYPES = new Set(['1', '1F', 'F1', 'F1A']);
+
 async function parseTSV(res) {
   const stream = res.body.pipeThrough(new DecompressionStream('gzip'));
   const text = await new Response(stream).text();
@@ -72,14 +75,15 @@ async function parseTSV(res) {
   const headers = lines[0].split('\t');
   const unitsIdx = headers.indexOf('Units');
   const appIdIdx = headers.indexOf('Apple Identifier');
+  const typeIdx = headers.indexOf('Product Type Identifier');
   if (unitsIdx === -1 || appIdIdx === -1) return 0;
 
   let total = 0;
   for (let i = 1; i < lines.length; i++) {
     const cols = lines[i].split('\t');
-    if (APP_IDS.has(cols[appIdIdx])) {
-      total += parseInt(cols[unitsIdx], 10) || 0;
-    }
+    if (!APP_IDS.has(cols[appIdIdx])) continue;
+    if (typeIdx >= 0 && !DOWNLOAD_TYPES.has(cols[typeIdx])) continue;
+    total += parseInt(cols[unitsIdx], 10) || 0;
   }
   return total;
 }
