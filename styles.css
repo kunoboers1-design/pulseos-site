@@ -3980,12 +3980,60 @@ h3 {
   :root:not([data-theme="dark"]) .hero-button.secondary { background: transparent; color: var(--text); }
   :root:not([data-theme="dark"]) .feature-dark          { background: linear-gradient(180deg, #1a1a1c, #2a2a2e); }
   :root:not([data-theme="dark"]) .fx-mini-panel         { background: #1a1a1c; }
+
+  /* PulseFX page cards */
+  :root:not([data-theme="dark"]) .app-bar {
+    background: rgba(244, 244, 246, 0.92);
+  }
+  :root:not([data-theme="dark"]) .fx-feature-card,
+  :root:not([data-theme="dark"]) .fx-highlight-card,
+  :root:not([data-theme="dark"]) .fx-step-card,
+  :root:not([data-theme="dark"]) .fx-info-card,
+  :root:not([data-theme="dark"]) .fx-changelog-card,
+  :root:not([data-theme="dark"]) .fx-contact-card {
+    background: #ffffff;
+    border-color: rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.07);
+  }
+  :root:not([data-theme="dark"]) .feature-green {
+    background:
+      radial-gradient(circle at top right, rgba(49, 214, 91, 0.08), transparent 40%),
+      #ffffff;
+  }
+  :root:not([data-theme="dark"]) .fx-contact-card:hover {
+    border-color: rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.11);
+  }
 }
 :root[data-theme="light"] .site-header            { background: rgba(244, 244, 246, 0.88); }
 :root[data-theme="light"] .hero-button            { background: #1a1a1c; }
 :root[data-theme="light"] .hero-button.secondary  { background: transparent; color: var(--text); }
 :root[data-theme="light"] .feature-dark           { background: linear-gradient(180deg, #1a1a1c, #2a2a2e); }
 :root[data-theme="light"] .fx-mini-panel          { background: #1a1a1c; }
+
+/* PulseFX page cards (manual toggle) */
+:root[data-theme="light"] .app-bar {
+  background: rgba(244, 244, 246, 0.92);
+}
+:root[data-theme="light"] .fx-feature-card,
+:root[data-theme="light"] .fx-highlight-card,
+:root[data-theme="light"] .fx-step-card,
+:root[data-theme="light"] .fx-info-card,
+:root[data-theme="light"] .fx-changelog-card,
+:root[data-theme="light"] .fx-contact-card {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.07);
+}
+:root[data-theme="light"] .feature-green {
+  background:
+    radial-gradient(circle at top right, rgba(49, 214, 91, 0.08), transparent 40%),
+    #ffffff;
+}
+:root[data-theme="light"] .fx-contact-card:hover {
+  border-color: rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.11);
+}
 
 /* ── Theme toggle button ── */
 .theme-toggle {

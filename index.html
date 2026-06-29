@@ -1847,15 +1847,13 @@ document.querySelectorAll('.cta-h, .cta-r').forEach(el => obs.observe(el));
     if (!cv) return;
     const ctx = cv.getContext('2d');
     const DPR = window.devicePixelRatio || 1;
-    // Use CSS-computed width (most reliable), fall back to parent offsetWidth, then viewport
-    const cssW = Math.round(cv.getBoundingClientRect().width)
-               || cv.parentElement.offsetWidth
-               || window.innerWidth
-               || 560;
-    const SIZE = Math.min(cssW, 560);
-    if (SIZE < 20) { setTimeout(init, 250); return; } // not laid out yet — retry
-    cv.width = SIZE * DPR; cv.height = SIZE * DPR;
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0); // clean DPR scale
+    // Use viewport width directly — most reliable across all themes/layouts
+    const SIZE = Math.min(560, window.innerWidth);
+    cv.style.width  = SIZE + 'px';
+    cv.style.height = SIZE + 'px';
+    cv.width  = SIZE * DPR;
+    cv.height = SIZE * DPR;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     const CX = SIZE/2, CY = SIZE/2;
 
     const APPS = [
