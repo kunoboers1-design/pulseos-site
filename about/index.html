@@ -59,10 +59,6 @@
               <span class="about-meta-label">Building since</span>
               <span class="about-meta-value">2025</span>
             </div>
-            <div class="about-meta-item" id="downloadsMetaItem" style="display:none">
-              <span class="about-meta-label">Total downloads</span>
-              <span class="about-meta-value" id="totalDownloads">—</span>
-            </div>
           </div>
         </div>
         <div class="about-photo-wrap fade-up delay-2">
@@ -112,6 +108,26 @@
             </div>
           </div>
 
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── STATS ─── -->
+    <section class="about-stats-section">
+      <div class="container">
+        <div class="about-stats-grid">
+          <div class="about-stat-item fade-up delay-1">
+            <span class="about-stat-value" id="totalDownloads">—</span>
+            <span class="about-stat-label">Total downloads</span>
+          </div>
+          <div class="about-stat-item fade-up delay-2">
+            <span class="about-stat-value">5</span>
+            <span class="about-stat-label">Apps built</span>
+          </div>
+          <div class="about-stat-item fade-up delay-3">
+            <span class="about-stat-value">2025</span>
+            <span class="about-stat-label">Year one</span>
+          </div>
         </div>
       </div>
     </section>
@@ -214,11 +230,7 @@
           if (!res.ok) return;
           const { total } = await res.json();
           if (typeof total !== 'number' || total <= 0) return;
-
           const el = document.getElementById('totalDownloads');
-          const wrap = document.getElementById('downloadsMetaItem');
-          wrap.style.display = '';
-
           const duration = 1400;
           const start = performance.now();
           const tick = now => {
