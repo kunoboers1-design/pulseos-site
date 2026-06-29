@@ -23,11 +23,6 @@
     /* ── PulseVinyl accent ── */
     :root { --vinyl: #C46EFF; --page-accent: #C46EFF; }
 
-    /* ── Hero phone: vinyl glow ── */
-    .vinyl-page .fx-iphone::after {
-      background: radial-gradient(ellipse at center, rgba(196, 110, 255, 0.35), transparent 70%);
-    }
-
     /* ── Step number circles ── */
     .vinyl-step-num {
       display: inline-flex;
@@ -93,16 +88,6 @@
       color: var(--muted);
       line-height: 1.7;
       max-width: 640px;
-    }
-
-    /* ── Screenshots: vinyl accent overrides ── */
-    .vinyl-page .fx-screenshots-section::before {
-      background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(196, 110, 255, 0.12), transparent);
-    }
-    .vinyl-page .fx-screenshot-frame:hover {
-      box-shadow:
-        0 0 0 1px rgba(196, 110, 255, 0.35),
-        0 40px 80px rgba(0, 0, 0, 0.65);
     }
 
     /* ── Pricing grid ── */
