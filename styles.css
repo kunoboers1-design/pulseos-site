@@ -1344,10 +1344,10 @@ h3 {
   flex-direction: column;
   gap: 6px;
   padding: 18px;
-  border: 1px solid rgba(183, 207, 255, 0.18);
+  border: 1px solid var(--line);
   border-radius: 20px;
-  background: linear-gradient(180deg, rgba(16, 20, 34, 0.88), rgba(13, 16, 26, 0.88));
-  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.48);
+  background: var(--surface);
+  box-shadow: var(--shadow);
   backdrop-filter: blur(8px);
 }
 
@@ -1473,10 +1473,10 @@ h3 {
 
 .fx-feature-card {
   padding: 24px;
-  border: 1px solid rgba(180, 203, 255, 0.12);
+  border: 1px solid var(--line);
   border-radius: 28px;
-  background: linear-gradient(180deg, rgba(18, 21, 31, 0.95), rgba(13, 16, 24, 0.95));
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.42);
+  background: var(--surface);
+  box-shadow: var(--shadow);
 }
 
 .fx-feature-card h3,
@@ -1545,10 +1545,10 @@ h3 {
 
 .fx-highlight-card {
   padding: 22px;
-  border: 1px solid rgba(180, 203, 255, 0.12);
+  border: 1px solid var(--line);
   border-radius: 24px;
-  background: linear-gradient(180deg, rgba(17, 20, 31, 0.95), rgba(12, 15, 23, 0.95));
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.4);
+  background: var(--surface);
+  box-shadow: var(--shadow);
 }
 
 .fx-highlight-card p {
@@ -1575,10 +1575,10 @@ h3 {
 
 .fx-step-card {
   padding: 22px;
-  border: 1px solid rgba(180, 203, 255, 0.12);
+  border: 1px solid var(--line);
   border-radius: 24px;
-  background: linear-gradient(180deg, rgba(17, 20, 31, 0.95), rgba(12, 15, 23, 0.95));
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.4);
+  background: var(--surface);
+  box-shadow: var(--shadow);
 }
 
 .fx-step-card p {
@@ -1607,10 +1607,10 @@ h3 {
 
 .fx-info-card {
   padding: 24px;
-  border: 1px solid rgba(180, 203, 255, 0.12);
+  border: 1px solid var(--line);
   border-radius: 26px;
-  background: linear-gradient(180deg, rgba(17, 20, 31, 0.95), rgba(12, 15, 23, 0.95));
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.4);
+  background: var(--surface);
+  box-shadow: var(--shadow);
 }
 
 .fx-info-card p {
@@ -1625,10 +1625,10 @@ h3 {
 
 .fx-changelog-card {
   padding: 24px;
-  border: 1px solid rgba(180, 203, 255, 0.12);
+  border: 1px solid var(--line);
   border-radius: 26px;
-  background: linear-gradient(180deg, rgba(17, 20, 31, 0.95), rgba(12, 15, 23, 0.95));
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.4);
+  background: var(--surface);
+  box-shadow: var(--shadow);
 }
 
 .fx-contact-row {
@@ -1642,10 +1642,10 @@ h3 {
   flex-direction: column;
   gap: 6px;
   padding: 20px;
-  border: 1px solid rgba(180, 203, 255, 0.12);
+  border: 1px solid var(--line);
   border-radius: 22px;
-  background: linear-gradient(180deg, rgba(17, 20, 31, 0.95), rgba(12, 15, 23, 0.95));
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.4);
+  background: var(--surface);
+  box-shadow: var(--shadow);
   transition:
     transform 180ms ease,
     box-shadow 180ms ease,
