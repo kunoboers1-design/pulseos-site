@@ -210,7 +210,7 @@
       // Downloads counter
       (async () => {
         try {
-          const res = await fetch('https://downloads.pulseos.eu');
+          const res = await fetch('/api/downloads');
           if (!res.ok) return;
           const { total } = await res.json();
           if (typeof total !== 'number' || total <= 0) return;

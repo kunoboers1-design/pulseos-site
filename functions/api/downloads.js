@@ -1,8 +1,15 @@
 /**
- * PulseOS Downloads Worker
- * Fetches total app downloads from App Store Connect Sales Reports API.
- * Requires secrets: ISSUER_ID, KEY_ID, PRIVATE_KEY, VENDOR_NUMBER
- * Optional KV binding: DOWNLOADS_KV (for 24h caching)
+ * PulseOS Downloads — Cloudflare Pages Function
+ * Endpoint: GET /api/downloads
+ *
+ * Secrets (set in Cloudflare Pages → Settings → Environment variables):
+ *   ISSUER_ID      App Store Connect API issuer UUID
+ *   KEY_ID         App Store Connect API key ID
+ *   PRIVATE_KEY    Contents of the .p8 private key file
+ *   VENDOR_NUMBER  Your vendor number (Payments & Financial Reports)
+ *
+ * KV binding (Pages → Settings → Functions → KV namespace bindings):
+ *   DOWNLOADS_KV   KV namespace for 24h caching
  */
 
 const APP_IDS = new Set([
@@ -15,7 +22,6 @@ const APP_IDS = new Set([
 
 const LAUNCH_YEAR = 2024;
 const CACHE_TTL = 86400; // 24 hours
-const ALLOWED_ORIGIN = 'https://pulseos.eu';
 
 // ── JWT ──────────────────────────────────────────────────────────────────────
 
@@ -55,7 +61,7 @@ async function generateJWT(issuerId, keyId, privateKeyPem) {
   return `${unsigned}.${sigB64}`;
 }
 
-// ── Sales Reports API ─────────────────────────────────────────────────────────
+// ── Sales Reports ─────────────────────────────────────────────────────────────
 
 async function fetchYearlyDownloads(token, vendorNumber, year) {
   const url = new URL('https://api.appstoreconnect.apple.com/v1/salesReports');
@@ -69,11 +75,9 @@ async function fetchYearlyDownloads(token, vendorNumber, year) {
     headers: { Authorization: `Bearer ${token}`, Accept: 'application/a-gzip' },
   });
 
-  // 404 = no data for this year yet
   if (res.status === 404) return 0;
-  if (!res.ok) throw new Error(`App Store Connect API ${res.status} for year ${year}`);
+  if (!res.ok) throw new Error(`App Store Connect ${res.status} for ${year}`);
 
-  // Decompress gzip → text
   const stream = res.body.pipeThrough(new DecompressionStream('gzip'));
   const text = await new Response(stream).text();
 
@@ -95,53 +99,33 @@ async function fetchYearlyDownloads(token, vendorNumber, year) {
   return total;
 }
 
-// ── CORS ──────────────────────────────────────────────────────────────────────
-
-function cors(origin) {
-  const allowed = origin === ALLOWED_ORIGIN ? origin : ALLOWED_ORIGIN;
-  return {
-    'Access-Control-Allow-Origin': allowed,
-    'Access-Control-Allow-Methods': 'GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-  };
-}
-
 // ── Handler ───────────────────────────────────────────────────────────────────
 
-export default {
-  async fetch(request, env, ctx) {
-    const origin = request.headers.get('Origin') || '';
+export async function onRequestGet({ request, env, waitUntil }) {
+  const headers = { 'Content-Type': 'application/json' };
 
-    if (request.method === 'OPTIONS') {
-      return new Response(null, { status: 204, headers: cors(origin) });
+  try {
+    if (env.DOWNLOADS_KV) {
+      const cached = await env.DOWNLOADS_KV.get('total');
+      if (cached) return new Response(cached, { headers });
     }
 
-    const headers = { 'Content-Type': 'application/json', ...cors(origin) };
+    const token = await generateJWT(env.ISSUER_ID, env.KEY_ID, env.PRIVATE_KEY);
 
-    try {
-      // Serve from KV cache if available
-      if (env.DOWNLOADS_KV) {
-        const cached = await env.DOWNLOADS_KV.get('total');
-        if (cached) return new Response(cached, { headers });
-      }
-
-      const token = await generateJWT(env.ISSUER_ID, env.KEY_ID, env.PRIVATE_KEY);
-
-      const currentYear = new Date().getFullYear();
-      let total = 0;
-      for (let year = LAUNCH_YEAR; year <= currentYear; year++) {
-        total += await fetchYearlyDownloads(token, env.VENDOR_NUMBER, year);
-      }
-
-      const body = JSON.stringify({ total, updatedAt: new Date().toISOString().split('T')[0] });
-
-      if (env.DOWNLOADS_KV) {
-        ctx.waitUntil(env.DOWNLOADS_KV.put('total', body, { expirationTtl: CACHE_TTL }));
-      }
-
-      return new Response(body, { headers });
-    } catch (err) {
-      return new Response(JSON.stringify({ error: err.message }), { status: 500, headers });
+    const currentYear = new Date().getFullYear();
+    let total = 0;
+    for (let year = LAUNCH_YEAR; year <= currentYear; year++) {
+      total += await fetchYearlyDownloads(token, env.VENDOR_NUMBER, year);
     }
-  },
-};
+
+    const body = JSON.stringify({ total, updatedAt: new Date().toISOString().split('T')[0] });
+
+    if (env.DOWNLOADS_KV) {
+      waitUntil(env.DOWNLOADS_KV.put('total', body, { expirationTtl: CACHE_TTL }));
+    }
+
+    return new Response(body, { headers });
+  } catch (err) {
+    return new Response(JSON.stringify({ error: err.message }), { status: 500, headers });
+  }
+}
