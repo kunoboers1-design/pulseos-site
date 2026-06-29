@@ -23,13 +23,9 @@
     /* ── PulseVinyl accent ── */
     :root { --vinyl: #C46EFF; }
 
-    /* ── Hero: single-column layout (no phone mockup) ── */
-    .vinyl-page .fx-hero-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .vinyl-page .fx-hero-copy {
-      max-width: 780px;
+    /* ── Hero phone: vinyl glow ── */
+    .vinyl-page .fx-iphone::after {
+      background: radial-gradient(ellipse at center, rgba(196, 110, 255, 0.35), transparent 70%);
     }
 
     /* ── Step number circles ── */
@@ -265,6 +261,17 @@
             <div class="fx-meta-card">
               <span class="fx-meta-label">Focus</span>
               <span class="fx-meta-value">Collection tracking</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="fx-phone-hero-wrap">
+          <div class="fx-iphone">
+            <div class="fx-iphone-frame">
+              <div class="fx-iphone-island" aria-hidden="true"></div>
+              <div class="fx-iphone-screen">
+                <img src="/pulsevinyl/1. Home (1290 x 2796 px).png" alt="PulseVinyl home screen" />
+              </div>
             </div>
           </div>
         </div>
