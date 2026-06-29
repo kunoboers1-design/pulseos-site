@@ -1836,14 +1836,22 @@ document.querySelectorAll('.cta-h, .cta-r').forEach(el => obs.observe(el));
 
 // ── ORBIT HERO ──
 (function(){
+  var _raf = null;
   function init() {
+    if (_raf) { cancelAnimationFrame(_raf); _raf = null; }
     const cv = document.getElementById('orbitCanvas');
     if (!cv) return;
     const ctx = cv.getContext('2d');
     const DPR = window.devicePixelRatio || 1;
-    const SIZE = Math.min(cv.parentElement.offsetWidth, 560);
+    // Use CSS-computed width (most reliable), fall back to parent offsetWidth, then viewport
+    const cssW = Math.round(cv.getBoundingClientRect().width)
+               || cv.parentElement.offsetWidth
+               || window.innerWidth
+               || 560;
+    const SIZE = Math.min(cssW, 560);
+    if (SIZE < 20) { setTimeout(init, 250); return; } // not laid out yet — retry
     cv.width = SIZE * DPR; cv.height = SIZE * DPR;
-    ctx.scale(DPR, DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0); // clean DPR scale
     const CX = SIZE/2, CY = SIZE/2;
 
     const APPS = [
@@ -1965,10 +1973,11 @@ document.querySelectorAll('.cta-h, .cta-r').forEach(el => obs.observe(el));
         drawApp(a, imgs[APPS.indexOf(a)], hovered===a);
       });
 
-      requestAnimationFrame(draw);
+      _raf = requestAnimationFrame(draw);
     }
     draw();
   }
+  window.onThemeChange = function() { setTimeout(init, 80); };
   if(document.readyState==='complete') setTimeout(init,80);
   else window.addEventListener('load',()=>setTimeout(init,80));
 })();
