@@ -59,6 +59,10 @@
               <span class="about-meta-label">Building since</span>
               <span class="about-meta-value">2025</span>
             </div>
+            <div class="about-meta-item" id="downloadsMetaItem" style="display:none">
+              <span class="about-meta-label">Total downloads</span>
+              <span class="about-meta-value" id="totalDownloads">—</span>
+            </div>
           </div>
         </div>
         <div class="about-photo-wrap fade-up delay-2">
@@ -202,6 +206,30 @@
         { threshold: 0.07, rootMargin: '0px 0px -40px 0px' }
       );
       document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+      // Downloads counter
+      (async () => {
+        try {
+          const res = await fetch('https://downloads.pulseos.eu');
+          if (!res.ok) return;
+          const { total } = await res.json();
+          if (typeof total !== 'number' || total <= 0) return;
+
+          const el = document.getElementById('totalDownloads');
+          const wrap = document.getElementById('downloadsMetaItem');
+          wrap.style.display = '';
+
+          const duration = 1400;
+          const start = performance.now();
+          const tick = now => {
+            const p = Math.min((now - start) / duration, 1);
+            const eased = 1 - Math.pow(1 - p, 3);
+            el.textContent = Math.round(eased * total).toLocaleString('en');
+            if (p < 1) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        } catch (_) {}
+      })();
 
       const btt = document.getElementById('backToTop');
       if (btt) {
