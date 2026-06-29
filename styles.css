@@ -3851,6 +3851,92 @@ h3 {
   .ww-pricing-grid { grid-template-columns: 1fr; max-width: 100%; }
 }
 
+/* ── FX Pricing ── */
+.fx-pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  max-width: 860px;
+}
+.fx-pricing-card {
+  padding: 32px 28px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+}
+.fx-pricing-featured {
+  border-color: rgba(43, 181, 75, 0.4);
+  background: linear-gradient(160deg, rgba(8, 30, 14, 0.97), rgba(6, 20, 10, 0.97));
+}
+.fx-pricing-badge {
+  position: absolute;
+  top: -12px;
+  left: 24px;
+  background: #2BB54B;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 12px;
+  border-radius: 999px;
+}
+.fx-pricing-tier {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.fx-pricing-featured .fx-pricing-tier { color: rgba(43, 181, 75, 0.7); }
+.fx-pricing-price {
+  font-size: 2.6rem;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 2px;
+}
+.fx-pricing-featured .fx-pricing-price { color: #fff; }
+.fx-pricing-cents {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+.fx-pricing-note {
+  font-size: 0.78rem;
+  font-family: 'DM Mono', monospace;
+  color: var(--muted);
+  margin-bottom: 18px;
+}
+.fx-pricing-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.fx-pricing-list li {
+  font-size: 0.88rem;
+  color: var(--muted);
+  padding-left: 20px;
+  position: relative;
+}
+.fx-pricing-list li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #2BB54B;
+  font-weight: 700;
+}
+@media (max-width: 720px) {
+  .fx-pricing-grid { grid-template-columns: 1fr; max-width: 100%; }
+}
+
 /* ═══════════════════════════════════════════════
    MARK: - Light / Dark mode
    ═══════════════════════════════════════════════ */
