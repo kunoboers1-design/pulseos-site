@@ -125,8 +125,8 @@
             <span class="about-stat-label">Apps built</span>
           </div>
           <div class="about-stat-item fade-up delay-3">
-            <span class="about-stat-value">2025</span>
-            <span class="about-stat-label">Year one</span>
+            <span class="about-stat-value" id="avgRating">—</span>
+            <span class="about-stat-label">Avg. rating</span>
           </div>
         </div>
       </div>
@@ -278,6 +278,17 @@
         } catch (_) {}
       })();
 
+      // Average rating
+      (async () => {
+        try {
+          const res = await fetch('/api/ratings');
+          if (!res.ok) return;
+          const { avgRating } = await res.json();
+          if (!avgRating) return;
+          const el = document.getElementById('avgRating');
+          if (el) el.textContent = avgRating.toFixed(1) + ' ★';
+        } catch (_) {}
+      })();
       const btt = document.getElementById('backToTop');
       if (btt) {
         window.addEventListener('scroll', () => {
