@@ -10,4 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Refresh downloads cache
-        run: curl -sf -H "Cache-Control: no-store" https://pulseos.eu/api/downloads
+        run: |
+          curl -s -o /dev/null -w "downloads: %{http_code}\n" -H "Cache-Control: no-store" https://pulseos.eu/api/downloads || echo "downloads cache refresh skipped"
+      - name: Refresh ratings cache
+        run: |
+          curl -s -o /dev/null -w "ratings: %{http_code}\n" https://pulseos.eu/api/ratings || echo "ratings cache refresh skipped"
