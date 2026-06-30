@@ -112,6 +112,25 @@
       </div>
     </section>
 
+    <!-- ─── STATS ─── -->
+    <section class="about-stats-section">
+      <div class="container">
+        <div class="about-stats-grid">
+          <div class="about-stat-item fade-up delay-1">
+            <span class="about-stat-value" id="totalDownloads">—</span>
+            <span class="about-stat-label">Total downloads</span>
+          </div>
+          <div class="about-stat-item fade-up delay-2">
+            <span class="about-stat-value">5</span>
+            <span class="about-stat-label">Apps built</span>
+          </div>
+          <div class="about-stat-item fade-up delay-3">
+            <span class="about-stat-value" id="avgRating">—</span>
+            <span class="about-stat-label">Avg. rating</span>
+          </div>
+        </div>
+      </div>
+    </section>
     <!-- ─── DRIVE ─── -->
     <section class="section about-drive-section">
       <div class="container">
@@ -203,6 +222,37 @@
       );
       document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
+      // Downloads counter
+      (async () => {
+        try {
+          const res = await fetch('/api/downloads');
+          if (!res.ok) return;
+          const { total } = await res.json();
+          if (typeof total !== 'number' || total <= 0) return;
+          const el = document.getElementById('totalDownloads');
+          const duration = 1400;
+          const start = performance.now();
+          const tick = now => {
+            const p = Math.min((now - start) / duration, 1);
+            const eased = 1 - Math.pow(1 - p, 3);
+            el.textContent = Math.round(eased * total).toLocaleString('en');
+            if (p < 1) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        } catch (_) {}
+      })();
+
+      // Average rating
+      (async () => {
+        try {
+          const res = await fetch('/api/ratings');
+          if (!res.ok) return;
+          const { avgRating } = await res.json();
+          if (!avgRating) return;
+          const el = document.getElementById('avgRating');
+          if (el) el.textContent = avgRating.toFixed(1) + ' ★';
+        } catch (_) {}
+      })();
       const btt = document.getElementById('backToTop');
       if (btt) {
         window.addEventListener('scroll', () => {

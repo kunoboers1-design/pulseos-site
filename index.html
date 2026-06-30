@@ -467,6 +467,17 @@ nav::after {
   transition: gap .2s;
 }
 .app-link:hover { gap: 16px; }
+.app-rating-display {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: rgba(255,255,255,0.35);
+}
+.app-rating-display .app-rating-star { color: #f5a623; }
 
 /* visual side */
 .app-visual {
@@ -2000,6 +2011,31 @@ document.querySelectorAll('.cta-h, .cta-r').forEach(el => obs.observe(el));
 })();
 
 </script>
+  <script>
+  (async () => {
+    try {
+      const res = await fetch('/api/ratings');
+      if (!res.ok) return;
+      const { byId } = await res.json();
+
+      document.querySelectorAll('a.app-link[href*="apps.apple.com"]').forEach(link => {
+        const m = link.href.match(/id(\d+)/);
+        if (!m) return;
+        const data = byId[m[1]];
+        if (!data?.rating || data.count < 1) return;
+
+        const el = document.createElement('div');
+        el.className = 'app-rating-display';
+        el.innerHTML = `<span class="app-rating-star">★</span> ${data.rating.toFixed(1)} <span style="opacity:.5">·</span> ${data.count.toLocaleString('en')} rating${data.count === 1 ? '' : 's'}`;
+
+        // Insert after link or its flex container
+        const parent = link.parentElement;
+        const target = (parent.getAttribute('style') || '').includes('flex') ? parent : link;
+        target.insertAdjacentElement('afterend', el);
+      });
+    } catch (_) {}
+  })();
+  </script>
   <script src="/theme.js"></script>
 </body>
 </html>
