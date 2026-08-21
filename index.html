@@ -52,6 +52,7 @@
   --habits:  #D95C3A;
   --wiish:   #C0C4D4;
   --vinyl:   #C46EFF;
+  --sidequest: #FF7F2E;
 
   /* live accent — updated by JS on scroll */
   --accent: #007AFF;
@@ -627,6 +628,7 @@ nav::after {
 .habits-section { --app-color: var(--habits); --app-rgb: 217, 92, 58; }
 .wiish-section  { --app-color: var(--wiish);  --app-rgb: 192, 196, 212; }
 .vinyl-section   { --app-color: var(--vinyl);  --app-rgb: 196, 110, 255; }
+.sidequest-section { --app-color: var(--sidequest); --app-rgb: 255, 127, 46; }
 
 .fx-section .app-section-bg {
   background: radial-gradient(ellipse 60% 80% at 70% 50%, rgba(0,122,255,0.05), transparent 70%);
@@ -642,6 +644,9 @@ nav::after {
 }
 .vinyl-section .app-section-bg {
   background: radial-gradient(ellipse 60% 80% at 70% 50%, rgba(196,110,255,0.05), transparent 70%);
+}
+.sidequest-section .app-section-bg {
+  background: radial-gradient(ellipse 60% 80% at 30% 50%, rgba(255,127,46,0.05), transparent 70%);
 }
 
 /* ── SYSTEM SECTION ── */
@@ -1335,11 +1340,54 @@ footer a:hover { color: var(--white); }
 
   <!-- PulseLift -->
 
+  <!-- PulseSideQuest -->
+  <section class="app-section sidequest-section" data-color="#FF7F2E" data-rgb="255,127,46">
+    <div class="app-section-bg"></div>
+    <div class="app-left">
+      <div class="app-num">04 · PulseSideQuest</div>
+      <h2 class="app-big-name">Pulse<span class="col">SideQuest</span></h2>
+      <p class="app-tagline">Break the routine.</p>
+      <div class="status-chip">
+        <div class="status-dot hold"></div>
+        Coming Soon
+      </div>
+      <p class="app-body">Short, real-world sidequests around attention, creativity, connection, movement, and reflection. Pick one whenever you've got a few minutes to spare — no streaks, no pressure.</p>
+      <div class="app-meta">
+        <div class="meta-item">
+          <div class="meta-label">Free</div>
+          <div class="meta-val">72 sidequests</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Plus</div>
+          <div class="meta-val">One-time</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Platform</div>
+          <div class="meta-val">iOS 17+</div>
+        </div>
+      </div>
+      <a href="https://pulseos.eu/pulsesidequest/" class="app-link">App page →</a>
+    </div>
+    <div class="app-visual">
+      <div class="phone-ring"><div class="ring-dot"></div></div>
+      <div class="phone-ring phone-ring-2"></div>
+      <div class="phone-frame">
+        <div class="phone-glow"></div>
+        <div class="phone-notch"></div>
+        <div style="width:88px;height:88px;border-radius:18px;background:#1a0e08;overflow:hidden;z-index:1;box-shadow:0 8px 32px rgba(0,0,0,0.5);flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+          <img src="/images/PulseSQ.png" style="width:72px;height:72px;object-fit:contain;display:block;" alt="PulseSideQuest">
+        </div>
+        <div class="phone-label">SIDEQUEST</div>
+        <div class="phone-sub">Sidequest Prompts</div>
+      </div>
+    </div>
+  </section>
+
   <!-- PulseReflect -->
   <section class="app-section reflect-section" data-color="#BF5AF2" data-rgb="191,90,242">
     <div class="app-section-bg"></div>
     <div class="app-left">
-      <div class="app-num">04 · PulseReflect</div>
+      <div class="app-num">05 · PulseReflect</div>
       <h2 class="app-big-name">Pulse<span class="col">Reflect</span></h2>
       <p class="app-tagline">Clarity, compounded daily.</p>
       <div class="status-chip">
@@ -1382,7 +1430,7 @@ footer a:hover { color: var(--white); }
   <section class="app-section wiish-section" data-color="#C0C4D4" data-rgb="192,196,212">
     <div class="app-section-bg"></div>
     <div class="app-left">
-      <div class="app-num">05 · PulseWiish</div>
+      <div class="app-num">06 · PulseWiish</div>
       <h2 class="app-big-name">Pulse<span class="col">Wiish</span></h2>
       <p class="app-tagline">Your wishlist, without the noise.</p>
       <div class="status-chip">
@@ -1425,7 +1473,7 @@ footer a:hover { color: var(--white); }
   <section class="app-section lift-section" data-color="#FF7A00" data-rgb="255,122,0">
     <div class="app-section-bg"></div>
     <div class="app-left">
-      <div class="app-num">06 · PulseLift</div>
+      <div class="app-num">07 · PulseLift</div>
       <h2 class="app-big-name">Pulse<span class="col">Lift</span></h2>
       <p class="app-tagline">Train smarter. Log faster.</p>
       <div class="status-chip">
@@ -1465,7 +1513,7 @@ footer a:hover { color: var(--white); }
   <section class="app-section habits-section" data-hex="#D95C3A" data-rgb="217,92,58">
     <div class="app-section-bg"></div>
     <div class="app-text">
-      <div class="app-num">07 · PulseHabits</div>
+      <div class="app-num">08 · PulseHabits</div>
       <h2 class="app-big-name">Pulse<span class="col">Habits</span></h2>
       <p class="app-tagline">Discipline, made visible.</p>
       <div class="status-chip">
