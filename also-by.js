@@ -56,6 +56,14 @@
       url: '/pulselift/',
       live: false,
     },
+    {
+      slug: 'pulsesidequest',
+      name: 'PulseSideQuest',
+      tagline: 'Small, real-world sidequests to break the routine',
+      icon: '/images/PulseSQ.png',
+      url: '/pulsesidequest/',
+      live: false,
+    },
   ];
 
   function currentSlug() {

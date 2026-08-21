@@ -3731,6 +3731,350 @@ h3 {
 }
 
 /* ══════════════════════════════════════
+   PULSESIDEQUEST
+══════════════════════════════════════ */
+
+.sq-page { --page-accent: #FF7F2E; }
+
+.sq-page {
+  position: relative;
+  padding-bottom: 24px;
+  isolation: isolate;
+}
+
+.sq-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 80% 58% at 16% 6%, rgba(255, 138, 61, 0.22), transparent 60%),
+    radial-gradient(ellipse 55% 40% at 86% 4%, rgba(255, 106, 26, 0.16), transparent 68%);
+}
+
+.sq-page > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* "PulseSideQuest" is longer than other app-bar names and peeked out from
+   behind the translucent header before the app bar was scrolled into view. */
+body:has(.sq-page) #appBar {
+  transform: translateY(calc(-100% - 70px));
+}
+
+.sq-page .eyebrow {
+  color: rgba(255, 196, 158, 0.85);
+}
+
+.sq-page .section-tag {
+  color: var(--page-accent);
+}
+
+.sq-page .hero-button {
+  background: linear-gradient(140deg, #ff7a1a, #ff9a47);
+  box-shadow: 0 16px 34px rgba(255, 122, 26, 0.32);
+}
+
+.sq-page .hero-button:hover {
+  box-shadow: 0 22px 44px rgba(255, 122, 26, 0.4);
+}
+
+.sq-page .hero-button.secondary {
+  background: rgba(255, 244, 240, 0.03);
+  border-color: rgba(255, 214, 190, 0.24);
+}
+
+.sq-page .hero-button.secondary:hover {
+  background: rgba(255, 154, 71, 0.1);
+  border-color: rgba(255, 190, 150, 0.42);
+}
+
+.sq-page .fx-pricing-badge {
+  background: var(--page-accent);
+}
+
+.sq-page .fx-pricing-price {
+  color: var(--page-accent);
+}
+
+.sq-page .fx-pricing-list li::before {
+  color: var(--page-accent);
+}
+
+.feature-sq-accent {
+  background:
+    radial-gradient(circle at top right, rgba(255, 122, 26, 0.13), transparent 36%),
+    var(--surface);
+}
+
+/* Disabled CTA controls (no confirmed App Store URL yet) */
+button.hero-button,
+button.appstore-badge {
+  font-family: inherit;
+  font-size: inherit;
+  border: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.hero-button:disabled,
+.appstore-badge:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.sq-cta-note {
+  margin: 10px 0 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+/* ── Sidequest screen mockups (placeholder app previews) ── */
+.sq-mockscreen {
+  container-type: inline-size;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1290 / 2796;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 15% 8% 8%;
+  background: radial-gradient(ellipse 90% 60% at 50% 0%, rgba(255, 138, 61, 0.22), transparent 55%), linear-gradient(165deg, #1a1210, #100b0a 55%, #150f0d);
+  color: #f5ede6;
+  font-family: 'Inter', sans-serif;
+}
+
+.sq-mock-eyebrow {
+  font-size: 3.6cqw;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #ffb27a;
+  margin-bottom: 2cqw;
+}
+
+.sq-mock-title {
+  font-size: 8.6cqw;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  margin: 0 0 6cqw;
+}
+
+.sq-mock-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 5cqw;
+  padding: 5cqw;
+  margin-bottom: 3.4cqw;
+}
+
+.sq-mock-tag {
+  display: inline-block;
+  font-size: 3.2cqw;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #ff9a47;
+  background: rgba(255, 122, 46, 0.18);
+  padding: 1cqw 2.6cqw;
+  border-radius: 999px;
+  margin-bottom: 2.6cqw;
+}
+
+.sq-mock-card h4 {
+  font-size: 5cqw;
+  margin: 0 0 1.5cqw;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #f5ede6;
+}
+
+.sq-mock-card p {
+  font-size: 3.6cqw;
+  margin: 0;
+  color: rgba(245, 237, 230, 0.55);
+  line-height: 1.4;
+}
+
+.sq-mock-fab {
+  position: absolute;
+  right: 6cqw;
+  bottom: 7cqw;
+  width: 13cqw;
+  height: 13cqw;
+  border-radius: 50%;
+  background: linear-gradient(140deg, #ff7a1a, #ff9a47);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 6.6cqw;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 3cqw 6cqw rgba(255, 122, 26, 0.4);
+}
+
+.sq-mock-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 2.2cqw;
+  height: 16cqw;
+  margin: 1cqw 0 5cqw;
+}
+
+.sq-mock-chart span {
+  flex: 1;
+  border-radius: 2cqw;
+  background: linear-gradient(180deg, #ff9a47, #ff6a1a);
+}
+
+.sq-mock-row {
+  display: flex;
+  align-items: center;
+  gap: 3cqw;
+  margin-bottom: 3cqw;
+}
+
+.sq-mock-dot {
+  width: 7.6cqw;
+  height: 7.6cqw;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.8cqw;
+}
+
+.sq-mock-row-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1cqw;
+}
+
+.sq-mock-row-title {
+  font-size: 4cqw;
+  font-weight: 650;
+  color: #f5ede6;
+}
+
+.sq-mock-row-sub {
+  font-size: 3.3cqw;
+  color: rgba(245, 237, 230, 0.5);
+}
+
+.sq-mock-field {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 3.5cqw;
+  padding: 3.2cqw 4cqw;
+  font-size: 3.8cqw;
+  color: rgba(245, 237, 230, 0.45);
+  margin-bottom: 3cqw;
+}
+
+.sq-mock-chip-row {
+  display: flex;
+  gap: 2.2cqw;
+  flex-wrap: wrap;
+  margin-bottom: 4cqw;
+}
+
+.sq-mock-chip {
+  font-size: 3.3cqw;
+  padding: 1.6cqw 3.2cqw;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(245, 237, 230, 0.7);
+}
+
+.sq-mock-chip.is-active {
+  background: linear-gradient(140deg, #ff7a1a, #ff9a47);
+  border-color: transparent;
+  color: #fff;
+  font-weight: 700;
+}
+
+.sq-mock-btn {
+  margin-top: auto;
+  text-align: center;
+  padding: 4cqw;
+  border-radius: 999px;
+  background: linear-gradient(140deg, #ff7a1a, #ff9a47);
+  color: #fff;
+  font-weight: 700;
+  font-size: 4.2cqw;
+}
+
+.sq-mock-widget-bg {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6cqw;
+  padding: 15% 8%;
+  opacity: 0.4;
+}
+
+.sq-mock-widget-bg span {
+  aspect-ratio: 1;
+  border-radius: 22%;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.sq-mock-widget {
+  position: relative;
+  z-index: 1;
+  margin-top: 30cqw;
+  background: linear-gradient(155deg, rgba(255, 122, 26, 0.32), rgba(20, 14, 10, 0.92));
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8cqw;
+  padding: 6cqw;
+}
+
+.sq-mock-widget-label {
+  font-size: 3.3cqw;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #ffb27a;
+  font-weight: 700;
+  margin-bottom: 2cqw;
+}
+
+.sq-mock-widget h4 {
+  font-size: 5.6cqw;
+  margin: 0 0 1cqw;
+  color: #f5ede6;
+}
+
+.sq-mock-widget p {
+  font-size: 3.6cqw;
+  color: rgba(245, 237, 230, 0.6);
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-up {
+    transition-duration: 0.01ms !important;
+  }
+  .fx-iphone,
+  .rf-iphone,
+  .hb-iphone {
+    animation: none !important;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--page-accent, var(--accent-bright));
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ══════════════════════════════════════
    PULSEWIISH
 ══════════════════════════════════════ */
 
