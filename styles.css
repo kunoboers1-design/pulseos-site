@@ -3760,7 +3760,7 @@ h3 {
 
 /* "PulseSideQuest" is longer than other app-bar names and peeked out from
    behind the translucent header before the app bar was scrolled into view. */
-body:has(.sq-page) #appBar {
+body:has(.sq-page) #appBar:not(.visible) {
   transform: translateY(calc(-100% - 70px));
 }
 
