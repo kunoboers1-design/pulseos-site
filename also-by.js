@@ -41,14 +41,6 @@
       live: true,
     },
     {
-      slug: 'pulsehabits',
-      name: 'Pulse Habits',
-      tagline: 'Discipline, consistency & daily momentum',
-      icon: '/images/PulseHB.png',
-      url: '/pulsehabits/',
-      live: false,
-    },
-    {
       slug: 'pulselift',
       name: 'PulseLift',
       tagline: 'Workout tracking & gym performance',
@@ -62,7 +54,7 @@
       tagline: 'Small, real-world sidequests to break the routine',
       icon: '/images/PulseSQ.png',
       url: '/pulsesidequest/',
-      live: false,
+      live: true,
     },
   ];
 
