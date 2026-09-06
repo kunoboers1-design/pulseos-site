@@ -186,6 +186,104 @@
       top: 2px;
     }
 
+    /* ── Privacy note ── */
+    .vinyl-privacy-note {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin: 22px 0 0;
+      padding: 16px 20px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 0.85rem;
+      line-height: 1.65;
+    }
+
+    .vinyl-privacy-note svg {
+      flex-shrink: 0;
+      margin-top: 2px;
+      color: var(--vinyl);
+    }
+
+    /* ── Services (expandable) ── */
+    .vinyl-services {
+      margin-top: 18px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .vinyl-services summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 20px 24px;
+      cursor: pointer;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      list-style: none;
+    }
+
+    .vinyl-services summary::-webkit-details-marker { display: none; }
+
+    .vinyl-services summary::after {
+      content: '';
+      flex-shrink: 0;
+      width: 10px;
+      height: 10px;
+      border-right: 2px solid var(--muted);
+      border-bottom: 2px solid var(--muted);
+      transform: rotate(45deg);
+      transition: transform 0.2s ease;
+    }
+
+    .vinyl-services[open] summary::after {
+      transform: rotate(-135deg);
+    }
+
+    .vinyl-services-body {
+      padding: 0 24px 24px;
+      border-top: 1px solid var(--line);
+    }
+
+    .vinyl-service-row {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .vinyl-service-row:last-of-type {
+      border-bottom: none;
+    }
+
+    .vinyl-service-row strong {
+      font-size: 0.95rem;
+    }
+
+    .vinyl-service-row span {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+
+    .vinyl-services-links {
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: 0.85rem;
+      line-height: 1.7;
+    }
+
+    .vinyl-services-links a {
+      color: var(--vinyl);
+    }
+
     /* ── Responsive ── */
     @media (max-width: 900px) {
       .vinyl-pricing-grid {
@@ -477,7 +575,7 @@
           <article class="fx-step-card">
             <span class="vinyl-step-num">1</span>
             <h3>Connect Apple Music</h3>
-            <p>Grant read access to your Apple Music library. No login needed, no data leaves your device.</p>
+            <p>Grant read access to your Apple Music library — no separate PulseOS account or login required.</p>
           </article>
 
           <article class="fx-step-card">
@@ -509,13 +607,94 @@
           <h3>Connected to 8 million+ releases</h3>
           <p>
             PulseVinyl uses the Discogs API to check vinyl availability, look up barcodes, and estimate
-            collection value. You can connect your own Discogs account to enable additional features
-            and sync your collection data.
+            collection value. You can optionally connect your own Discogs account — this is used only
+            for those lookups, not to sync or upload your PulseVinyl collection to Discogs.
           </p>
           <a class="btn btn-ghost" href="https://www.discogs.com/settings/developers" target="_blank" rel="noopener noreferrer">
             Discogs Developer Settings →
           </a>
         </div>
+      </div>
+    </section>
+
+    <!-- ─── Privacy ─── -->
+    <section class="fx-section" id="privacy">
+      <div class="container">
+        <div class="fx-section-heading">
+          <span class="vinyl-kicker">Privacy by design</span>
+          <h2>Your music taste is yours.</h2>
+          <p class="fx-lead">
+            PulseVinyl has no ads, behavioural tracking or third-party analytics. We don't sell
+            your data or use it for marketing. Your collection is stored on your device and synced
+            through your private iCloud account.
+          </p>
+        </div>
+
+        <div class="fx-info-stack">
+          <article class="fx-info-card">
+            <h3>No ads or tracking</h3>
+            <p>PulseVinyl contains no advertising networks or behavioural tracking tools.</p>
+          </article>
+
+          <article class="fx-info-card">
+            <h3>Private collection</h3>
+            <p>Owned and wanted records, notes and collection details are stored locally and synced through your private iCloud database.</p>
+          </article>
+
+          <article class="fx-info-card">
+            <h3>Purpose-only music access</h3>
+            <p>Apple Music access is used only to read the album and artist information required for PulseVinyl's features.</p>
+          </article>
+
+          <article class="fx-info-card">
+            <h3>Transparent lookups</h3>
+            <p>Album titles, artist names, barcodes or release IDs may be sent directly to Discogs or MusicBrainz when needed to identify a record. These services process requests under their own privacy policies.</p>
+          </article>
+        </div>
+
+        <p class="vinyl-privacy-note">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          <span>When identifying music, the microphone is active only during recognition. Audio is not stored by PulseVinyl. ShazamKit converts captured audio into a one-way acoustic signature and does not share the original audio with Apple.</span>
+        </p>
+
+        <details class="vinyl-services">
+          <summary>Services PulseVinyl uses</summary>
+          <div class="vinyl-services-body">
+            <div class="vinyl-service-row">
+              <strong>Apple Music</strong>
+              <span>Music-library and catalogue access after explicit permission.</span>
+            </div>
+            <div class="vinyl-service-row">
+              <strong>iCloud / CloudKit</strong>
+              <span>Private collection synchronisation between your own devices.</span>
+            </div>
+            <div class="vinyl-service-row">
+              <strong>Discogs</strong>
+              <span>Release information, barcode matching, artwork and marketplace prices. Optional account connection tokens are stored securely in the iPhone Keychain.</span>
+            </div>
+            <div class="vinyl-service-row">
+              <strong>MusicBrainz &amp; Cover Art Archive</strong>
+              <span>Fallback barcode metadata and artwork.</span>
+            </div>
+            <div class="vinyl-service-row">
+              <strong>ShazamKit</strong>
+              <span>Music recognition without storing microphone recordings.</span>
+            </div>
+            <div class="vinyl-service-row">
+              <strong>Frankfurter</strong>
+              <span>Currency conversion rates; no collection contents are included.</span>
+            </div>
+
+            <p class="vinyl-services-links">
+              Read more in the privacy policies of
+              <a href="https://www.apple.com/legal/privacy/" target="_blank" rel="noopener noreferrer">Apple</a>,
+              <a href="https://www.discogs.com/privacy" target="_blank" rel="noopener noreferrer">Discogs</a>, and
+              <a href="https://metabrainz.org/privacy" target="_blank" rel="noopener noreferrer">MusicBrainz</a>.
+              PulseOS doesn't run its own user-profile or analytics database, and we can't browse your
+              music library or collection — see the full <a href="/privacy/">Privacy Policy</a> for details.
+            </p>
+          </div>
+        </details>
       </div>
     </section>
 
@@ -611,7 +790,7 @@
 
           <article class="fx-info-card">
             <h3>Privacy</h3>
-            <p>PulseVinyl connects to Apple Music using on-device permissions. No account data, library info, or collection details are stored on our servers. Discogs integration uses only publicly available API data.</p>
+            <p>PulseVinyl connects to Apple Music using on-device permissions, and your collection is stored on your device and synced through your private iCloud account — PulseOS doesn't store it on our servers. See <a href="#privacy" style="color:var(--vinyl);">Privacy by design</a> above for the full picture, including what Discogs, MusicBrainz and ShazamKit are used for.</p>
           </article>
 
           <article class="fx-info-card">
