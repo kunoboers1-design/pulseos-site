@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Contact — PulseOS</title>
-  <meta name="description" content="Get in touch with PulseOS for support, feedback, or ideas. Reach us via email, Instagram, or Threads." />
+  <title>Contact &amp; Support — PulseOS</title>
+  <meta name="description" content="Get in touch with PulseOS for support, feedback, or ideas. Reach us via email or Instagram." />
   <meta name="theme-color" content="#08090e" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -20,8 +20,9 @@
   <meta property="og:image" content="https://pulseos.eu/pulseos-logo.png" />
   <meta name="twitter:card" content="summary" />
   <link rel="stylesheet" href="/site-pages.css">
+  <link rel="stylesheet" href="/company-pages.css">
 </head>
-<body class="site-refresh page-support">
+<body class="site-refresh company-refresh page-support">
 
   <header class="site-header">
     <div class="container">
@@ -38,105 +39,34 @@
     </div>
   </header>
 
-  <main class="contact-page">
-
-    <!-- ─── HERO ─── -->
-    <section class="contact-hero">
-      <div class="container contact-hero-inner">
-        <p class="eyebrow fade-up">Contact</p>
-        <h1 class="contact-title fade-up delay-1">Get in touch.</h1>
-        <p class="contact-lead fade-up delay-2">Questions, feedback, bug reports, or just a good idea — always welcome.</p>
+  <main class="company-main">
+    <!-- MARK: - Direct contact -->
+    <section class="container help-intro" aria-labelledby="contact-title">
+      <div><p class="company-kicker">Contact &amp; support</p><h1 id="contact-title">Let's talk.<br><span>I'm all ears.</span></h1><p class="company-lead">Something not working? An idea worth sharing? Get in touch with the person building your apps.</p></div>
+      <div class="help-email"><span class="company-kicker">Straight to my inbox</span><a href="mailto:support@pulseos.eu">support@pulseos.eu <span aria-hidden="true">↗</span></a><p>Response within 24–48 hours</p><button class="company-text-link" type="button" id="copy-email" hidden>Copy email address</button><span class="copy-status" id="copy-status" role="status"></span></div>
+    </section>
+    <!-- MARK: - Hulp per onderwerp -->
+    <div class="container help-layout">
+      <section class="help-routes" aria-labelledby="help-title">
+        <p class="company-kicker">Start here</p><h2 id="help-title">What brings you here?</h2>
+        <a class="help-route" href="mailto:support@pulseos.eu?subject=Bug%20report&amp;body=App%20name%20and%20version%3A%20%0ADevice%20and%20OS%20version%3A%20%0A%0AWhat%20happened%3A%20%0A%0ASteps%20to%20reproduce%3A%20%0A%0AWhat%20I%20expected%3A%20"><span class="route-number" aria-hidden="true">01</span><div><h3>Something isn't working.</h3><p>Report a bug or get help with an app.</p><span class="route-action">Write a support email</span></div><span class="route-arrow" aria-hidden="true">↗</span></a>
+        <a class="help-route" href="mailto:support@pulseos.eu?subject=An%20idea%20for%20PulseOS&amp;body=App%3A%20%0A%0AMy%20idea%3A%20%0A%0AThis%20would%20help%20me%20with%3A%20"><span class="route-number" aria-hidden="true">02</span><div><h3>I have an idea.</h3><p>A feature you'd love or a small thing that could be better.</p><span class="route-action">Share your feedback</span></div><span class="route-arrow" aria-hidden="true">↗</span></a>
+        <a class="help-route" href="mailto:support@pulseos.eu?subject=Hello%20Kuno"><span class="route-number" aria-hidden="true">03</span><div><h3>Just want to say hello.</h3><p>Questions, collaborations, and conversations are welcome.</p><span class="route-action">Say hello</span></div><span class="route-arrow" aria-hidden="true">↗</span></a>
+        <p class="help-mail-note">These links open a draft in your email app. Add your details and send when you're ready.</p>
+      </section>
+      <aside class="help-aside">
+        <div class="help-checklist"><p class="company-kicker">A little context helps</p><h2>Let's get it sorted.</h2><p>For an app issue, include these details so I can understand what happened.</p><ol><li><strong>The app</strong><span>Its name and version.</span></li><li><strong>Your setup</strong><span>Your device and iOS or macOS version.</span></li><li><strong>What happened</strong><span>What you tried and what you expected.</span></li><li><strong>A screenshot, if helpful</strong><span>Leave out personal or sensitive details.</span></li></ol></div>
+        <a class="help-privacy" href="/privacy/"><span>Looking for the privacy policy?</span><span aria-hidden="true">↗</span></a>
+      </aside>
+    </div>
+    <section class="container help-social" aria-labelledby="social-title">
+      <div><p class="company-kicker">Instagram</p><h2 id="social-title">Follow along.</h2><p>Follow PulseOS or message an app directly on Instagram.</p></div>
+      <div class="social-links">
+        <a href="https://instagram.com/pulseosofficial" target="_blank" rel="noopener noreferrer"><strong>PulseOS</strong><span>@pulseosofficial</span><span aria-hidden="true">↗</span></a>
+        <a href="https://instagram.com/pulsefx.app" target="_blank" rel="noopener noreferrer"><strong>PulseFX</strong><span>@pulsefx.app</span><span aria-hidden="true">↗</span></a>
+        <a href="https://instagram.com/pulsevinyl.app" target="_blank" rel="noopener noreferrer"><strong>PulseVinyl</strong><span>@pulsevinyl.app</span><span aria-hidden="true">↗</span></a>
       </div>
     </section>
-
-    <!-- ─── CHANNELS ─── -->
-    <section class="section contact-channels-section">
-      <div class="container">
-        <div class="contact-channels">
-
-          <a class="contact-channel fade-up delay-1" href="mailto:support@pulseos.eu">
-            <div class="contact-channel-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="4" width="20" height="16" rx="2"/>
-                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-              </svg>
-            </div>
-            <div class="contact-channel-body">
-              <div class="contact-channel-label">Email</div>
-              <div class="contact-channel-value">support@pulseos.eu</div>
-              <div class="contact-channel-hint">Response within 24–48 hours</div>
-            </div>
-            <div class="contact-channel-arrow">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </div>
-          </a>
-
-          <a class="contact-channel fade-up delay-2" href="https://instagram.com/pulseosofficial" target="_blank" rel="noopener noreferrer">
-            <div class="contact-channel-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                <circle cx="12" cy="12" r="4"/>
-                <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/>
-              </svg>
-            </div>
-            <div class="contact-channel-body">
-              <div class="contact-channel-label">Instagram</div>
-              <div class="contact-channel-value">@pulseosofficial</div>
-              <div class="contact-channel-hint">DMs open</div>
-            </div>
-            <div class="contact-channel-arrow">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </div>
-          </a>
-
-          <a class="contact-channel fade-up delay-3" href="https://threads.net/@pulseosofficial" target="_blank" rel="noopener noreferrer">
-            <div class="contact-channel-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 2.623-.02 4.358-.631 5.689-2.044 1.543-1.637 1.527-3.637 1.459-4.976l-.003-.082c-.013-.05-.013-.12-.013-.192-.01-1.84-1.019-3.088-2.82-3.514.098 1.68-.216 3.224-.93 4.37-.736 1.187-1.86 1.846-3.137 1.852-1.01.01-1.924-.335-2.568-.96-.685-.667-1.056-1.623-1.044-2.682.023-2.11 1.648-3.532 4.184-3.596.638-.017 1.266-.004 1.88.026-.048-.544-.23-.968-.54-1.261-.41-.384-1.052-.576-1.907-.582a4.52 4.52 0 0 0-1.59.28 4.26 4.26 0 0 0-1.338.857l-1.384-1.492c.563-.505 1.24-.905 2.015-1.19.759-.28 1.568-.42 2.416-.416 1.56.01 2.79.468 3.655 1.36.837.862 1.264 2.07 1.263 3.587l.002.044c.008.162.018.34.026.518l.004.08c.095 2.01.106 4.696-1.957 6.92C17.077 23.208 14.906 23.98 12.186 24Zm.024-9.024c-.808 0-1.614.205-1.625 1.497-.006.535.152.97.455 1.26.303.29.756.44 1.33.436.817-.006 1.466-.378 1.884-1.069.41-.676.603-1.656.572-2.893-.606-.03-1.218-.043-1.616-.03Z"/>
-              </svg>
-            </div>
-            <div class="contact-channel-body">
-              <div class="contact-channel-label">Threads</div>
-              <div class="contact-channel-value">@pulseosofficial</div>
-              <div class="contact-channel-hint">DMs open</div>
-            </div>
-            <div class="contact-channel-arrow">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </div>
-          </a>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- ─── TIPS ─── -->
-    <section class="section contact-tips-section">
-      <div class="container">
-        <div class="contact-tips-card fade-up">
-          <h2>Sending a support email?</h2>
-          <p>Including these details helps resolve your issue faster:</p>
-          <ul class="contact-tips-list">
-            <li>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              The app name (e.g. PulseFX)
-            </li>
-            <li>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              Your device (iPhone, iPad, or Mac)
-            </li>
-            <li>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              Your iOS or macOS version
-            </li>
-            <li>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              A short description of the issue or idea
-            </li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
   </main>
 
   <footer class="site-footer">
@@ -160,37 +90,10 @@
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
   </button>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const observer = new IntersectionObserver(
-        entries => entries.forEach(e => {
-          if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
-        }),
-        { threshold: 0.07, rootMargin: '0px 0px -40px 0px' }
-      );
-      document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
-
-      const btt = document.getElementById('backToTop');
-      if (btt) {
-        window.addEventListener('scroll', () => {
-          btt.classList.toggle('visible', window.scrollY > 400);
-        }, { passive: true });
-        btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-      }
-
-      // Active nav link
-      const path = window.location.pathname;
-      document.querySelectorAll('.nav-links a').forEach(a => {
-        const href = a.getAttribute('href');
-        if (href === path || (href !== '/' && path.startsWith(href))) {
-          a.classList.add('active');
-        }
-      });
-    });
-  </script>
 
   <script src="/theme.js"></script>
   <script src="/newsletter-popup.js"></script>
   <script src="/site-pages.js"></script>
+  <script src="/company-pages.js"></script>
 </body>
 </html>

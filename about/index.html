@@ -20,8 +20,9 @@
   <meta property="og:image" content="https://pulseos.eu/pulseos-logo.png" />
   <meta name="twitter:card" content="summary" />
   <link rel="stylesheet" href="/site-pages.css">
+  <link rel="stylesheet" href="/company-pages.css">
 </head>
-<body class="site-refresh page-about">
+<body class="site-refresh company-refresh page-about">
 
   <header class="site-header">
     <div class="container">
@@ -38,46 +39,31 @@
     </div>
   </header>
 
-  <main class="about-page">
-
-    <!-- ─── HERO ─── -->
-    <section class="about-hero">
-      <div class="container about-hero-grid">
-        <div class="about-hero-copy fade-up">
-          <p class="eyebrow">About</p>
-          <h1 class="about-title">Hi, I'm Kuno.</h1>
-          <p class="about-lead">25-year-old developer from Rotterdam building a system of focused apps for people who want to perform better, stay consistent, and live with more structure.</p>
-          <div class="about-meta-row">
-            <div class="about-meta-item">
-              <span class="about-meta-label">Age</span>
-              <span class="about-meta-value">25</span>
-            </div>
-            <div class="about-meta-item">
-              <span class="about-meta-label">Location</span>
-              <span class="about-meta-value">Rotterdam, NL</span>
-            </div>
-            <div class="about-meta-item">
-              <span class="about-meta-label">Building since</span>
-              <span class="about-meta-value">2025</span>
-            </div>
-          </div>
-        </div>
-        <div class="about-photo-wrap fade-up delay-2">
-          <img src="/images/kuno.jpg" alt="Kuno at HYROX" class="about-photo" />
-        </div>
+  <main class="company-main">
+    <!-- MARK: - Persoonlijke introductie -->
+    <section class="container maker-intro" aria-labelledby="maker-title">
+      <div class="maker-copy">
+        <p class="company-kicker">The person behind PulseOS</p>
+        <h1 id="maker-title">Hi, I'm Kuno.<br><span>I make ideas<br>into apps.</span></h1>
+        <p class="company-lead">An independent developer from Rotterdam, building focused tools for the things I care about. Trading, music, food, and a little more structure in everyday life.</p>
+        <a class="company-text-link" href="#story">A little of my story <span aria-hidden="true">↓</span></a>
       </div>
+      <figure class="maker-portrait">
+        <img src="/images/kuno.jpg" alt="Kuno taking part in HYROX" width="600" height="750" fetchpriority="high">
+        <figcaption><span>Kuno · Rotterdam, NL</span><span>Outside the editor.</span></figcaption>
+      </figure>
     </section>
+    <div class="container maker-now">
+      <span class="company-kicker"><i aria-hidden="true"></i> Right now</span>
+      <p>Building PulseOS. Studying Data Analysis. Always collecting the next idea.</p>
+      <a href="#the-work">Explore the apps <span aria-hidden="true">↗</span></a>
+    </div>
+    <!-- MARK: - Doorlopend verhaal -->
+    <section class="container company-split maker-story" id="story" aria-labelledby="story-title">
+      <div class="company-section-label"><p class="company-kicker">The backstory</p><h2 id="story-title">One thing<br>led to another.</h2><p>From charts and Notion templates to apps you can carry in your pocket.</p></div>
+      <div class="maker-timeline">
 
-    <!-- ─── STORY ─── -->
-    <section class="section about-story-section">
-      <div class="container about-story-grid">
-        <div class="about-story-left fade-up">
-          <span class="section-tag">Story</span>
-          <h2>How it started.</h2>
-        </div>
-        <div class="about-story-right">
-
-          <div class="about-chapter fade-up delay-1">
+          <div class="about-chapter delay-1">
             <span class="about-chapter-year">Now</span>
             <div class="about-chapter-body">
               <h3>PulseOS.</h3>
@@ -85,7 +71,7 @@
             </div>
           </div>
 
-          <div class="about-chapter fade-up delay-2">
+          <div class="about-chapter delay-2">
             <span class="about-chapter-year">2025</span>
             <div class="about-chapter-body">
               <h3>First app. First spark.</h3>
@@ -93,7 +79,7 @@
             </div>
           </div>
 
-          <div class="about-chapter fade-up delay-3">
+          <div class="about-chapter delay-3">
             <span class="about-chapter-year">2023</span>
             <div class="about-chapter-body">
               <h3>Notion, templates, and building things.</h3>
@@ -101,131 +87,82 @@
             </div>
           </div>
 
-          <div class="about-chapter fade-up delay-4">
+          <div class="about-chapter delay-4">
             <span class="about-chapter-year">2022</span>
             <div class="about-chapter-body">
               <h3>Trading got me hooked.</h3>
               <p>In early 2022 I got into trading and became completely obsessed. Studying charts, strategies, risk management — I was all in. But after a while I realized I couldn't put all my eggs in one basket. I needed more.</p>
             </div>
           </div>
-
-        </div>
-      </div>
+</div>
     </section>
-
-    <!-- ─── STATS ─── -->
-    <section class="about-stats-section">
-      <div class="container">
-        <div class="about-stats-grid">
-          <div class="about-stat-item fade-up delay-1">
-            <span class="about-stat-value" id="totalDownloads">—</span>
-            <span class="about-stat-label">Total downloads</span>
-          </div>
-          <div class="about-stat-item fade-up delay-2">
-            <span class="about-stat-value">5</span>
-            <span class="about-stat-label">Apps built</span>
-          </div>
-          <div class="about-stat-item fade-up delay-3">
-            <span class="about-stat-value" id="avgRating">—</span>
-            <span class="about-stat-label">Avg. rating</span>
-          </div>
-        </div>
-      </div>
+    <section class="container maker-note" aria-label="Why I build">
+      <span class="company-kicker">Why I keep building</span>
+      <blockquote>“What drives me is taking an idea that lives in your head and turning it into something real — something other people can actually use, and enjoy.”</blockquote>
+      <p>Every app in PulseOS started that way. An idea, a problem, and the curiosity to see it through.</p>
     </section>
-
-    <!-- ─── DRIVE ─── -->
-    <section class="section about-drive-section">
-      <div class="container">
-        <div class="about-drive-card fade-up">
-          <span class="section-tag">Drive</span>
-          <blockquote class="about-quote">
-            "What drives me is taking an idea that lives in your head and turning it into something real — something other people can actually use, and enjoy."
-          </blockquote>
-          <p class="about-quote-sub">That feeling never gets old. Every app in PulseOS started as a thought. Building it out, seeing it work, and knowing someone benefits from it — that's exactly why I keep going.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ─── APPS ─── -->
-    <section class="section">
-      <div class="container">
-        <div class="section-header fade-up">
-          <span class="section-tag">The work</span>
-          <h2>Apps I've built.</h2>
-          <p>Each one solves a specific problem I cared about.</p>
-        </div>
-        <div class="about-apps-row">
-          <a class="about-app-link fade-up delay-1" href="/pulsefx/">
-            <img src="/images/PulseFX.png" alt="PulseFX" />
+    <!-- MARK: - Appoverzicht -->
+    <section class="container company-split maker-work" id="the-work" aria-labelledby="work-title">
+      <div class="company-section-label"><p class="company-kicker">The work</p><h2 id="work-title">Small apps.<br>Real purpose.</h2><p>Each one solves a specific problem I cared about.</p><a class="company-text-link" href="/#apps">See the whole collection <span aria-hidden="true">↗</span></a></div>
+      <div class="maker-app-list">
+          <a class="about-app-link" href="/pulsefx/">
+            <img src="/images/PulseFX.png" alt="" />
             <div>
               <strong>PulseFX</strong>
               <span>Lot size, account tracking &amp; trading structure</span>
             </div>
             <span class="about-app-status about-app-status--live">Live</span>
           </a>
-          <a class="about-app-link fade-up delay-2" href="/pulsewiish/">
-            <img src="/images/PulseWW.png" alt="PulseWiish" />
+          <a class="about-app-link" href="/pulsewiish/">
+            <img src="/images/PulseWW.png" alt="" />
             <div>
               <strong>PulseWiish</strong>
               <span>Wishlist &amp; shopping list management</span>
             </div>
             <span class="about-app-status about-app-status--live">Live</span>
           </a>
-          <a class="about-app-link fade-up delay-3" href="/pulserecipes/">
-            <img src="/images/PulseRC.png" alt="Pulse Recipes" />
+          <a class="about-app-link" href="/pulserecipes/">
+            <img src="/images/PulseRC.png" alt="" />
             <div>
               <strong>Pulse Recipes</strong>
               <span>Clean meals, macros &amp; recipe management</span>
             </div>
             <span class="about-app-status about-app-status--live">Live</span>
           </a>
-          <a class="about-app-link fade-up delay-4" href="/pulsevinyl/">
-            <img src="/images/PulseVN.png" alt="PulseVinyl" />
+          <a class="about-app-link" href="/pulsevinyl/">
+            <img src="/images/PulseVN.png" alt="" />
             <div>
               <strong>PulseVinyl</strong>
               <span>Vinyl &amp; CD collection tracking with Discogs integration</span>
             </div>
             <span class="about-app-status about-app-status--live">Live</span>
           </a>
-          <a class="about-app-link fade-up delay-5" href="/pulsereflect/">
-            <img src="/images/PulseRF.png" alt="PulseReflect" />
+          <a class="about-app-link" href="/pulsereflect/">
+            <img src="/images/PulseRF.png" alt="" />
             <div>
               <strong>PulseReflect</strong>
               <span>Daily journaling, mood tracking &amp; self-reflection</span>
             </div>
             <span class="about-app-status about-app-status--live">Live</span>
           </a>
-          <a class="about-app-link fade-up delay-1" href="/pulsesidequest/">
-            <img src="/images/PulseSQ.png" alt="PulseSideQuest" />
+          <a class="about-app-link" href="/pulsesidequest/">
+            <img src="/images/PulseSQ.png" alt="" />
             <div>
               <strong>PulseSideQuest</strong>
               <span>Small, real-world sidequests to break the routine</span>
             </div>
             <span class="about-app-status about-app-status--live">Live</span>
           </a>
-          <a class="about-app-link fade-up delay-2" href="/pulselift/">
-            <img src="/images/PulseLF.png" alt="PulseLift" />
+          <a class="about-app-link" href="/pulselift/">
+            <img src="/images/PulseLF.png" alt="" />
             <div>
               <strong>PulseLift</strong>
               <span>Workout tracking &amp; gym performance</span>
             </div>
-            <span class="about-app-status about-app-status--soon">Coming Soon</span>
-          </a>
-        </div>
-      </div>
+            <span class="about-app-status about-app-status--soon">On hold</span>
+          </a></div>
     </section>
-
-    <!-- ─── CONTACT ─── -->
-    <section class="section about-contact-section">
-      <div class="container">
-        <div class="about-contact-card fade-up">
-          <h2>Want to get in touch?</h2>
-          <p>Have an idea for an app, feedback on something I built, or just want to say hi — I'd love to hear from you.</p>
-          <a class="btn btn-primary" href="/support/">Send a message</a>
-        </div>
-      </div>
-    </section>
-
+    <section class="container company-outro" aria-labelledby="hello-title"><div><p class="company-kicker">Keep the conversation going</p><h2 id="hello-title">Got something in mind?</h2><p>An app idea, some feedback, or just a hello. I'd love to hear it.</p></div><a class="company-button" href="/support/">Get in touch <span aria-hidden="true">↗</span></a></section>
   </main>
 
   <footer class="site-footer">
@@ -249,68 +186,10 @@
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
   </button>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const observer = new IntersectionObserver(
-        entries => entries.forEach(e => {
-          if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
-        }),
-        { threshold: 0.07, rootMargin: '0px 0px -40px 0px' }
-      );
-      document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
-
-      // Downloads counter
-      (async () => {
-        try {
-          const res = await fetch('/api/downloads');
-          if (!res.ok) return;
-          const { total } = await res.json();
-          if (typeof total !== 'number' || total <= 0) return;
-          const el = document.getElementById('totalDownloads');
-          const duration = 1400;
-          const start = performance.now();
-          const tick = now => {
-            const p = Math.min((now - start) / duration, 1);
-            const eased = 1 - Math.pow(1 - p, 3);
-            el.textContent = Math.round(eased * total).toLocaleString('en');
-            if (p < 1) requestAnimationFrame(tick);
-          };
-          requestAnimationFrame(tick);
-        } catch (_) {}
-      })();
-
-      // Average rating
-      (async () => {
-        try {
-          const res = await fetch('/api/ratings');
-          if (!res.ok) return;
-          const { avgRating } = await res.json();
-          if (!avgRating) return;
-          const el = document.getElementById('avgRating');
-          if (el) el.textContent = avgRating.toFixed(1) + ' ★';
-        } catch (_) {}
-      })();
-      const btt = document.getElementById('backToTop');
-      if (btt) {
-        window.addEventListener('scroll', () => {
-          btt.classList.toggle('visible', window.scrollY > 400);
-        }, { passive: true });
-        btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-      }
-
-      // Active nav link
-      const path = window.location.pathname;
-      document.querySelectorAll('.nav-links a').forEach(a => {
-        const href = a.getAttribute('href');
-        if (href === path || (href !== '/' && path.startsWith(href))) {
-          a.classList.add('active');
-        }
-      });
-    });
-  </script>
 
   <script src="/theme.js"></script>
   <script src="/newsletter-popup.js"></script>
   <script src="/site-pages.js"></script>
+  <script src="/company-pages.js"></script>
 </body>
 </html>
