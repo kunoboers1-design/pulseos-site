@@ -11,7 +11,7 @@
     {
       slug: 'pulsevinyl',
       name: 'PulseVinyl',
-      tagline: 'Vinyl collection tracking & Discogs integration',
+      tagline: 'Vinyl & CD collection tracking with Discogs integration',
       icon: '/images/PulseVN.png',
       url: '/pulsevinyl/',
       live: true,
