@@ -24,8 +24,9 @@
   <meta property="og:image" content="https://pulseos.eu/images/PulseFX.png" />
   <meta name="twitter:card" content="summary" />
   <style>:root { --page-accent: #2BB54B; }</style>
+  <link rel="stylesheet" href="/site-pages.css">
 </head>
-<body>
+<body class="site-refresh page-motion">
   <header class="site-header">
     <div class="container">
       <nav class="nav-inner">
@@ -33,28 +34,18 @@
         <div class="nav-links">
           <a href="/#apps">Apps</a>
           <a class="pill-btn" href="/support/">Support</a>
-        
+
           <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button>
         </div>
       </nav>
     </div>
   </header>
 
-  <div class="app-bar" id="appBar" aria-hidden="true">
-    <div class="container">
-      <div class="app-bar-inner">
-        <img class="app-bar-icon" src="/images/PulseFX.png" alt="" />
-        <span class="app-bar-name">PulseFX</span>
-      </div>
-    </div>
-  </div>
 
-  <main class="fx-page">
-    <section class="fx-hero" id="appHero">
-      <div class="container fx-hero-grid">
-        <div class="fx-hero-copy">
+
+  <main class="fx-page"><section class="fx-hero product-hero" id="appHero"><div class="container product-hero-grid"><div class="fx-hero-copy">
           <p class="eyebrow">PulseFX</p>
-          <h1>Lot size, account tracking, alerts, and trading structure in one place.</h1>
+          <h1>Your trading toolkit.</h1>
           <p class="fx-lead">
             PulseFX is built for traders who want fast lot size calculations,
             clean account tracking, useful reminders, notes per account, and a
@@ -62,123 +53,12 @@
           </p>
 
           <div class="fx-hero-actions">
-            <a class="hero-button" href="#features">Explore features</a>
+            <a class="hero-button" href="https://apps.apple.com/nl/app/pulsefx-lot-size-calculator/id6751821638">Download on the App Store</a>
             <a class="hero-button secondary" href="#how-it-works">How it works</a>
           </div>
 
-          <div class="fx-meta-row">
-            <div class="fx-meta-card">
-              <span class="fx-meta-label">Audience</span>
-              <span class="fx-meta-value">Forex traders</span>
-            </div>
-            <div class="fx-meta-card">
-              <span class="fx-meta-label">Platforms</span>
-              <span class="fx-meta-value">iPhone + Mac</span>
-            </div>
-            <div class="fx-meta-card">
-              <span class="fx-meta-label">Focus</span>
-              <span class="fx-meta-value">Risk + execution</span>
-            </div>
-          </div>
-        </div>
 
-        <div class="fx-phone-hero-wrap">
-          <div class="fx-iphone">
-            <div class="fx-iphone-frame">
-              <div class="fx-iphone-island" aria-hidden="true"></div>
-              <div class="fx-iphone-screen">
-                <img src="/pulsefx/1.%20lotsize%20(1290%20x%202796%20px).png" alt="PulseFX lot size calculator" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ─── Screenshots ─── -->
-    <section class="fx-screenshots-section">
-      <div class="fx-screenshots-header container">
-        <span class="section-tag">Screenshots</span>
-        <h2>See the app in action.</h2>
-        <p>Every screen designed for speed and clarity.</p>
-      </div>
-      <div class="fx-screenshots-track">
-        <div class="fx-screenshot-item fade-up delay-1">
-          <div class="fx-screenshot-frame">
-            <div class="fx-screenshot-island" aria-hidden="true"></div>
-            <div class="fx-screenshot-screen">
-              <img src="/pulsefx/1.%20lotsize%20(1290%20x%202796%20px).png" alt="Lot size calculator" loading="lazy" />
-            </div>
-          </div>
-          <p class="fx-screenshot-label">Lot Size</p>
-        </div>
-        <div class="fx-screenshot-item fade-up delay-2">
-          <div class="fx-screenshot-frame">
-            <div class="fx-screenshot-island" aria-hidden="true"></div>
-            <div class="fx-screenshot-screen">
-              <img src="/pulsefx/2.%20Compact%20mode%20(1290%20x%202796%20px).png" alt="Compact mode" loading="lazy" />
-            </div>
-          </div>
-          <p class="fx-screenshot-label">Compact Mode</p>
-        </div>
-        <div class="fx-screenshot-item fade-up delay-3">
-          <div class="fx-screenshot-frame">
-            <div class="fx-screenshot-island" aria-hidden="true"></div>
-            <div class="fx-screenshot-screen">
-              <img src="/pulsefx/3.%20Overzicht%20accounts%20(1290%20x%202796%20px).png" alt="Account overview" loading="lazy" />
-            </div>
-          </div>
-          <p class="fx-screenshot-label">Accounts</p>
-        </div>
-        <div class="fx-screenshot-item fade-up delay-4">
-          <div class="fx-screenshot-frame">
-            <div class="fx-screenshot-island" aria-hidden="true"></div>
-            <div class="fx-screenshot-screen">
-              <img src="/pulsefx/4.%20Na%20trade%20notes%20(1290%20x%202796%20px).png" alt="Trade notes" loading="lazy" />
-            </div>
-          </div>
-          <p class="fx-screenshot-label">Trade Notes</p>
-        </div>
-        <div class="fx-screenshot-item fade-up delay-5">
-          <div class="fx-screenshot-frame">
-            <div class="fx-screenshot-island" aria-hidden="true"></div>
-            <div class="fx-screenshot-screen">
-              <img src="/pulsefx/5.%20Meldingen%20(1290%20x%202796%20px).png" alt="Notifications" loading="lazy" />
-            </div>
-          </div>
-          <p class="fx-screenshot-label">Notifications</p>
-        </div>
-        <div class="fx-screenshot-item fade-up delay-5">
-          <div class="fx-screenshot-frame">
-            <div class="fx-screenshot-island" aria-hidden="true"></div>
-            <div class="fx-screenshot-screen">
-              <img src="/pulsefx/6.%20Notes%20(1290%20x%202796%20px).png" alt="Notes" loading="lazy" />
-            </div>
-          </div>
-          <p class="fx-screenshot-label">Notes</p>
-        </div>
-        <div class="fx-screenshot-item fade-up delay-5">
-          <div class="fx-screenshot-frame">
-            <div class="fx-screenshot-island" aria-hidden="true"></div>
-            <div class="fx-screenshot-screen">
-              <img src="/pulsefx/7.%20setttings%20(1290%20x%202796%20px).png" alt="Settings" loading="lazy" />
-            </div>
-          </div>
-          <p class="fx-screenshot-label">Settings</p>
-        </div>
-      </div>
-      <div class="fx-screenshots-cta">
-        <a class="appstore-badge" href="https://apps.apple.com/nl/app/pulsefx-lot-size-calculator/id6751821638" target="_blank" rel="noopener noreferrer">
-          <svg width="18" height="24" viewBox="0 0 384 512" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
-          <span class="appstore-badge-text">
-            <span>Download on the</span>
-            <span>App Store</span>
-          </span>
-        </a>
-      </div>
-    </section>
-
-    <section class="fx-section" id="features">
+        </div><div class="product-preview" id="screenshots"><div class="product-device"><span class="product-island" aria-hidden="true"></span><span class="product-screen-window"><img id="product-screen" src="/images/product-pulsefx-1.jpg" alt="Lot Size" width="640" height="1387" fetchpriority="high"></span></div><p class="preview-caption" id="preview-caption" aria-live="polite">Lot Size</p><div class="screen-picker" role="group" aria-label="Choose an app screenshot"><button type="button" class="screen-choice" data-screen-src="/images/product-pulsefx-1.jpg" data-screen-label="Lot Size" aria-controls="product-screen" aria-pressed="true">Lot Size</button><button type="button" class="screen-choice" data-screen-src="/images/product-pulsefx-2.jpg" data-screen-label="Compact Mode" aria-controls="product-screen" aria-pressed="false">Compact Mode</button><button type="button" class="screen-choice" data-screen-src="/images/product-pulsefx-3.jpg" data-screen-label="Accounts" aria-controls="product-screen" aria-pressed="false">Accounts</button><button type="button" class="screen-choice" data-screen-src="/images/product-pulsefx-4.jpg" data-screen-label="Trade Notes" aria-controls="product-screen" aria-pressed="false">Trade Notes</button><button type="button" class="screen-choice" data-screen-src="/images/product-pulsefx-5.jpg" data-screen-label="Notifications" aria-controls="product-screen" aria-pressed="false">Notifications</button><button type="button" class="screen-choice" data-screen-src="/images/product-pulsefx-6.jpg" data-screen-label="Notes" aria-controls="product-screen" aria-pressed="false">Notes</button><button type="button" class="screen-choice" data-screen-src="/images/product-pulsefx-7.jpg" data-screen-label="Settings" aria-controls="product-screen" aria-pressed="false">Settings</button></div></div></div></section><div class="container product-layout"><aside class="product-sidebar"><p>PulseFX</p><nav aria-label="On this page"><a href="#appHero">Overview</a><a href="#features">Features</a><a href="#how-it-works">How it works</a><a href="#pricing">Pricing</a><a href="#product-details">More details</a></nav><a class="back-to-apps" href="/#apps">← All apps</a></aside><div class="product-content"><section class="fx-section" id="features">
       <div class="container">
         <div class="fx-section-heading">
           <p class="section-label">Features</p>
@@ -186,8 +66,8 @@
         </div>
 
         <div class="fx-feature-grid">
-          <article class="fx-feature-card feature-green">
-            <h3>Lot Size Calculator</h3>
+          <details class="feature-row" open><summary>Lot Size Calculator</summary><div class="feature-row-body">
+
             <p>
               Instantly calculate the correct lot size based on your selected risk,
               entry, and stop loss.
@@ -197,10 +77,10 @@
               <li>Compact mode for quick use</li>
               <li>Open MetaTrader from the app (iOS only)</li>
             </ul>
-          </article>
+          </div></details>
 
-          <article class="fx-feature-card">
-            <h3>Account Tracking</h3>
+          <details class="feature-row"><summary>Account Tracking</summary><div class="feature-row-body">
+
             <p>
               Track balances, favorites, and goals across your trading accounts in
               one clean setup.
@@ -210,10 +90,10 @@
               <li>More than 5 accounts with Pro</li>
               <li>Charts &amp; insights with Pro</li>
             </ul>
-          </article>
+          </div></details>
 
-          <article class="fx-feature-card">
-            <h3>Notes &amp; Journal</h3>
+          <details class="feature-row"><summary>Notes &amp; Journal</summary><div class="feature-row-body">
+
             <p>
               Keep notes per account and attach context to your trades so your journal
               stays useful over time.
@@ -223,10 +103,10 @@
               <li>Attach screenshots or photos</li>
               <li>Review trades with more context</li>
             </ul>
-          </article>
+          </div></details>
 
-          <article class="fx-feature-card feature-dark">
-            <h3>Alerts &amp; Reports</h3>
+          <details class="feature-row"><summary>Alerts &amp; Reports</summary><div class="feature-row-body">
+
             <p>
               Stay consistent with reminders, free weekly alerts, daily reports, and
               deeper review tools when you upgrade.
@@ -236,82 +116,10 @@
               <li>Daily reminder/report at 20:30</li>
               <li>Weekly R/R report with Pro</li>
             </ul>
-          </article>
+          </div></details>
         </div>
       </div>
-    </section>
-
-    <section class="fx-section">
-      <div class="container">
-        <div class="fx-section-heading">
-          <p class="section-label">Highlights</p>
-          <h2>Built around the real trading workflow.</h2>
-        </div>
-
-        <div class="fx-highlight-grid">
-          <div class="fx-highlight-card">
-            <span class="fx-highlight-kicker">Widgets</span>
-            <h3>Useful tools on your iPhone home screen.</h3>
-            <p>Last Lot Size is available as a widget, with more widget power unlocked through Pro.</p>
-          </div>
-
-          <div class="fx-highlight-card">
-            <span class="fx-highlight-kicker">Pro</span>
-            <h3>More depth when you need it.</h3>
-            <p>Unlock more accounts, higher alert limits, capital movements, charts, widgets, and weekly R/R.</p>
-          </div>
-
-          <div class="fx-highlight-card">
-            <span class="fx-highlight-kicker">Capital</span>
-            <h3>Track deposits and withdrawals per account.</h3>
-            <p>Keep better visibility on funded accounts and personal capital with capital movement tracking in Pro.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="fx-section" id="how-it-works">
-      <div class="container">
-        <div class="fx-section-heading">
-          <p class="section-label">How it works</p>
-          <h2>Simple from setup to review.</h2>
-        </div>
-
-        <div class="fx-steps-grid">
-          <article class="fx-step-card">
-            <span class="fx-step-number">1</span>
-            <h3>Download &amp; setup</h3>
-            <p>Get started on iPhone or Mac and configure your preferences in under a minute.</p>
-          </article>
-
-          <article class="fx-step-card">
-            <span class="fx-step-number">2</span>
-            <h3>Add your account</h3>
-            <p>Create an account for funded trading or personal capital and enter your starting balance.</p>
-          </article>
-
-          <article class="fx-step-card">
-            <span class="fx-step-number">3</span>
-            <h3>Calculate risk</h3>
-            <p>Enter pair, entry, and stop loss to calculate lot size quickly and consistently.</p>
-          </article>
-
-          <article class="fx-step-card">
-            <span class="fx-step-number">4</span>
-            <h3>Log context</h3>
-            <p>Add notes, screenshots, photos, and alerts so every trade is easier to review later.</p>
-          </article>
-
-          <article class="fx-step-card">
-            <span class="fx-step-number">5</span>
-            <h3>Review results</h3>
-            <p>Track balances, charts, alerts, and reports to stay more consistent over time.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="fx-section fx-section-tight" id="pricing">
+    </section><section class="fx-section fx-section-tight" id="pricing">
       <div class="container">
         <div class="fx-section-heading">
           <p class="section-label">Pricing</p>
@@ -354,9 +162,73 @@
 
         </div>
       </div>
-    </section>
+    </section><div class="product-details" id="product-details"><details class="product-disclosure"><summary>Highlights</summary><section id="product-section-1" class="fx-section">
+      <div class="container">
+        <div class="fx-section-heading">
+          <p class="section-label">Highlights</p>
+          <h2>Built around the real trading workflow.</h2>
+        </div>
 
-    <section class="fx-section fx-section-tight">
+        <div class="fx-highlight-grid">
+          <div class="fx-highlight-card">
+            <span class="fx-highlight-kicker">Widgets</span>
+            <h3>Useful tools on your iPhone home screen.</h3>
+            <p>Last Lot Size is available as a widget, with more widget power unlocked through Pro.</p>
+          </div>
+
+          <div class="fx-highlight-card">
+            <span class="fx-highlight-kicker">Pro</span>
+            <h3>More depth when you need it.</h3>
+            <p>Unlock more accounts, higher alert limits, capital movements, charts, widgets, and weekly R/R.</p>
+          </div>
+
+          <div class="fx-highlight-card">
+            <span class="fx-highlight-kicker">Capital</span>
+            <h3>Track deposits and withdrawals per account.</h3>
+            <p>Keep better visibility on funded accounts and personal capital with capital movement tracking in Pro.</p>
+          </div>
+        </div>
+      </div>
+    </section></details><details class="product-disclosure"><summary>How it works</summary><section class="fx-section" id="how-it-works">
+      <div class="container">
+        <div class="fx-section-heading">
+          <p class="section-label">How it works</p>
+          <h2>Simple from setup to review.</h2>
+        </div>
+
+        <div class="fx-steps-grid">
+          <article class="fx-step-card">
+            <span class="fx-step-number">1</span>
+            <h3>Download &amp; setup</h3>
+            <p>Get started on iPhone or Mac and configure your preferences in under a minute.</p>
+          </article>
+
+          <article class="fx-step-card">
+            <span class="fx-step-number">2</span>
+            <h3>Add your account</h3>
+            <p>Create an account for funded trading or personal capital and enter your starting balance.</p>
+          </article>
+
+          <article class="fx-step-card">
+            <span class="fx-step-number">3</span>
+            <h3>Calculate risk</h3>
+            <p>Enter pair, entry, and stop loss to calculate lot size quickly and consistently.</p>
+          </article>
+
+          <article class="fx-step-card">
+            <span class="fx-step-number">4</span>
+            <h3>Log context</h3>
+            <p>Add notes, screenshots, photos, and alerts so every trade is easier to review later.</p>
+          </article>
+
+          <article class="fx-step-card">
+            <span class="fx-step-number">5</span>
+            <h3>Review results</h3>
+            <p>Track balances, charts, alerts, and reports to stay more consistent over time.</p>
+          </article>
+        </div>
+      </div>
+    </section></details><details class="product-disclosure"><summary>About</summary><section id="product-section-4" class="fx-section fx-section-tight">
       <div class="container">
         <div class="fx-section-heading">
           <p class="section-label">About</p>
@@ -419,9 +291,7 @@
           </article>
         </div>
       </div>
-    </section>
-
-    <section class="fx-section fx-section-tight">
+    </section></details><details class="product-disclosure"><summary>Change log</summary><section id="product-section-5" class="fx-section fx-section-tight">
       <div class="container">
         <div class="fx-section-heading">
           <p class="section-label">Change log</p>
@@ -469,9 +339,7 @@
           </article>
         </div>
       </div>
-    </section>
-
-    <section class="fx-section fx-section-tight">
+    </section></details><details class="product-disclosure"><summary>Contact</summary><section id="product-section-6" class="fx-section fx-section-tight">
       <div class="container">
         <div class="fx-section-heading">
           <p class="section-label">Contact</p>
@@ -495,8 +363,7 @@
           </a>
         </div>
       </div>
-    </section>
-  </main>
+    </section></details></div></div></div></main>
 
   <footer class="site-footer">
     <div class="container footer-inner">
@@ -563,5 +430,6 @@
   <script src="/theme.js"></script>
   <script src="/also-by.js"></script>
   <script src="/newsletter-popup.js"></script>
+  <script src="/site-pages.js"></script>
 </body>
 </html>

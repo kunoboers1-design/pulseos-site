@@ -1,0 +1,14 @@
+EXAMPLE — earlier release, not a new announcement.
+
+PulseFX 1.1 — what’s new
+
+This example uses the PulseFX release notes dated February 12, 2026.
+
+- PulseFX is now available on Mac.
+- Added capital movements for funded and personal accounts (Pro).
+- Added support for Turkish and Arabic.
+- Removed the Notion advertisement.
+
+View update: https://apps.apple.com/nl/app/pulsefx-lot-size-calculator/id6751821638
+
+Unsubscribe: {{ unsubscribe }}

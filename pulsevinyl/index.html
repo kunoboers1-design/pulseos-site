@@ -16,7 +16,7 @@
   <meta property="og:url" content="https://pulseos.eu/pulsevinyl/" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles.css" />
   <link rel="icon" type="image/png" href="/pulseos-logo.png" />
   <link rel="apple-touch-icon" href="/pulseos-logo.png" />
@@ -301,8 +301,9 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="/site-pages.css">
 </head>
-<body>
+<body class="site-refresh">
   <header class="site-header">
     <div class="container">
       <nav class="nav-inner">
@@ -310,30 +311,18 @@
         <div class="nav-links">
           <a href="/#apps">Apps</a>
           <a class="pill-btn" href="/support/">Support</a>
-        
+
           <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button>
         </div>
       </nav>
     </div>
   </header>
 
-  <div class="app-bar" id="appBar" aria-hidden="true">
-    <div class="container">
-      <div class="app-bar-inner">
-        <img class="app-bar-icon" src="/images/PulseVN.png" alt="" />
-        <span class="app-bar-name">PulseVinyl</span>
-      </div>
-    </div>
-  </div>
 
-  <main class="fx-page vinyl-page">
 
-    <!-- ─── Hero ─── -->
-    <section class="fx-hero" id="appHero">
-      <div class="container fx-hero-grid">
-        <div class="fx-hero-copy">
+  <main class="fx-page vinyl-page"><section class="fx-hero product-hero" id="appHero"><div class="container product-hero-grid"><div class="fx-hero-copy">
           <p class="eyebrow">PulseVinyl</p>
-          <h1>Your Apple Music library, on vinyl and CD.</h1>
+          <h1>Your music, on record.</h1>
           <p class="fx-lead">
             PulseVinyl scans your Apple Music library and checks every album
             for vinyl and CD availability. See what you own, what's on your
@@ -341,106 +330,12 @@
           </p>
 
           <div class="fx-hero-actions">
-            <a class="hero-button" href="https://apps.apple.com/nl/app/pulse-vinyl/id6772808092" target="_blank" rel="noopener noreferrer">Download on App Store</a>
+            <a class="hero-button" href="https://apps.apple.com/nl/app/pulse-vinyl/id6772808092" target="_blank" rel="noopener noreferrer">Download on the App Store</a>
             <a class="hero-button secondary" href="#features">Explore features</a>
           </div>
 
-          <div class="fx-meta-row">
-            <div class="fx-meta-card">
-              <span class="fx-meta-label">Audience</span>
-              <span class="fx-meta-value">Music, vinyl &amp; CD collectors</span>
-            </div>
-            <div class="fx-meta-card">
-              <span class="fx-meta-label">Platform</span>
-              <span class="fx-meta-value">iPhone</span>
-            </div>
-            <div class="fx-meta-card">
-              <span class="fx-meta-label">Focus</span>
-              <span class="fx-meta-value">Collection tracking</span>
-            </div>
-          </div>
-        </div>
 
-        <div class="fx-phone-hero-wrap">
-          <div class="fx-iphone">
-            <div class="fx-iphone-frame">
-              <div class="fx-iphone-island" aria-hidden="true"></div>
-              <div class="fx-iphone-screen">
-                <img src="/pulsevinyl/1. Home (1290 x 2796 px).png" alt="PulseVinyl home screen" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ─── Screenshots ─── -->
-    <section class="fx-screenshots-section">
-      <div class="fx-screenshots-header container">
-        <span class="section-tag">Screenshots</span>
-        <h2>See the app in action.</h2>
-        <p>Your whole vinyl and CD world, in your pocket.</p>
-      </div>
-      <div class="fx-screenshots-track">
-        <div class="fx-screenshot-item fade-up delay-1">
-          <div class="fx-screenshot-frame">
-            <div class="fx-screenshot-island" aria-hidden="true"></div>
-            <div class="fx-screenshot-screen">
-              <img src="/pulsevinyl/1. Home (1290 x 2796 px).png" alt="Home screen" loading="lazy" />
-            </div>
-          </div>
-          <p class="fx-screenshot-label">Home</p>
-        </div>
-        <div class="fx-screenshot-item fade-up delay-2">
-          <div class="fx-screenshot-frame">
-            <div class="fx-screenshot-island" aria-hidden="true"></div>
-            <div class="fx-screenshot-screen">
-              <img src="/pulsevinyl/2. Library (1290 x 2796 px).png" alt="Library" loading="lazy" />
-            </div>
-          </div>
-          <p class="fx-screenshot-label">Library</p>
-        </div>
-        <div class="fx-screenshot-item fade-up delay-3">
-          <div class="fx-screenshot-frame">
-            <div class="fx-screenshot-island" aria-hidden="true"></div>
-            <div class="fx-screenshot-screen">
-              <img src="/pulsevinyl/3. Album (1290 x 2796 px).png" alt="Album detail" loading="lazy" />
-            </div>
-          </div>
-          <p class="fx-screenshot-label">Album Detail</p>
-        </div>
-        <div class="fx-screenshot-item fade-up delay-4">
-          <div class="fx-screenshot-frame">
-            <div class="fx-screenshot-island" aria-hidden="true"></div>
-            <div class="fx-screenshot-screen">
-              <img src="/pulsevinyl/4. ReleaseRadar (1290 x 2796 px).png" alt="Release Radar" loading="lazy" />
-            </div>
-          </div>
-          <p class="fx-screenshot-label">Release Radar</p>
-        </div>
-        <div class="fx-screenshot-item fade-up delay-5">
-          <div class="fx-screenshot-frame">
-            <div class="fx-screenshot-island" aria-hidden="true"></div>
-            <div class="fx-screenshot-screen">
-              <img src="/pulsevinyl/5. Collection (1290 x 2796 px).png" alt="My Collection" loading="lazy" />
-            </div>
-          </div>
-          <p class="fx-screenshot-label">Collection</p>
-        </div>
-      </div>
-      <div class="fx-screenshots-cta">
-        <a class="appstore-badge" href="https://apps.apple.com/nl/app/pulse-vinyl/id6772808092" target="_blank" rel="noopener noreferrer">
-          <svg width="18" height="24" viewBox="0 0 384 512" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
-          <span class="appstore-badge-text">
-            <span>Download on the</span>
-            <span>App Store</span>
-          </span>
-        </a>
-      </div>
-    </section>
-
-    <!-- ─── Features ─── -->
-    <section class="fx-section" id="features">
+        </div><div class="product-preview" id="screenshots"><div class="product-device"><span class="product-island" aria-hidden="true"></span><img id="product-screen" src="/images/product-pulsevinyl-1.jpg" alt="Home" width="640" height="1387" fetchpriority="high"></div><p class="preview-caption" id="preview-caption" aria-live="polite">Home</p><div class="screen-picker" role="group" aria-label="Choose an app screenshot"><button type="button" class="screen-choice" data-screen-src="/images/product-pulsevinyl-1.jpg" data-screen-label="Home" aria-controls="product-screen" aria-pressed="true">Home</button><button type="button" class="screen-choice" data-screen-src="/images/product-pulsevinyl-2.jpg" data-screen-label="Library" aria-controls="product-screen" aria-pressed="false">Library</button><button type="button" class="screen-choice" data-screen-src="/images/product-pulsevinyl-3.jpg" data-screen-label="Album Detail" aria-controls="product-screen" aria-pressed="false">Album Detail</button><button type="button" class="screen-choice" data-screen-src="/images/product-pulsevinyl-4.jpg" data-screen-label="Release Radar" aria-controls="product-screen" aria-pressed="false">Release Radar</button><button type="button" class="screen-choice" data-screen-src="/images/product-pulsevinyl-5.jpg" data-screen-label="Collection" aria-controls="product-screen" aria-pressed="false">Collection</button></div></div></div></section><div class="container product-layout"><aside class="product-sidebar"><p>PulseVinyl</p><nav aria-label="On this page"><a href="#appHero">Overview</a><a href="#features">Features</a><a href="#how-it-works">How it works</a><a href="#privacy">Privacy</a><a href="#pricing">Pricing</a><a href="#product-details">More details</a></nav><a class="back-to-apps" href="/#apps">← All apps</a></aside><div class="product-content"><section class="fx-section" id="features">
       <div class="container">
         <div class="fx-section-heading">
           <p class="section-label">Features</p>
@@ -449,8 +344,8 @@
 
         <div class="fx-feature-grid fx-feature-grid-3">
 
-          <article class="fx-feature-card feature-vinyl">
-            <h3>Vinyl &amp; CD Availability Scan</h3>
+          <details class="feature-row" open><summary>Vinyl &amp; CD Availability Scan</summary><div class="feature-row-body">
+
             <p>
               Scan your entire Apple Music library and instantly see which
               albums are available on vinyl or CD.
@@ -460,10 +355,10 @@
               <li>Powered by Discogs database</li>
               <li>Availability badge per album</li>
             </ul>
-          </article>
+          </div></details>
 
-          <article class="fx-feature-card">
-            <h3>Owned &amp; Wanted</h3>
+          <details class="feature-row"><summary>Owned &amp; Wanted</summary><div class="feature-row-body">
+
             <p>
               Track your vinyl and CD collection. Mark albums as owned or add
               them to your wanted list and see everything at a glance.
@@ -473,10 +368,10 @@
               <li>Collection overview at a glance</li>
               <li>Up to 10 of each for free</li>
             </ul>
-          </article>
+          </div></details>
 
-          <article class="fx-feature-card">
-            <h3>Barcode Scanner</h3>
+          <details class="feature-row"><summary>Barcode Scanner</summary><div class="feature-row-body">
+
             <p>
               Scan the barcode on a physical record — vinyl or CD — to look
               it up instantly on Discogs and add it to your collection.
@@ -486,10 +381,10 @@
               <li>Add to Owned or Wanted</li>
               <li>Unlimited scans, always free</li>
             </ul>
-          </article>
+          </div></details>
 
-          <article class="fx-feature-card">
-            <h3>Music Recognition</h3>
+          <details class="feature-row"><summary>Music Recognition</summary><div class="feature-row-body">
+
             <p>
               Identify a song playing nearby with Shazam recognition, and
               PulseVinyl checks both the single and its full album.
@@ -499,10 +394,10 @@
               <li>Checks the single and its full album</li>
               <li>Powered by Apple's ShazamKit</li>
             </ul>
-          </article>
+          </div></details>
 
-          <article class="fx-feature-card">
-            <h3>Collection Value</h3>
+          <details class="feature-row"><summary>Collection Value</summary><div class="feature-row-body">
+
             <p>
               Track the estimated market value of your vinyl and CD
               collection based on Discogs pricing data.
@@ -512,10 +407,10 @@
               <li>Per-record pricing</li>
               <li>Powered by Discogs marketplace</li>
             </ul>
-          </article>
+          </div></details>
 
-          <article class="fx-feature-card">
-            <h3>Release Radar</h3>
+          <details class="feature-row"><summary>Release Radar</summary><div class="feature-row-body">
+
             <p>
               Discover upcoming vinyl releases and pre-orders from artists
               already in your Apple Music library.
@@ -525,10 +420,10 @@
               <li>Pre-order alerts</li>
               <li>Never miss a release</li>
             </ul>
-          </article>
+          </div></details>
 
-          <article class="fx-feature-card feature-dark">
-            <h3>Export &amp; CSV</h3>
+          <details class="feature-row"><summary>Export &amp; CSV</summary><div class="feature-row-body">
+
             <p>
               Export your full collection as a CSV file to back it up,
               share it, or use it in any spreadsheet app.
@@ -538,10 +433,10 @@
               <li>Compatible with any spreadsheet app</li>
               <li>Available with Pro</li>
             </ul>
-          </article>
+          </div></details>
 
-          <article class="fx-feature-card">
-            <h3>Home Screen Widgets</h3>
+          <details class="feature-row"><summary>Home Screen Widgets</summary><div class="feature-row-body">
+
             <p>
               Add a PulseVinyl widget to your Home Screen for quick access
               to your collection, without opening the app.
@@ -551,14 +446,80 @@
               <li>Quick access without opening the app</li>
               <li>Built with Apple's WidgetKit</li>
             </ul>
-          </article>
+          </div></details>
 
         </div>
       </div>
-    </section>
+    </section><section id="pricing" class="fx-section fx-section-tight">
+      <div class="container">
+        <div class="fx-section-heading">
+          <p class="section-label">Pricing</p>
+          <h2>Start free, go deeper with Pro.</h2>
+        </div>
 
-    <!-- ─── Highlights ─── -->
-    <section class="fx-section">
+        <div class="vinyl-pricing-grid">
+
+          <div class="vinyl-plan-card">
+            <p class="vinyl-plan-name">Free</p>
+            <div>
+              <span class="vinyl-plan-price">€0</span>
+            </div>
+            <ul class="vinyl-plan-features">
+              <li>10 owned records</li>
+              <li>10 wanted records</li>
+              <li>Unlimited barcode scans</li>
+              <li>Full library scan</li>
+            </ul>
+          </div>
+
+          <div class="vinyl-plan-card">
+            <p class="vinyl-plan-name">Pro Monthly</p>
+            <div>
+              <span class="vinyl-plan-price">€9.99</span>
+              <span class="vinyl-plan-period"> / month</span>
+            </div>
+            <ul class="vinyl-plan-features">
+              <li>Unlimited owned &amp; wanted</li>
+              <li>Collection value tracking</li>
+              <li>Release Radar</li>
+              <li>Export &amp; CSV</li>
+            </ul>
+          </div>
+
+          <div class="vinyl-plan-card vinyl-plan-featured">
+            <span class="vinyl-plan-badge">Best value · save 71%</span>
+            <p class="vinyl-plan-name">Pro Yearly</p>
+            <div>
+              <span class="vinyl-plan-price">€34.99</span>
+              <span class="vinyl-plan-period"> / year</span>
+            </div>
+            <ul class="vinyl-plan-features">
+              <li>7 days free on first subscription</li>
+              <li>Unlimited owned &amp; wanted</li>
+              <li>Collection value tracking</li>
+              <li>Release Radar</li>
+              <li>Export &amp; CSV</li>
+            </ul>
+          </div>
+
+          <div class="vinyl-plan-card">
+            <p class="vinyl-plan-name">Lifetime</p>
+            <div>
+              <span class="vinyl-plan-price">€59.99</span>
+              <span class="vinyl-plan-period"> once</span>
+            </div>
+            <ul class="vinyl-plan-features">
+              <li>Pay once, own forever</li>
+              <li>Unlimited owned &amp; wanted</li>
+              <li>Collection value tracking</li>
+              <li>Release Radar</li>
+              <li>Export &amp; CSV</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </section><div class="product-details" id="product-details"><details class="product-disclosure"><summary>Highlights</summary><section id="product-section-1" class="fx-section">
       <div class="container">
         <div class="fx-section-heading">
           <p class="section-label">Highlights</p>
@@ -586,10 +547,7 @@
 
         </div>
       </div>
-    </section>
-
-    <!-- ─── How it works ─── -->
-    <section class="fx-section" id="how-it-works">
+    </section></details><details class="product-disclosure"><summary>How it works</summary><section class="fx-section" id="how-it-works">
       <div class="container">
         <div class="fx-section-heading">
           <p class="section-label">How it works</p>
@@ -618,10 +576,7 @@
 
         </div>
       </div>
-    </section>
-
-    <!-- ─── Discogs ─── -->
-    <section class="fx-section fx-section-tight">
+    </section></details><details class="product-disclosure"><summary>Powered by Discogs</summary><section id="product-section-3" class="fx-section fx-section-tight">
       <div class="container">
         <div class="fx-section-heading">
           <p class="section-label">Powered by Discogs</p>
@@ -641,10 +596,7 @@
           </a>
         </div>
       </div>
-    </section>
-
-    <!-- ─── Privacy ─── -->
-    <section class="fx-section" id="privacy">
+    </section></details><details class="product-disclosure"><summary>Your music taste is yours.</summary><section class="fx-section" id="privacy">
       <div class="container">
         <div class="fx-section-heading">
           <span class="vinyl-kicker">Privacy by design</span>
@@ -722,82 +674,7 @@
           </div>
         </details>
       </div>
-    </section>
-
-    <!-- ─── Pricing ─── -->
-    <section class="fx-section fx-section-tight">
-      <div class="container">
-        <div class="fx-section-heading">
-          <p class="section-label">Pricing</p>
-          <h2>Start free, go deeper with Pro.</h2>
-        </div>
-
-        <div class="vinyl-pricing-grid">
-
-          <div class="vinyl-plan-card">
-            <p class="vinyl-plan-name">Free</p>
-            <div>
-              <span class="vinyl-plan-price">€0</span>
-            </div>
-            <ul class="vinyl-plan-features">
-              <li>10 owned records</li>
-              <li>10 wanted records</li>
-              <li>Unlimited barcode scans</li>
-              <li>Full library scan</li>
-            </ul>
-          </div>
-
-          <div class="vinyl-plan-card">
-            <p class="vinyl-plan-name">Pro Monthly</p>
-            <div>
-              <span class="vinyl-plan-price">€9.99</span>
-              <span class="vinyl-plan-period"> / month</span>
-            </div>
-            <ul class="vinyl-plan-features">
-              <li>Unlimited owned &amp; wanted</li>
-              <li>Collection value tracking</li>
-              <li>Release Radar</li>
-              <li>Export &amp; CSV</li>
-            </ul>
-          </div>
-
-          <div class="vinyl-plan-card vinyl-plan-featured">
-            <span class="vinyl-plan-badge">Best value · save 71%</span>
-            <p class="vinyl-plan-name">Pro Yearly</p>
-            <div>
-              <span class="vinyl-plan-price">€34.99</span>
-              <span class="vinyl-plan-period"> / year</span>
-            </div>
-            <ul class="vinyl-plan-features">
-              <li>7 days free on first subscription</li>
-              <li>Unlimited owned &amp; wanted</li>
-              <li>Collection value tracking</li>
-              <li>Release Radar</li>
-              <li>Export &amp; CSV</li>
-            </ul>
-          </div>
-
-          <div class="vinyl-plan-card">
-            <p class="vinyl-plan-name">Lifetime</p>
-            <div>
-              <span class="vinyl-plan-price">€59.99</span>
-              <span class="vinyl-plan-period"> once</span>
-            </div>
-            <ul class="vinyl-plan-features">
-              <li>Pay once, own forever</li>
-              <li>Unlimited owned &amp; wanted</li>
-              <li>Collection value tracking</li>
-              <li>Release Radar</li>
-              <li>Export &amp; CSV</li>
-            </ul>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- ─── About ─── -->
-    <section class="fx-section fx-section-tight">
+    </section></details><details class="product-disclosure"><summary>About</summary><section id="product-section-6" class="fx-section fx-section-tight">
       <div class="container">
         <div class="fx-section-heading">
           <p class="section-label">About</p>
@@ -827,10 +704,7 @@
 
         </div>
       </div>
-    </section>
-
-    <!-- ─── Changelog ─── -->
-    <section class="fx-section fx-section-tight">
+    </section></details><details class="product-disclosure"><summary>Change log</summary><section id="product-section-7" class="fx-section fx-section-tight">
       <div class="container">
         <div class="fx-section-heading">
           <p class="section-label">Change log</p>
@@ -865,10 +739,7 @@
           </article>
         </div>
       </div>
-    </section>
-
-    <!-- ─── Contact ─── -->
-    <section class="fx-section fx-section-tight">
+    </section></details><details class="product-disclosure"><summary>Contact</summary><section id="product-section-8" class="fx-section fx-section-tight">
       <div class="container">
         <div class="fx-section-heading">
           <p class="section-label">Contact</p>
@@ -892,9 +763,7 @@
           </a>
         </div>
       </div>
-    </section>
-
-  </main>
+    </section></details></div></div></div></main>
 
   <footer class="site-footer">
     <div class="container footer-inner">
@@ -960,5 +829,6 @@
   <script src="/theme.js"></script>
   <script src="/also-by.js"></script>
   <script src="/newsletter-popup.js"></script>
+  <script src="/site-pages.js"></script>
 </body>
 </html>

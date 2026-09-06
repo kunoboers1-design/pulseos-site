@@ -1,0 +1,22 @@
+/* MARK: - Nieuwsbrief */
+/* Comment NL: De aanmelding is onderdeel van de pagina en neemt nooit de focus over. */
+.newsletter-section { --nl-text: var(--text, var(--white, #f0f0f2)); position: relative; z-index: 1; color: var(--nl-text); border-top: 1px solid var(--line, var(--border)); margin-top: 24px; }
+.newsletter-inner { display: grid; grid-template-columns: 1fr 1.15fr; gap: 70px; width: min(calc(100% - 48px), 1160px); margin: auto; padding: 44px 0; }
+.newsletter-label { font-size: 12px; letter-spacing: 1.3px; text-transform: uppercase; color: var(--muted); }
+.newsletter-copy h2 { font-family: 'Bricolage Grotesque', sans-serif; font-size: clamp(28px, 3.4vw, 40px); line-height: 1.07; letter-spacing: -1px; margin: 14px 0; }
+.newsletter-copy p { color: var(--muted); font-size: 16px; line-height: 1.65; max-width: 370px; }
+.newsletter-email-label { display: block; font-size: 14px; margin-bottom: 9px; }
+.newsletter-email-row { display: flex; gap: 8px; }
+.newsletter-email-row input { min-width: 0; flex: 1; padding: 13px 15px; border: 1px solid var(--line-strong, var(--border)); background: var(--surface, var(--bg)); color: var(--nl-text); border-radius: 10px; font: inherit; font-size: 16px; }
+.newsletter-email-row button { border: 0; border-radius: 10px; background: var(--nl-text); color: var(--bg); font: inherit; font-size: 14px; font-weight: 600; padding: 13px 18px; cursor: pointer; white-space: nowrap; }
+.newsletter-email-row button:disabled { opacity: .55; cursor: wait; }
+.newsletter-apps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 18px; border: 0; padding: 0; margin: 20px 0 16px; }
+.newsletter-apps legend { padding: 0 0 12px; font-size: 13px; color: var(--muted); }
+.newsletter-apps label, .newsletter-releases { display: flex; align-items: center; gap: 7px; cursor: pointer; font-size: 14px; line-height: 1.5; }
+.newsletter-form input[type="checkbox"] { appearance: auto; width: 16px; height: 16px; flex-shrink: 0; accent-color: var(--page-accent, var(--accent)); margin: 0; }
+.newsletter-note { color: var(--muted); font-size: 12px; line-height: 1.6; margin: 16px 0 0; }
+.newsletter-note a { text-decoration: underline; text-underline-offset: 3px; }
+.newsletter-message { font-size: 14px; line-height: 1.5; min-height: 21px; margin: 12px 0 0; }
+.newsletter-section :is(input, button, a):focus-visible { outline: 2px solid var(--page-accent, var(--accent)); outline-offset: 4px; }
+@media (max-width: 760px) { .newsletter-inner { grid-template-columns: 1fr; gap: 22px; padding: 32px 0; } .newsletter-copy p { max-width: none; } }
+@media (max-width: 380px) { .newsletter-email-row { flex-direction: column; } .newsletter-apps { gap: 10px; } }

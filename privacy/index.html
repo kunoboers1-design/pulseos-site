@@ -19,8 +19,9 @@
   <meta property="og:description" content="PulseOS apps are designed to keep data usage minimal, clear, and local to your device." />
   <meta property="og:image" content="https://pulseos.eu/pulseos-logo.png" />
   <meta name="twitter:card" content="summary" />
+  <link rel="stylesheet" href="/site-pages.css">
 </head>
-<body>
+<body class="site-refresh page-privacy">
 
   <header class="site-header">
     <div class="container">
@@ -30,7 +31,7 @@
           <a href="/#apps">Apps</a>
           <a href="/about/">About</a>
           <a class="pill-btn" href="/support/">Contact</a>
-        
+
           <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button>
         </div>
       </nav>
@@ -46,7 +47,7 @@
         <p class="contact-lead">PulseOS apps are designed to keep data usage minimal, clear, and local to your device.</p>
         <p style="font-size:0.82rem; color:var(--muted); opacity:0.6; margin-top:0.5rem;">Last updated: March 23, 2026</p>
       </div>
-    </section>
+    </section><div class="container policy-layout"><aside class="policy-sidebar"><nav aria-label="Privacy contents"><a href="#privacy-topic-1">Overview</a><a href="#privacy-topic-2">What we collect</a><a href="#privacy-topic-3">How data is used</a><a href="#privacy-topic-4">Analytics and tracking</a><a href="#privacy-topic-5">Third parties</a><a href="#privacy-topic-6">Data security</a><a href="#privacy-topic-7">Contact</a><a href="#privacy-topic-8">Changes</a><a href="#privacy-topic-9">PulseVinyl</a><a href="#privacy-topic-10">Apple Music</a><a href="#privacy-topic-11">iCloud / CloudKit</a><a href="#privacy-topic-12">Discogs</a><a href="#privacy-topic-13">MusicBrainz &amp; Cover Art Archive</a><a href="#privacy-topic-14">ShazamKit</a><a href="#privacy-topic-15">Frankfurter</a></nav></aside><div class="policy-content">
 
     <section class="section" style="padding-top: 2rem;">
       <div class="container" style="max-width: 680px;">
@@ -54,45 +55,45 @@
         <div class="fx-info-stack">
 
           <article class="fx-info-card">
-            <h3>Overview</h3>
+            <h3 id="privacy-topic-1">Overview</h3>
             <p>PulseOS respects your privacy. Our apps are built to provide useful functionality without unnecessary data collection, intrusive tracking, or advertising profiles.</p>
           </article>
 
           <article class="fx-info-card">
-            <h3>What we collect</h3>
+            <h3 id="privacy-topic-2">What we collect</h3>
             <p>PulseOS apps are designed to work primarily on your device. Information you enter — such as settings, account values, notes, or preferences — stays local unless clearly stated otherwise.</p>
             <p>We do not intentionally collect unnecessary personal information through our apps.</p>
           </article>
 
           <article class="fx-info-card">
-            <h3>How data is used</h3>
+            <h3 id="privacy-topic-3">How data is used</h3>
             <p>App data is used only to provide the features of the app and support the experience you expect from the product.</p>
             <p>We do not use your data to build marketing profiles or serve targeted advertising.</p>
           </article>
 
           <article class="fx-info-card">
-            <h3>Analytics and tracking</h3>
+            <h3 id="privacy-topic-4">Analytics and tracking</h3>
             <p>PulseOS keeps analytics and tracking to a minimum. We do not use intrusive ad networks or external tracking tools to monitor your personal behavior across apps or websites.</p>
           </article>
 
           <article class="fx-info-card">
-            <h3>Third parties</h3>
+            <h3 id="privacy-topic-5">Third parties</h3>
             <p>We do not sell your personal data to third parties.</p>
             <p>If a PulseOS app uses third-party platform services such as Apple systems or app distribution tools, those services are governed by the privacy terms of the relevant platform provider.</p>
           </article>
 
           <article class="fx-info-card">
-            <h3>Data security</h3>
+            <h3 id="privacy-topic-6">Data security</h3>
             <p>We aim to keep app experiences simple and privacy-conscious. However, no device, software environment, or transmission method can be guaranteed to be completely secure.</p>
           </article>
 
           <article class="fx-info-card">
-            <h3>Contact</h3>
+            <h3 id="privacy-topic-7">Contact</h3>
             <p>Privacy-related questions? Reach out at <a href="mailto:support@pulseos.eu" style="color:var(--accent);">support@pulseos.eu</a></p>
           </article>
 
           <article class="fx-info-card">
-            <h3>Changes</h3>
+            <h3 id="privacy-topic-8">Changes</h3>
             <p>This privacy policy may be updated over time as PulseOS grows. Any updates will be reflected on this page.</p>
           </article>
 
@@ -106,7 +107,7 @@
 
         <div style="margin-bottom: 22px;">
           <span class="section-tag">App-specific</span>
-          <h2 style="margin: 0 0 8px;">PulseVinyl</h2>
+          <h2 id="privacy-topic-9">PulseVinyl</h2>
           <p style="color: var(--muted); line-height: 1.7; margin: 0;">
             PulseVinyl checks your Apple Music library against vinyl release data and tracks
             what you own or want. Here's exactly what each service it relies on receives, why,
@@ -117,42 +118,42 @@
         <div class="fx-info-stack">
 
           <article class="fx-info-card">
-            <h3>Apple Music</h3>
+            <h3 id="privacy-topic-10">Apple Music</h3>
             <p><strong>Receives:</strong> read-only access to your Apple Music library (albums and artists), granted through Apple's MusicKit framework.</p>
             <p><strong>Why:</strong> to match your library against vinyl release data.</p>
             <p><strong>Stored:</strong> processed on your device; PulseOS does not receive your Apple ID or copy your library to its own servers. Governed by <a href="https://www.apple.com/legal/privacy/" target="_blank" rel="noopener noreferrer" style="color:var(--accent);">Apple's privacy policy</a>.</p>
           </article>
 
           <article class="fx-info-card">
-            <h3>iCloud / CloudKit</h3>
+            <h3 id="privacy-topic-11">iCloud / CloudKit</h3>
             <p><strong>Receives:</strong> your owned and wanted records, notes, and other collection details.</p>
             <p><strong>Why:</strong> to sync your collection between your own devices.</p>
             <p><strong>Stored:</strong> in your private iCloud database via Apple's CloudKit — not on a PulseOS server, and not readable by us. Governed by <a href="https://www.apple.com/legal/privacy/" target="_blank" rel="noopener noreferrer" style="color:var(--accent);">Apple's privacy policy</a>.</p>
           </article>
 
           <article class="fx-info-card">
-            <h3>Discogs</h3>
+            <h3 id="privacy-topic-12">Discogs</h3>
             <p><strong>Receives:</strong> the album title, artist name, barcode, or release ID needed to identify a record. If you optionally connect your own Discogs account, that connection is used for the same lookups — not to sync or upload your collection.</p>
             <p><strong>Why:</strong> to check vinyl availability, match barcodes, and estimate collection value from Discogs marketplace pricing.</p>
             <p><strong>Stored:</strong> an optional account's access token is stored securely in your iPhone's Keychain. Governed by <a href="https://www.discogs.com/privacy" target="_blank" rel="noopener noreferrer" style="color:var(--accent);">Discogs' privacy policy</a>.</p>
           </article>
 
           <article class="fx-info-card">
-            <h3>MusicBrainz &amp; Cover Art Archive</h3>
+            <h3 id="privacy-topic-13">MusicBrainz &amp; Cover Art Archive</h3>
             <p><strong>Receives:</strong> the same identifying details (barcode, title, artist) as a fallback when Discogs doesn't have a match.</p>
             <p><strong>Why:</strong> to fill in barcode metadata and album artwork.</p>
             <p><strong>Stored:</strong> not stored by PulseOS beyond the request. Governed by <a href="https://metabrainz.org/privacy" target="_blank" rel="noopener noreferrer" style="color:var(--accent);">MusicBrainz's privacy policy</a>.</p>
           </article>
 
           <article class="fx-info-card">
-            <h3>ShazamKit</h3>
+            <h3 id="privacy-topic-14">ShazamKit</h3>
             <p><strong>Receives:</strong> a short audio sample when you actively use PulseVinyl's music recognition — the microphone is only active during that recognition.</p>
             <p><strong>Why:</strong> to identify a song playing nearby.</p>
             <p><strong>Stored:</strong> PulseVinyl doesn't store the recording. Apple's ShazamKit framework converts it into a one-way acoustic signature that isn't shared back to Apple as audio. Governed by <a href="https://www.apple.com/legal/privacy/" target="_blank" rel="noopener noreferrer" style="color:var(--accent);">Apple's privacy policy</a>.</p>
           </article>
 
           <article class="fx-info-card">
-            <h3>Frankfurter</h3>
+            <h3 id="privacy-topic-15">Frankfurter</h3>
             <p><strong>Receives:</strong> the currency codes needed for a conversion rate.</p>
             <p><strong>Why:</strong> to show estimated collection value in your local currency.</p>
             <p><strong>Stored:</strong> no collection contents, record details, or personal information are included in these requests.</p>
@@ -172,7 +173,7 @@
       </div>
     </section>
 
-  </main>
+  </div></div></main>
 
   <footer class="site-footer">
     <div class="container footer-inner">
@@ -225,5 +226,6 @@
 
   <script src="/theme.js"></script>
   <script src="/newsletter-popup.js"></script>
+  <script src="/site-pages.js"></script>
 </body>
 </html>

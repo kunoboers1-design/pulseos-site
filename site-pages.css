@@ -1,0 +1,216 @@
+/* MARK: - Gedeelde paginastijl */
+/* Comment NL: Subpagina's delen de rustige typografie en directe navigatie van de homepage. */
+body.site-refresh { --max-width: 1160px; --muted: color-mix(in srgb, var(--text) 67%, var(--bg)); background: var(--bg); }
+.site-refresh h1, .site-refresh h2, .site-refresh h3 { font-family: 'Bricolage Grotesque', Inter, sans-serif; }
+.site-refresh :is(a, button, summary):focus-visible { outline: 2px solid var(--page-accent, var(--accent)); outline-offset: 5px; }
+.site-refresh .site-header { background: color-mix(in srgb, var(--bg) 88%, transparent); }
+.site-refresh .nav-links a { font-size: 14px; }
+.site-refresh .fade-up { opacity: 1; transform: none; animation: none; }
+.site-refresh main { padding-top: 0; }
+.site-refresh :is(section, details, h2, h3, #product-details) { scroll-margin-top: 95px; }
+.site-refresh .site-footer { padding: 32px 0; background: transparent; }
+.site-refresh .footer-inner { gap: 24px; }
+.site-refresh .section-tag, .site-refresh .section-label, .site-refresh .eyebrow { font-size: 12px; letter-spacing: 1.2px; }
+
+/* MARK: - Productintro en screenshotkiezer */
+/* Comment NL: Eén compact productbeeld vervangt de losse hero en lange screenshotstrook. */
+.site-refresh .product-hero { padding: 42px 0 48px; min-height: 0; overflow: visible; }
+.site-refresh .product-hero::before { background: radial-gradient(ellipse at 80% 40%, color-mix(in srgb, var(--page-accent, var(--accent)) 9%, transparent), transparent 60%); }
+.product-hero-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(290px, .75fr); align-items: center; gap: 70px; position: relative; }
+.site-refresh .fx-hero-copy { max-width: 660px; }
+.site-refresh .fx-hero-copy h1 { font-size: clamp(38px, 4.8vw, 64px); line-height: 1.02; max-width: 17ch; letter-spacing: -.045em; text-wrap: balance; }
+.site-refresh .fx-lead { font-size: 17px; line-height: 1.7; max-width: 540px; margin-top: 22px; }
+.site-refresh .fx-hero-actions { margin-top: 24px; gap: 12px; }
+.site-refresh .hero-button { font-size: 14px; border-radius: 99px; padding: 13px 19px; min-height: 46px; }
+.site-refresh .hero-button.secondary { box-shadow: none; background: transparent; color: var(--text); border-color: var(--line-strong); }
+.product-preview { display: flex; flex-direction: column; align-items: center; gap: 13px; min-width: 0; }
+.product-device { width: 184px; padding: 6px; border: 2px solid #73747b; background: #111216; border-radius: 31px; position: relative; box-shadow: 0 20px 45px rgba(0,0,0,.22); transform: rotate(3deg); transition: transform .35s; }
+.product-device::after { content: ''; width: 3px; height: 48px; right: -4px; top: 85px; border-radius: 2px; position: absolute; background: #74757b; }
+.product-device img { width: 100%; height: auto; aspect-ratio: 640 / 1387; object-fit: contain; background: #000; border-radius: 23px; }
+.product-island { position: absolute; z-index: 1; width: 48px; height: 13px; top: 15px; left: calc(50% - 24px); border-radius: 99px; background: #020203; pointer-events: none; }
+.product-preview:focus-within .product-device { transform: rotate(0); }
+.preview-caption { margin: 0; color: var(--muted); font-size: 13px; }
+.screen-picker { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; max-width: 365px; }
+.screen-choice { cursor: pointer; font: inherit; font-size: 12px; min-height: 34px; padding: 6px 10px; color: var(--muted); background: transparent; border: 1px solid var(--line-strong); border-radius: 99px; }
+.screen-choice[aria-pressed="true"] { color: var(--text); border-color: var(--page-accent, var(--accent)); background: color-mix(in srgb, var(--page-accent, var(--accent)) 12%, var(--bg)); }
+.screen-choice:hover { color: var(--text); }
+.product-unreleased { min-height: 300px; justify-content: center; background: radial-gradient(ellipse, color-mix(in srgb, var(--page-accent, var(--accent)) 12%, transparent), transparent 70%); }
+.product-unreleased > img { border-radius: 35px; box-shadow: 0 18px 45px rgba(0,0,0,.18); }
+.product-unreleased > p { font-size: 14px; color: var(--muted); }
+
+/* MARK: - Productinhoud */
+/* Comment NL: Een inhoudsopgave en native details maken informatie gericht doorzoekbaar. */
+.product-layout { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 60px; align-items: start; padding-top: 30px; padding-bottom: 50px; border-top: 1px solid var(--line); }
+.product-sidebar { position: sticky; top: 90px; padding: 8px 0; }
+.product-sidebar > p { margin: 0 0 18px; font-size: 16px; font-weight: 700; }
+.product-sidebar nav { display: flex; flex-direction: column; gap: 3px; }
+.product-sidebar nav a { display: block; padding: 9px 12px; color: var(--muted); font-size: 14px; border-radius: 9px; }
+.product-sidebar nav a:hover, .product-sidebar nav a[aria-current="location"] { color: var(--text); background: var(--surface); }
+.back-to-apps { display: inline-block; margin-top: 20px; padding: 10px 0; font-size: 14px; color: var(--muted); }
+.product-content { min-width: 0; }
+.site-refresh .product-content > section { padding: 0 0 32px; }
+.site-refresh .product-content .container { width: 100%; max-width: none; padding: 0; }
+.site-refresh .product-content .fx-section-heading { margin-bottom: 20px; }
+.site-refresh .product-content .fx-section-heading h2 { font-size: 27px; line-height: 1.15; letter-spacing: -.7px; margin: 6px 0 16px; }
+.site-refresh .product-content [class*="feature-grid"] { display: block; }
+.feature-row { border-top: 1px solid var(--line); }
+.feature-row:last-child { border-bottom: 1px solid var(--line); }
+.feature-row summary { padding: 18px 0; font-size: 17px; font-weight: 600; cursor: pointer; display: flex; gap: 18px; align-items: center; list-style: none; }
+.feature-row summary::after, .product-disclosure > summary::after { content: '+'; font-weight: 400; font-size: 22px; margin-left: auto; }
+.feature-row[open] > summary::after, .product-disclosure[open] > summary::after { content: '−'; }
+.feature-row summary::-webkit-details-marker, .product-disclosure > summary::-webkit-details-marker { display: none; }
+.feature-row-body { padding: 0 32px 20px 0; max-width: 700px; font-size: 16px; line-height: 1.7; color: var(--muted); }
+.feature-row-body p { margin-top: 0; }
+.feature-row-body ul { margin: 10px 0 0; padding-left: 20px; }
+.feature-row-body > [class*="icon"] { display: none; }
+.product-details { border-top: 1px solid var(--line); }
+.product-disclosure { border-bottom: 1px solid var(--line); }
+.product-disclosure > summary { display: flex; align-items: center; gap: 18px; list-style: none; cursor: pointer; padding: 20px 0; font-size: 18px; font-weight: 600; }
+.site-refresh .product-disclosure > section { padding: 0 0 24px; }
+.site-refresh .product-disclosure .fx-section-heading { display: none; }
+.site-refresh .product-disclosure :is([class*="highlight-grid"], [class*="steps-grid"], .fx-contact-row) { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; }
+.site-refresh .product-disclosure :is(article, .fx-contact-card) { background: transparent; box-shadow: none; border-radius: 0; border: 0; padding: 14px 0; }
+.site-refresh .product-disclosure article h3 { font-size: 18px; }
+.site-refresh .product-disclosure article p, .site-refresh .product-disclosure article li { font-size: 16px; }
+.site-refresh .product-content :is(.fx-pricing-grid, .vinyl-pricing-grid, .ww-pricing-grid) { width: 100%; max-width: none; gap: 14px; }
+.site-refresh .product-content [class*="pricing-card"] { border-radius: 18px; box-shadow: none; padding: 22px; min-width: 0; }
+.site-refresh .product-content [class*="pricing-price"] { font-size: 32px; }
+
+/* MARK: - About, contact en privacy */
+/* Comment NL: Deze pagina's krijgen een redactionele of functionele indeling met behoud van hun inhoud. */
+.site-refresh .about-hero { padding: 50px 0 35px; }
+.site-refresh .about-hero-grid { grid-template-columns: 1.3fr .7fr; gap: 60px; align-items: center; }
+.site-refresh .about-title, .site-refresh .contact-title { font-size: clamp(36px, 5vw, 60px); }
+.site-refresh .about-photo-wrap { max-width: 300px; justify-self: end; }
+.site-refresh .about-photo { max-height: 360px; width: 100%; object-fit: cover; border-radius: 20px; transform: rotate(2deg); }
+.site-refresh .about-lead { font-size: 17px; }
+.site-refresh .about-meta-label, .site-refresh .about-stat-label { font-size: 12px; }
+.site-refresh .about-page > .section { padding: 35px 0; }
+.site-refresh .about-story-grid { grid-template-columns: 230px 1fr; gap: 60px; border-top: 1px solid var(--line); padding-top: 30px; }
+.site-refresh .about-story-left { position: sticky; top: 90px; align-self: start; }
+.site-refresh .about-story-left h2, .site-refresh .section-header h2 { font-size: 30px; }
+.site-refresh .about-chapter { padding-bottom: 24px; }
+.site-refresh .about-chapter-body p { font-size: 16px; }
+.site-refresh .about-stats-section { padding: 10px 0 25px; }
+.site-refresh .about-stats-grid { border-radius: 0; box-shadow: none; background: transparent; border: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.site-refresh .about-stat-value { font-size: 34px; }
+.site-refresh .about-drive-card { padding: 25px 0; background: transparent; border: 0; box-shadow: none; }
+.site-refresh .about-quote { font-size: 30px; max-width: 750px; }
+.site-refresh .about-apps-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.site-refresh .about-app-link { padding: 16px; border-radius: 14px; box-shadow: none; min-width: 0; }
+.site-refresh .about-contact-card { padding: 25px 0; border-radius: 0; box-shadow: none; background: transparent; border-width: 1px 0 0; }
+.site-refresh .about-contact-card h2 { font-size: 30px; }
+.site-refresh .contact-hero { padding: 45px 0 30px; }
+.site-refresh .contact-hero-inner { max-width: var(--max-width); text-align: left; }
+.site-refresh .contact-lead { max-width: 630px; font-size: 17px; }
+.site-refresh .contact-page { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, .8fr); gap: 0 50px; width: min(calc(100% - 40px), var(--max-width)); margin: auto; padding-bottom: 60px; }
+.site-refresh .contact-page .contact-hero { grid-column: 1 / -1; }
+.site-refresh .contact-page .container { width: 100%; }
+.site-refresh .contact-channels-section, .site-refresh .contact-tips-section { padding: 15px 0; }
+.site-refresh .contact-channel { background: transparent; box-shadow: none; border-radius: 0; border-width: 0 0 1px; padding: 23px 0; }
+.site-refresh .contact-channel-label, .site-refresh .contact-channel-hint { font-size: 12px; opacity: 1; }
+.site-refresh .contact-channel-value { overflow-wrap: anywhere; }
+.site-refresh .contact-tips-card { border: 1px solid var(--line); background: var(--surface); border-radius: 18px; box-shadow: none; padding: 25px; }
+.site-refresh .contact-tips-card h2 { font-size: 24px; }
+.site-refresh .contact-tips-card p, .site-refresh .contact-tips-list li { font-size: 15px; }
+.policy-layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 65px; align-items: start; padding-bottom: 50px; }
+.policy-sidebar { position: sticky; top: 85px; max-height: calc(100vh - 110px); overflow-y: auto; padding: 15px 0; }
+.policy-sidebar nav { display: flex; flex-direction: column; }
+.policy-sidebar a { padding: 6px 0; color: var(--muted); font-size: 13px; }
+.policy-sidebar a:hover { color: var(--text); }
+.policy-content { min-width: 0; max-width: 720px; }
+.site-refresh .policy-content .container { width: 100%; max-width: none !important; }
+.site-refresh .policy-content .fx-info-stack { gap: 0; }
+.site-refresh .policy-content .fx-info-card { background: transparent; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; padding: 20px 0; box-shadow: none; }
+.site-refresh .policy-content .fx-info-card h3 { font-size: 22px; }
+.site-refresh .policy-content .fx-info-card p { font-size: 16px; line-height: 1.8; }
+.site-refresh .policy-content .section { padding-top: 0 !important; padding-bottom: 30px; }
+
+/* MARK: - Verwante apps */
+/* Comment NL: Een compacte rij houdt de andere apps vindbaar zonder een nieuwe presentatie te starten. */
+.site-refresh .also-by-section { padding: 30px 0; }
+.site-refresh .also-by-heading { margin-bottom: 18px; }
+.site-refresh .also-by-heading h2 { color: var(--text); font-size: 25px; }
+.site-refresh .also-by-heading .section-label { color: var(--muted); }
+.site-refresh .also-by-grid { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; }
+.site-refresh .also-by-card { flex: 0 0 185px; padding: 14px; background: var(--surface); border-color: var(--line); }
+.site-refresh .also-by-card-name { color: var(--text); }
+.site-refresh .also-by-card-tagline { color: var(--muted); font-size: 13px; }
+.site-refresh .also-by-card img { width: 32px; height: 32px; border-radius: 8px; }
+
+/* MARK: - Subtiele interactieanimaties */
+/* Comment NL: PulseFX gebruikt korte, eenmalige overgangen; de inhoud en scroll blijven direct bedienbaar. */
+.page-motion .product-screen-window { display: block; overflow: hidden; border-radius: 23px; background: #000; }
+.page-motion .hero-button, .page-motion .screen-choice {
+  transition: transform .2s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.page-motion .hero-button:active, .page-motion .screen-choice:active { transform: scale(.98); }
+.page-motion .product-sidebar nav a { transition: background .2s ease, color .2s ease; }
+.page-motion :is(.feature-row, .product-disclosure) > summary { transition: color .2s ease; }
+.page-motion :is(.feature-row, .product-disclosure) > summary:hover { color: var(--page-accent, var(--accent)); }
+@media (prefers-reduced-motion: no-preference) {
+  .page-motion .fx-hero-copy > .eyebrow { animation: product-arrive .45s both; }
+  .page-motion .fx-hero-copy > h1 { animation: product-arrive .5s .06s both; }
+  .page-motion .fx-hero-copy > .fx-lead { animation: product-arrive .5s .12s both; }
+  .page-motion .fx-hero-actions { animation: product-arrive .5s .18s both; }
+  .page-motion .product-preview { animation: product-arrive .65s .1s both; }
+  .page-motion .feature-row[open] > .feature-row-body,
+  .page-motion .product-disclosure[open] > section { animation: product-expand .24s ease-out; }
+  @media (hover: hover) and (pointer: fine) {
+    .page-motion .hero-button:hover { transform: translateY(-2px); }
+    .page-motion .screen-choice:hover { transform: translateY(-2px); }
+  }
+}
+@keyframes product-arrive {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes product-expand {
+  from { opacity: .35; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* MARK: - Kleinere schermen en bewegingsvoorkeur */
+@media (max-width: 950px) {
+  .product-hero-grid { gap: 30px; grid-template-columns: minmax(0, 1fr) 300px; }
+  .product-layout { grid-template-columns: 150px minmax(0, 1fr); gap: 30px; }
+  .site-refresh .product-content :is(.fx-pricing-grid, .vinyl-pricing-grid) { grid-template-columns: 1fr; }
+  .policy-layout { grid-template-columns: 170px minmax(0, 1fr); gap: 30px; }
+  .site-refresh .contact-page { gap: 25px; }
+}
+@media (max-width: 700px) {
+  .site-refresh .nav-links { gap: 14px; }
+  .site-refresh .nav-links a { font-size: 13px; }
+  .site-refresh .wordmark { font-size: 16px; letter-spacing: 2px; }
+  .site-refresh .pill-btn { padding: 8px 12px; }
+  .site-refresh .product-hero { padding: 32px 0; }
+  .product-hero-grid { grid-template-columns: 1fr; gap: 30px; }
+  .site-refresh .fx-hero-copy h1 { font-size: clamp(36px, 9vw, 52px); max-width: 20ch; }
+  .product-preview { padding-top: 5px; }
+  .product-device { width: 160px; border-radius: 27px; }
+  .product-device img { border-radius: 19px; }
+  .page-motion .product-screen-window { border-radius: 19px; }
+  .product-unreleased { min-height: 210px; }
+  .product-unreleased > img { width: 120px; height: 120px; }
+  .product-layout { display: block; padding-top: 0; }
+  .product-sidebar { position: static; padding: 14px 0 22px; }
+  .product-sidebar > p, .product-sidebar .back-to-apps { display: none; }
+  .product-sidebar nav { flex-direction: row; gap: 4px; overflow-x: auto; padding: 4px; }
+  .product-sidebar nav a { white-space: nowrap; background: var(--surface); font-size: 13px; }
+  .site-refresh .product-disclosure :is([class*="highlight-grid"], [class*="steps-grid"], .fx-contact-row) { grid-template-columns: 1fr; }
+  .site-refresh .product-content .ww-pricing-grid { grid-template-columns: 1fr; }
+  .site-refresh .about-hero-grid { grid-template-columns: 1fr; gap: 25px; }
+  .site-refresh .about-photo-wrap { max-width: 240px; justify-self: start; }
+  .site-refresh .about-photo { max-height: 280px; }
+  .site-refresh .about-story-grid { grid-template-columns: 1fr; gap: 20px; }
+  .site-refresh .about-story-left { position: static; }
+  .site-refresh .about-apps-row { grid-template-columns: 1fr; }
+  .site-refresh .contact-page { display: block; padding-bottom: 35px; }
+  .policy-layout { display: block; }
+  .policy-sidebar { position: static; max-height: 175px; margin-bottom: 24px; border-block: 1px solid var(--line); }
+  .policy-sidebar nav { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .site-refresh *, .site-refresh *::before, .site-refresh *::after { animation: none !important; transition: none !important; }
+}

@@ -1,0 +1,13 @@
+{
+  "app": "pulsefx",
+  "version": "1.1",
+  "example": true,
+  "intro": "This example uses the PulseFX release notes dated February 12, 2026.",
+  "changes": [
+    "PulseFX is now available on Mac.",
+    "Added capital movements for funded and personal accounts (Pro).",
+    "Added support for Turkish and Arabic.",
+    "Removed the Notion advertisement."
+  ],
+  "appStoreUrl": "https://apps.apple.com/nl/app/pulsefx-lot-size-calculator/id6751821638"
+}
