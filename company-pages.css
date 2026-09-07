@@ -50,6 +50,24 @@
 .company-outro h2 { margin-bottom: 10px; }
 .company-outro p:not(.company-kicker) { font-size: 15px; color: var(--muted); margin: 0; }
 
+/* MARK: - Appdownloads */
+/* Comment NL: Eén echt cijfer met een persoonlijk bedankje; geen fictieve statistieken. */
+.maker-downloads { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 45px; margin-top: 34px; padding: 32px; border: 1px solid var(--line-strong); border-radius: 20px; background: radial-gradient(ellipse at 95% 100%, var(--accent-dim), transparent 70%), var(--surface); }
+.downloads-story > p:not(.company-kicker) { max-width: 380px; color: var(--muted); font-size: 14px; line-height: 1.8; }
+.downloads-apps { display: flex; padding-top: 8px; }
+.downloads-apps img { border-radius: 12px; border: 3px solid var(--surface); box-sizing: content-box; margin-right: -7px; transform: rotate(-5deg); }
+.downloads-apps img:nth-child(even) { transform: rotate(5deg); }
+.downloads-metric { align-self: center; min-width: 0; border-left: 1px solid var(--line-strong); padding-left: 38px; }
+.downloads-symbol { display: block; font-size: 32px; color: var(--accent); }
+.downloads-number { margin: 0; font: 700 clamp(38px, 6vw, 78px)/1.15 'Bricolage Grotesque', sans-serif; letter-spacing: -.06em; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.downloads-label { margin: 9px 0; font-size: 15px; font-weight: 600; }
+.downloads-status { margin: 0; color: var(--muted); font: 11px/1.7 'DM Mono', monospace; }
+@media (max-width: 700px) {
+  .maker-downloads { grid-template-columns: 1fr; gap: 24px; padding: 24px; }
+  .downloads-metric { border-left: 0; border-top: 1px solid var(--line-strong); padding: 20px 0 0; }
+  .downloads-number { font-size: clamp(40px, 12vw, 65px); }
+}
+
 /* MARK: - Contact en ondersteuning */
 .help-intro { padding-block: 58px 42px; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .9fr); gap: 75px; align-items: center; }
 .help-email { border-left: 1px solid var(--line-strong); padding: 30px 0 30px 30px; min-width: 0; }
