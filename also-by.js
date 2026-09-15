@@ -27,7 +27,7 @@
     {
       slug: 'pulsereflect',
       name: 'PulseReflect',
-      tagline: 'Daily journaling, mood tracking & self-reflection',
+      tagline: 'Guided reflections & reflection history',
       icon: '/images/PulseRF.png',
       url: '/pulsereflect/',
       live: true,
@@ -203,7 +203,7 @@
               <p class="also-by-card-tagline">${app.tagline}</p>
               <div class="also-by-card-footer">
                 <span class="also-by-badge ${app.live ? 'also-by-badge--live' : 'also-by-badge--soon'}">
-                  ${app.live ? 'Live' : 'Coming soon'}
+                  ${app.live ? 'Live' : app.slug === 'pulselift' ? 'Paused' : 'Coming soon'}
                 </span>
                 <span class="also-by-arrow">→</span>
               </div>

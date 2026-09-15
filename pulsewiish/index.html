@@ -44,7 +44,7 @@
           <p class="eyebrow">PulseWiish</p>
           <h1>Good things, saved.</h1>
           <p class="fx-lead">
-            Add anything you want — via link, photo, or text. Organize in lists. Free up to 20 items, unlimited for a single one-time payment.
+            Save wishes from supported links, photos or text. Organize them in lists and review product details before saving.
           </p>
           <div class="fx-hero-actions">
             <a class="hero-button" href="https://apps.apple.com/nl/app/pulsewiish/id6763711631">Download on the App Store</a>
@@ -60,67 +60,51 @@
 
         <div class="fx-feature-grid">
           <details class="feature-row" open><summary>Add via URL</summary><div class="feature-row-body">
-
-            <p>
-              Paste a product link and we fill in the name, image, and price automatically. Works with any shop.
-            </p>
+            <p>Import available product details from supported product pages, then review or edit the result.</p>
             <ul>
-              <li>Auto-fill from any URL</li>
-              <li>Image, name & price extracted</li>
-              <li>One tap to add</li>
+              <li>Name, image and price where available</li>
+              <li>Import results depend on the source page</li>
             </ul>
           </div></details>
 
           <details class="feature-row"><summary>Add via photo</summary><div class="feature-row-body">
-
-            <p>
-              Pick a photo from your library and save it as a wish. Add a title and price manually — your image, your item.
-            </p>
+            <p>Use a photo or screenshot to add a wish, then review its details.</p>
             <ul>
-              <li>Photo import from library</li>
-              <li>Add title, price &amp; notes manually</li>
-              <li>Instant add to list</li>
+              <li>Add or edit the title, price and notes</li>
             </ul>
           </div></details>
 
           <details class="feature-row"><summary>Add manually</summary><div class="feature-row-body">
-
-            <p>
-              No link? No photo? Just type it. Add anything as a wish — from a concert ticket to a weekend trip.
-            </p>
+            <p>Save a wish without a product link, using a title, price and notes.</p>
             <ul>
-              <li>Free-text entry</li>
-              <li>Any category, any idea</li>
+              <li>Keep ideas and products in one place</li>
             </ul>
           </div></details>
 
-          <details class="feature-row"><summary>Lists & categories</summary><div class="feature-row-body">
-
-            <p>
-              Organize your wishes in separate lists — Birthday, Tech, Home — with fully customizable categories that are yours alone.
-            </p>
+          <details class="feature-row"><summary>Lists &amp; categories</summary><div class="feature-row-body">
+            <p>Organize wishes in multiple lists and categories.</p>
             <ul>
-              <li>Multiple custom lists</li>
-              <li>Your own categories</li>
+              <li>Move wishes between lists and set priorities</li>
+              <li>Mark items as purchased</li>
             </ul>
           </div></details>
         </div>
       </div>
-    </section><section id="pricing" class="fx-section">
+    </section><section id="pricing" data-pricing-app="pulsewiish" class="fx-section">
       <div class="container">
         <div class="fx-section-heading">
           <p class="section-label">Pricing</p>
           <h2>Simple, honest pricing.</h2>
         </div>
 
-        <div class="ww-pricing-grid">
+        <div class="ww-pricing-grid" data-price-grid>
           <div class="ww-pricing-card">
             <div class="ww-pricing-tier">Free</div>
-            <div class="ww-pricing-price">€0</div>
+            <div class="ww-pricing-price">Free</div>
             <div class="ww-pricing-note">forever</div>
             <ul class="ww-pricing-list">
-              <li>Up to 20 items</li>
-              <li>All features included</li>
+              <li>Core wishlist importing</li>
+              <li>List organization</li>
               <li>Multiple lists</li>
               <li>Add via URL, photo or text</li>
               <li>Custom categories</li>
@@ -128,13 +112,12 @@
           </div>
 
           <div class="ww-pricing-card ww-pricing-featured">
-            <div class="ww-pricing-badge">Best value</div>
-            <div class="ww-pricing-tier">Unlimited</div>
-            <div class="ww-pricing-price">€4<span class="ww-pricing-cents">,99</span></div>
-            <div class="ww-pricing-note">one-time payment</div>
+            <div class="ww-pricing-tier">Lifetime</div>
+            <div class="ww-pricing-price price-unavailable" data-price-plan="lifetime">Check price in the app</div>
+            <div class="ww-pricing-note">One-time purchase</div>
             <ul class="ww-pricing-list">
-              <li>Unlimited items</li>
-              <li>Unlimited lists</li>
+              <li>More wish item capacity</li>
+              <li>Multiple lists</li>
               <li>Add via URL, photo or text</li>
               <li>Custom categories</li>
             </ul>
@@ -144,6 +127,8 @@
             </a>
           </div>
         </div>
+        <p class="price-status" data-price-status role="status" aria-live="polite" aria-atomic="true"></p>
+        <p class="price-disclaimer">Prices are based on your selected App Store region and may change at any time. Website prices may not be up to date. Always check the current price shown in the app before purchasing.</p>
       </div>
     </section><div class="product-details" id="product-details"><details class="product-disclosure"><summary>Highlights</summary><section id="product-section-1" class="fx-section">
       <div class="container">
@@ -156,7 +141,7 @@
           <div class="fx-highlight-card">
             <span class="ww-highlight-kicker">Simple</span>
             <h3>Add it in seconds.</h3>
-            <p>Paste a link, drop a screenshot, or just type. Adding a wish takes less than ten seconds.</p>
+            <p>Paste a supported product link, add a photo or enter a wish manually, then review the details.</p>
           </div>
 
           <div class="fx-highlight-card">
@@ -168,7 +153,7 @@
           <div class="fx-highlight-card">
             <span class="ww-highlight-kicker">Clean</span>
             <h3>No noise. No subscriptions.</h3>
-            <p>Free up to 20 items — every feature included. One small payment for unlimited. No monthly fees, no ads, no upsells.</p>
+            <p>Start with core wishlist importing and organization. A one-time Premium purchase adds more item capacity. No subscription.</p>
           </div>
         </div>
       </div>
@@ -225,12 +210,7 @@
 
           <article class="fx-info-card">
             <h3>Privacy</h3>
-            <p>
-              PulseWiish stores your data locally on your device. We do not collect, store, or share personal information.
-            </p>
-            <p>
-              Your wishlist data stays on your device. We do not use ad networks or external tracking tools.
-            </p>
+            <p>Read the <a href="/privacy/">PulseOS Privacy Policy</a> for information about data use and privacy.</p>
           </article>
 
           <article class="fx-info-card">
@@ -266,11 +246,11 @@
             <span class="fx-changelog-version">Version 1.1.0</span>
             <h3>June 2026</h3>
             <ul>
-              <li><strong>Widgets</strong> — Add PulseWiish to your Home Screen. See your most recent wish items at a glance, right from your lock screen or Home Screen.</li>
+              <li><strong>Widgets</strong> — Add PulseWiish to your Home Screen. See your most recent wish items at a glance, on your Home Screen.</li>
               <li><strong>Midnight Luxe Theme</strong> — A new dark theme with a deep purple background, gold accents, and animated card borders. Unlock it with Premium.</li>
-              <li><strong>Premium — Unlimited Items</strong> — Free accounts support up to 20 items. Upgrade once to remove the limit forever. No subscription.</li>
-              <li><strong>Events &amp; Countdown</strong> — Attach an event to any list — a birthday, holiday, or any date that matters. See a live countdown in your Lists tab, with reminders at 7 days, 1 day, and the day itself.</li>
-              <li><strong>Buy Together</strong> — Want something that's too expensive to buy alone? Start a fund, share a code with friends, and track contributions together in real time via iCloud.</li>
+              <li><strong>Premium — Unlimited Items</strong> — A one-time upgrade for more wish item capacity. No subscription.</li>
+              <li><strong>Events &amp; Countdown</strong> — Attach an event to any list — a birthday, holiday, or any date that matters. See a live countdown in your Lists tab, with reminders at 7 days, 1 day, and the day itself when notification permission is enabled.</li>
+              <li><strong>Buy Together</strong> — Track a shared goal, share its code and record contributions using iCloud. Refresh to see the latest recorded contributions. Buy Together does not collect, hold or transfer money.</li>
               <li><strong>Bug Fixes &amp; Improvements</strong> — Various stability improvements and UI refinements.</li>
             </ul>
           </article>
@@ -374,5 +354,6 @@
   <script src="/also-by.js"></script>
   <script src="/newsletter-popup.js"></script>
   <script src="/site-pages.js"></script>
+  <script type="module" src="/pricing.mjs"></script>
 </body>
 </html>

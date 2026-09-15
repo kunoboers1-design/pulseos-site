@@ -1,6 +1,8 @@
 /* PulseOS theme toggle — apply saved theme immediately to prevent flash */
 (function () {
-  var saved = localStorage.getItem('pulse-theme');
+  // Comment NL: Geblokkeerde browseropslag mag de pagina en themaknop niet onderbreken.
+  var saved;
+  try { saved = localStorage.getItem('pulse-theme'); } catch {}
   if (saved) document.documentElement.setAttribute('data-theme', saved);
 })();
 
@@ -28,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
   btn.addEventListener('click', function () {
     var next = getTheme() === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', next);
-    localStorage.setItem('pulse-theme', next);
+    try { localStorage.setItem('pulse-theme', next); } catch {}
     applyIcon(next);
 
     /* Update homepage canvas colours if present */
