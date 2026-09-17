@@ -237,7 +237,7 @@
               </span>` : ''}
               <div class="also-by-card-footer">
                 <span class="also-by-badge ${app.live ? 'also-by-badge--live' : 'also-by-badge--soon'}">
-                  ${app.live ? '<span class="also-by-live-dot" aria-hidden="true"></span>Live' : app.slug === 'pulselift' ? 'Paused' : 'Coming soon'}
+                  ${app.live ? '<span class="also-by-live-dot" aria-hidden="true"></span>Live' : app.slug === 'pulselift' ? 'Soon live' : 'Coming soon'}
                 </span>
                 <span class="also-by-arrow">→</span>
               </div>
