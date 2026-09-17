@@ -213,16 +213,11 @@
       </div>
     `;
 
-    // Insert before the last section in main (contact), or before </main>
-    const main = document.querySelector('main');
-    if (!main) return;
-    const sections = main.querySelectorAll('section');
-    const lastSection = sections[sections.length - 1];
-    if (lastSection) {
-      main.insertBefore(section, lastSection);
-    } else {
-      main.appendChild(section);
-    }
+    // Insert right before the footer — robust regardless of how the page's
+    // own sections are nested (e.g. inside sidebar layouts or <details>).
+    const footer = document.querySelector('.site-footer');
+    if (!footer) return;
+    footer.before(section);
   }
 
   if (document.readyState === 'loading') {
