@@ -148,6 +148,9 @@
         padding-top: 4px;
       }
       .also-by-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
         font-family: 'DM Mono', monospace;
         font-size: 10px;
         letter-spacing: .06em;
@@ -162,6 +165,19 @@
       .also-by-badge--soon {
         background: rgba(255,255,255,.07);
         color: rgba(255,255,255,.3);
+      }
+      .also-by-live-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #30a84a;
+        box-shadow: 0 0 6px 2px rgba(48,168,74,.55);
+        animation: also-by-blink 2s ease infinite;
+        flex-shrink: 0;
+      }
+      @keyframes also-by-blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: .3; }
       }
       .also-by-arrow {
         font-size: 14px;
@@ -203,7 +219,7 @@
               <p class="also-by-card-tagline">${app.tagline}</p>
               <div class="also-by-card-footer">
                 <span class="also-by-badge ${app.live ? 'also-by-badge--live' : 'also-by-badge--soon'}">
-                  ${app.live ? 'Live' : app.slug === 'pulselift' ? 'Paused' : 'Coming soon'}
+                  ${app.live ? '<span class="also-by-live-dot" aria-hidden="true"></span>Live' : app.slug === 'pulselift' ? 'Paused' : 'Coming soon'}
                 </span>
                 <span class="also-by-arrow">→</span>
               </div>
