@@ -87,6 +87,7 @@ function createRegionPicker(regions, id, onSelect) {
       option.setAttribute('role', 'option');
       option.textContent = name;
       option.addEventListener('pointerdown', event => event.preventDefault());
+      option.addEventListener('mousedown', event => event.preventDefault());
       option.addEventListener('click', () => onSelect(name));
       list.append(option);
     });
@@ -103,9 +104,15 @@ function createRegionPicker(regions, id, onSelect) {
   });
   input.addEventListener('input', () => show(input.value));
   input.addEventListener('blur', () => {
-    const exact = regions.find(name => normalize(name) === normalize(input.value));
-    if (exact && exact !== selected) onSelect(exact);
-    else close();
+    // Comment NL: Uitstellen zodat een klik/tik op een optie (die in sommige
+    // browsers vóór deze blur kan komen) eerst de kans krijgt om af te ronden —
+    // anders sluit dit de lijst al voordat de klik op de optie kan vuren.
+    window.setTimeout(() => {
+      if (popup.hidden) return;
+      const exact = regions.find(name => normalize(name) === normalize(input.value));
+      if (exact && exact !== selected) onSelect(exact);
+      else close();
+    }, 0);
   });
   input.addEventListener('keydown', event => {
     if (event.isComposing) return;
