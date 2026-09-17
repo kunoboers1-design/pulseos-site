@@ -167,6 +167,8 @@ body.site-refresh { --max-width: 1160px; --muted: color-mix(in srgb, var(--text)
 .site-refresh .also-by-card-name { color: var(--text); }
 .site-refresh .also-by-card-tagline { color: var(--muted); font-size: 13px; }
 .site-refresh .also-by-card img { width: 32px; height: 32px; border-radius: 8px; }
+.site-refresh .also-by-badge--soon { background: var(--line); color: var(--muted); }
+.site-refresh .also-by-arrow { color: var(--muted); }
 
 /* MARK: - Subtiele interactieanimaties */
 /* Comment NL: PulseFX gebruikt korte, eenmalige overgangen; de inhoud en scroll blijven direct bedienbaar. */

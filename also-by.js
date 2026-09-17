@@ -47,6 +47,7 @@
       icon: '/images/PulseLF.png',
       url: '/pulselift/',
       live: false,
+      progress: 70,
     },
     {
       slug: 'pulsesidequest',
@@ -147,6 +148,19 @@
         margin-top: auto;
         padding-top: 4px;
       }
+      .also-by-progress {
+        height: 4px;
+        border-radius: 99px;
+        background: rgba(255,122,0,.15);
+        overflow: hidden;
+        margin-top: 4px;
+      }
+      .also-by-progress-fill {
+        display: block;
+        height: 100%;
+        border-radius: 99px;
+        background: #FF7A00;
+      }
       .also-by-badge {
         display: inline-flex;
         align-items: center;
@@ -217,6 +231,10 @@
                 <span class="also-by-card-name">${app.name}</span>
               </div>
               <p class="also-by-card-tagline">${app.tagline}</p>
+              ${typeof app.progress === 'number' ? `
+              <span class="also-by-progress" role="progressbar" aria-valuenow="${app.progress}" aria-valuemin="0" aria-valuemax="100" aria-label="${app.name} development progress">
+                <span class="also-by-progress-fill" style="width:${app.progress}%"></span>
+              </span>` : ''}
               <div class="also-by-card-footer">
                 <span class="also-by-badge ${app.live ? 'also-by-badge--live' : 'also-by-badge--soon'}">
                   ${app.live ? '<span class="also-by-live-dot" aria-hidden="true"></span>Live' : app.slug === 'pulselift' ? 'Paused' : 'Coming soon'}
