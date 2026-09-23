@@ -47,6 +47,7 @@
       icon: '/images/PulseLF.png',
       url: '/pulselift/',
       live: false,
+      progress: 70,
     },
     {
       slug: 'pulsesidequest',
@@ -147,7 +148,23 @@
         margin-top: auto;
         padding-top: 4px;
       }
+      .also-by-progress {
+        height: 4px;
+        border-radius: 99px;
+        background: rgba(255,122,0,.15);
+        overflow: hidden;
+        margin-top: 4px;
+      }
+      .also-by-progress-fill {
+        display: block;
+        height: 100%;
+        border-radius: 99px;
+        background: #FF7A00;
+      }
       .also-by-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
         font-family: 'DM Mono', monospace;
         font-size: 10px;
         letter-spacing: .06em;
@@ -162,6 +179,19 @@
       .also-by-badge--soon {
         background: rgba(255,255,255,.07);
         color: rgba(255,255,255,.3);
+      }
+      .also-by-live-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #30a84a;
+        box-shadow: 0 0 6px 2px rgba(48,168,74,.55);
+        animation: also-by-blink 2s ease infinite;
+        flex-shrink: 0;
+      }
+      @keyframes also-by-blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: .3; }
       }
       .also-by-arrow {
         font-size: 14px;
@@ -201,9 +231,13 @@
                 <span class="also-by-card-name">${app.name}</span>
               </div>
               <p class="also-by-card-tagline">${app.tagline}</p>
+              ${typeof app.progress === 'number' ? `
+              <span class="also-by-progress" role="progressbar" aria-valuenow="${app.progress}" aria-valuemin="0" aria-valuemax="100" aria-label="${app.name} development progress">
+                <span class="also-by-progress-fill" style="width:${app.progress}%"></span>
+              </span>` : ''}
               <div class="also-by-card-footer">
                 <span class="also-by-badge ${app.live ? 'also-by-badge--live' : 'also-by-badge--soon'}">
-                  ${app.live ? 'Live' : app.slug === 'pulselift' ? 'Paused' : 'Coming soon'}
+                  ${app.live ? '<span class="also-by-live-dot" aria-hidden="true"></span>Live' : app.slug === 'pulselift' ? 'Soon live' : 'Coming soon'}
                 </span>
                 <span class="also-by-arrow">→</span>
               </div>
@@ -213,16 +247,11 @@
       </div>
     `;
 
-    // Insert before the last section in main (contact), or before </main>
-    const main = document.querySelector('main');
-    if (!main) return;
-    const sections = main.querySelectorAll('section');
-    const lastSection = sections[sections.length - 1];
-    if (lastSection) {
-      main.insertBefore(section, lastSection);
-    } else {
-      main.appendChild(section);
-    }
+    // Insert right before the footer — robust regardless of how the page's
+    // own sections are nested (e.g. inside sidebar layouts or <details>).
+    const footer = document.querySelector('.site-footer');
+    if (!footer) return;
+    footer.before(section);
   }
 
   if (document.readyState === 'loading') {

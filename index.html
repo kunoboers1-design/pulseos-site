@@ -893,6 +893,8 @@ footer a:hover { color: var(--white); }
   padding: 4px 10px; border-radius: 100px;
   width: fit-content;
 }
+.roadmap-progress { height: 4px; border-radius: 99px; background: rgba(255,122,0,.15); overflow: hidden; }
+.roadmap-progress-fill { display: block; height: 100%; border-radius: 99px; background: #FF7A00; }
 
 /* ── IDEA SECTION ── */
 .idea-section {
@@ -1252,7 +1254,7 @@ footer a:hover { color: var(--white); }
       <span class="tile-arrow" aria-hidden="true">↗</span>
     </a>
   </div>
-  <a class="catalog-hold" href="/pulselift/"><img src="/images/PulseLF.png" alt="" width="32" height="32" loading="lazy"><span><strong>PulseLift</strong><span class="hold-description"> Workout tracking, at your pace.</span></span><span class="hold-status">Paused</span><span aria-hidden="true">↗</span></a>
+  <a class="catalog-hold" href="/pulselift/"><img src="/images/PulseLF.png" alt="" width="32" height="32" loading="lazy"><span><strong>PulseLift</strong><span class="hold-description"> Workout tracking, at your pace.</span></span><span class="hold-status">Soon live</span><span aria-hidden="true">↗</span><span class="hold-progress" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" aria-label="PulseLift development progress"><span class="hold-progress-fill" style="width:70%"></span></span></a>
 </section>
 
 <!-- ── ROADMAP ── -->
@@ -1268,6 +1270,7 @@ footer a:hover { color: var(--white); }
         </div>
         <div class="roadmap-name">Pulse Sleep</div>
         <div class="roadmap-desc">Track your sleep, set a wind-down routine, and understand your rest patterns over time.</div>
+        <span class="roadmap-progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Pulse Sleep development progress"><span class="roadmap-progress-fill" style="width:0%"></span></span>
         <span class="roadmap-tag">Coming soon</span>
       </div>
       <div class="roadmap-card">
@@ -1276,6 +1279,7 @@ footer a:hover { color: var(--white); }
         </div>
         <div class="roadmap-name">Pulse Finance</div>
         <div class="roadmap-desc">Personal finance tracking and control. Know exactly where your money goes every month.</div>
+        <span class="roadmap-progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Pulse Finance development progress"><span class="roadmap-progress-fill" style="width:0%"></span></span>
         <span class="roadmap-tag">Coming soon</span>
       </div>
       <div class="roadmap-card">
@@ -1284,6 +1288,7 @@ footer a:hover { color: var(--white); }
         </div>
         <div class="roadmap-name">Pulse Library</div>
         <div class="roadmap-desc">Build your reading list, log notes per book, and track your progress through every read.</div>
+        <span class="roadmap-progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Pulse Library development progress"><span class="roadmap-progress-fill" style="width:0%"></span></span>
         <span class="roadmap-tag">Coming soon</span>
       </div>
       <div class="roadmap-card">
@@ -1292,6 +1297,7 @@ footer a:hover { color: var(--white); }
         </div>
         <div class="roadmap-name">Pulse Subscriptions</div>
         <div class="roadmap-desc">Monitor all your subscriptions in one place. No more forgotten charges.</div>
+        <span class="roadmap-progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Pulse Subscriptions development progress"><span class="roadmap-progress-fill" style="width:0%"></span></span>
         <span class="roadmap-tag">Coming soon</span>
       </div>
     </div>
