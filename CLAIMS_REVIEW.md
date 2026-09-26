@@ -37,6 +37,8 @@ De bestaande vormgeving, HTML-sectie-indeling en uitklapbare featurekaarten blij
 | PulseSideQuest | 92 quests; vijf Queue-items; exacte tijdsbudgetten 5/15/30 minuten; nieuwe exacte moodlabels en alle instelbare Quest Studio-velden. |
 | PulseLifts / PulseHabits | Geen van de beschreven ontwikkelfuncties wordt als uitgebracht gepresenteerd. Er is geen lancering, beschikbaarheidsdatum of definitieve prijs toegevoegd. |
 
+PulseReflect 1.1.0 (27 september 2026) brengt scorevergelijking over tijd uit als Premium-functie; de overige Reflect-punten hierboven blijven voorbehouden.
+
 PulseWiish 1.2.0 (26 september 2026) heeft PDF-/CSV-export, spaargeschiedenis en deposit tracking en smart collections als Pro-functies uitgebracht; die staan daarom niet meer op deze lijst.
 
 Vervolgverificatie vraagt per claim een concrete uitgebrachte versie/build en controle van die publieke versie. Een lokale route of Pro-gate alleen is daarvoor onvoldoende. Bovenstaande lijst is een releasevoorbehoud, geen aankondiging van toekomstige functionaliteit.
