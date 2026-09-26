@@ -4,7 +4,7 @@ De automatische pop-up is vervangen door een vast formulier bij de footer. Op ee
 
 ## Huidige status
 
-De interface, API-routering en lokale mailopmaak zijn gereed. De nieuwe Brevo-lijsten en Cloudflare-instelling moeten vóór publicatie worden ingesteld. Automatische releaseherkenning en het versturen van campagnes zijn nog niet geactiveerd. De lokale Python-preview voert de Cloudflare-functie niet uit; daarmee is geen echte aanmelding getest.
+De interface, API-routering met double opt-in, bevestigingspagina, privacytekst en lokale mailopmaak zijn gereed. De nieuwe Brevo-lijsten, de bevestigingstemplate en de Cloudflare-instellingen moeten vóór publicatie worden ingesteld. Automatische releaseherkenning en het versturen van campagnes zijn nog niet geactiveerd. De lokale Python-preview voert de Cloudflare-functie niet uit; daarmee is geen echte aanmelding getest.
 
 ## Brevo instellen
 
@@ -17,6 +17,16 @@ Maak één afzonderlijke lijst per app en één lijst voor nieuwe appaankondigin
 Gebruik verschillende lijst-ID's; zo ontvangt iemand alleen de gekozen onderwerpen. Bewaar de bestaande `BREVO_API_KEY` als geheim. `BREVO_LIST_ID` blijft beschikbaar voor oudere, gecachte formulieren. De API meldt een fout als een geselecteerd onderwerp nog geen geldige lijst heeft; een ontbrekende koppeling wordt niet als succesvolle aanmelding gepresenteerd.
 
 Bestaande algemene contacten krijgen niet automatisch een appvoorkeur. Houd de oude lijst afzonderlijk; verzend appupdates naar de specifieke applijst. Brevo voegt via `listIds` lidmaatschappen toe en behoudt bestaande lijstlidmaatschappen. Nieuwe formulieren overschrijven het oude PREFERENCES-attribuut niet.
+
+## Double opt-in instellen
+
+Aanmeldingen lopen via Brevo's double opt-in (`/v3/contacts/doubleOptinConfirmation`). Brevo stuurt eerst een bevestigingsmail; pas na een klik op de link komt het contact op de gekozen lijsten. Daarna stuurt Brevo de bezoeker naar `https://pulseos.eu/subscribed/`.
+
+1. Maak in Brevo een transactionele template aan (Templates → New template) met de tag `optin`.
+2. Zet in de mail een knop of link met als URL `{{ doubleoptin }}`.
+3. Activeer de template en zet de numerieke template-ID in de Cloudflare Pages-omgevingsvariabele `BREVO_DOI_TEMPLATE_ID`.
+
+Zonder geldige `BREVO_DOI_TEMPLATE_ID` geeft de API een 503; er wordt dan niemand stilletjes zonder bevestiging aangemeld.
 
 ## Een update-mail voorbereiden
 

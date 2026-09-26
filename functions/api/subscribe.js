@@ -1,9 +1,12 @@
 // MARK: - Nieuwsbriefaanmelding
 // Comment NL: Elke gekozen app heeft een eigen Brevo-lijst; bestaande inschrijvingen blijven behouden.
+// Comment NL: Double opt-in: Brevo zet iemand pas op de lijsten nadat de link in de bevestigingsmail is aangeklikt.
 // BREVO_API_KEY: bestaande geheime API-sleutel in Cloudflare.
+// BREVO_DOI_TEMPLATE_ID: numerieke ID van de Brevo-bevestigingstemplate (met tag optin en de link {{ doubleoptin }}).
 // BREVO_TOPIC_LIST_IDS: JSON-object met numerieke lijst-ID's per app en de optionele sleutel releases.
 // BREVO_LIST_ID: bestaande algemene lijst, alleen voor oudere formulieren zonder apps-veld.
-const BREVO_API = 'https://api.brevo.com/v3/contacts';
+const BREVO_API = 'https://api.brevo.com/v3/contacts/doubleOptinConfirmation';
+const CONFIRMED_URL = 'https://pulseos.eu/subscribed/';
 const APPS = new Set(['pulsefx', 'pulsevinyl', 'pulserecipes', 'pulsesidequest', 'pulsereflect', 'pulsewiish', 'pulselift', 'pulsehabits']);
 const PREFERENCES = new Set(['updates', 'releases']);
 const validListId = value => Number.isSafeInteger(Number(value)) && Number(value) > 0;
@@ -18,7 +21,7 @@ export async function onRequestPost({ request, env }) {
   if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return reply(400, { error: 'Invalid email' });
   const preferences = body.preferences ?? [];
   if (!Array.isArray(preferences) || preferences.some(value => !PREFERENCES.has(value))) return reply(400, { error: 'Invalid preferences' });
-  if (!env.BREVO_API_KEY) return reply(503, { error: 'Subscriptions are temporarily unavailable' });
+  if (!env.BREVO_API_KEY || !validListId(env.BREVO_DOI_TEMPLATE_ID)) return reply(503, { error: 'Subscriptions are temporarily unavailable' });
 
   let listIds;
   let attributes;
@@ -43,10 +46,10 @@ export async function onRequestPost({ request, env }) {
     const response = await fetch(BREVO_API, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'api-key': env.BREVO_API_KEY },
-      body: JSON.stringify({ email, listIds, updateEnabled: true, ...(attributes ? { attributes } : {}) }),
+      body: JSON.stringify({ email, includeListIds: listIds, templateId: Number(env.BREVO_DOI_TEMPLATE_ID), redirectionUrl: CONFIRMED_URL, ...(attributes ? { attributes } : {}) }),
       signal: AbortSignal.timeout(10000)
     });
-    if (response.status === 201 || response.status === 204) return reply(200, { ok: true });
+    if (response.status === 201 || response.status === 204) return reply(200, { ok: true, pending: true });
     return reply(502, { error: 'Could not save your subscription. Please try again later.' });
   } catch {
     return reply(502, { error: 'Could not save your subscription. Please try again later.' });

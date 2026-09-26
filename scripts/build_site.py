@@ -7,7 +7,7 @@ import shutil
 ROOT = Path(__file__).resolve().parents[1]
 DEST = ROOT / "dist"
 PAGES = ("about", "privacy", "support", "pulsefx", "pulsehabits", "pulselift",
-         "pulserecipes", "pulsereflect", "pulsesidequest", "pulsevinyl", "pulsewiish")
+         "pulserecipes", "pulsereflect", "pulsesidequest", "pulsevinyl", "pulsewiish", "subscribed")
 ASSETS = {".html", ".css", ".js", ".mjs", ".png", ".jpg", ".jpeg", ".webp", ".svg", ".ico", ".woff", ".woff2"}
 
 

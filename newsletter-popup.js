@@ -36,7 +36,7 @@
             ${apps.map(([id, name]) => `<label><input type="checkbox" name="app" value="${id}" ${current?.[0] === id ? 'checked' : ''}> ${name}</label>`).join('')}
           </fieldset>
           <label class="newsletter-releases"><input type="checkbox" name="releases"> Also tell me about new PulseOS apps</label>
-          <p class="newsletter-note">Only the news you choose. Unsubscribe from any email. <a href="/privacy/">Privacy</a></p>
+          <p class="newsletter-note">Only the news you choose. We’ll ask you to confirm by email. Unsubscribe anytime. <a href="/privacy/">Privacy</a></p>
           <p class="newsletter-message" role="status" aria-live="polite"></p>
         </form>
       </div>`;
@@ -65,7 +65,7 @@
         });
         const result = await response.json();
         if (!response.ok || !result.ok) throw new Error('subscribe-failed');
-        message.textContent = 'You’re on the list. We’ll email you when there’s news for your choices.';
+        message.textContent = 'Almost there. Check your inbox and tap the link to confirm.';
         form.reset();
       } catch {
         message.textContent = 'We couldn’t save your subscription. Please try again later.';
