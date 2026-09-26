@@ -33,9 +33,11 @@ De bestaande vormgeving, HTML-sectie-indeling en uitklapbare featurekaarten blij
 | PulseVinyl | Full Rescan; uitgebreide collectie-inzichten als aparte Pro-feature; conditie- en aankoopdetails; nieuwe Pro-labels voor persoonlijke notities; een nieuwe marketingclaim over valutakeuze. De precieze Radar-artiestenbron, recente/toekomstige Apple Music-releases en release-day alerts blijven volledig buiten de copy. |
 | PulseRecipes | OCR/import van recepttekst uit foto's; gratis handmatige shopping checklists als nieuw beschreven feature; vijf extra foto's; automatisch samenvoegen van gelijke ingrediënten; nieuwe exacte sorteeropties en planlimieten. |
 | PulseReflect | Scorevragen en score-overzichten als nieuwe expliciete functies; zelf vragen aanpassen, antwoordtype 1–10 en verplichte vragen; vijf vragen per level; maand-/kwartaal-/jaarlevels; onbeperkte custom vragen; optionele iCloud-sync als nieuwe feature; Monday insights digest. |
-| PulseWiish | OCR-uitbreiding van bestaande items; PDF-/CSV-export; spaargeschiedenis en deposit tracking; smart collections; nieuwe thema’s Standard/Ember/Aurora/Rose/Forest en hun planindeling; exacte definitie van niet-verwijderde items. |
+| PulseWiish | OCR-uitbreiding van bestaande items; nieuwe thema’s Standard/Ember/Aurora/Rose/Forest en hun planindeling; exacte definitie van niet-verwijderde items. |
 | PulseSideQuest | 92 quests; vijf Queue-items; exacte tijdsbudgetten 5/15/30 minuten; nieuwe exacte moodlabels en alle instelbare Quest Studio-velden. |
 | PulseLifts / PulseHabits | Geen van de beschreven ontwikkelfuncties wordt als uitgebracht gepresenteerd. Er is geen lancering, beschikbaarheidsdatum of definitieve prijs toegevoegd. |
+
+PulseWiish 1.2.0 (26 september 2026) heeft PDF-/CSV-export, spaargeschiedenis en deposit tracking en smart collections als Pro-functies uitgebracht; die staan daarom niet meer op deze lijst.
 
 Vervolgverificatie vraagt per claim een concrete uitgebrachte versie/build en controle van die publieke versie. Een lokale route of Pro-gate alleen is daarvoor onvoldoende. Bovenstaande lijst is een releasevoorbehoud, geen aankondiging van toekomstige functionaliteit.
 
