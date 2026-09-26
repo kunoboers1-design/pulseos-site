@@ -8,6 +8,12 @@ De interface, API-routering met double opt-in, bevestigingspagina, privacytekst 
 
 ## Brevo instellen
 
+Snelste route: laat het script de lijsten aanmaken en de JSON voor Cloudflare printen. Het hergebruikt lijsten met dezelfde naam, dus nog een keer draaien maakt geen dubbele lijsten aan.
+
+```sh
+BREVO_API_KEY=xkeysib-... node scripts/create-brevo-lists.mjs
+```
+
 Maak één afzonderlijke lijst per app en één lijst voor nieuwe appaankondigingen. Zet de echte numerieke lijst-ID's in de Cloudflare Pages-omgevingsvariabele `BREVO_TOPIC_LIST_IDS`, als JSON met deze sleutels:
 
 - `pulsefx`, `pulsevinyl`, `pulserecipes`, `pulsesidequest`
