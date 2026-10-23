@@ -19,6 +19,7 @@ const APP_IDS = new Set([
   '6760773764', // PulseRecipes
   '6763062516', // PulseReflect
   '6763711631', // PulseWiish
+  '6804146767', // PulseSideQuest
 ]);
 
 const LAUNCH_YEAR = 2024;

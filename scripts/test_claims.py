@@ -52,7 +52,7 @@ def main():
         'pulsevinyl': r'pre-orders?|pre-order alerts|never miss|always first|unlimited scans|always free|\b10 (owned|wanted)|days free',
         'pulserecipes': r'any recipe site|any website|20 recipes|extra photos|import recipe text from photos',
         'pulsereflect': r'free.writ|unlimited entries|mood tracking|mood logs|morning and evening modes|monthly look-back|Monday|quarterly|unlimited custom questions',
-        'pulsewiish': r'any shop|any URL|all features included|every feature included|\b20 items|real.time|lock screen|Aurora|Rose and Forest|PDF and CSV exports|smart collections',
+        'pulsewiish': r'any shop|any URL|all features included|every feature included|\b20 items|real.time|lock screen|Aurora|Rose and Forest',
         'pulsesidequest': r'\b(72|92)\b|unlimited custom sidequests|up to five|5-, 15- or 30-minute',
         'pulselift': r'1RM|filter by equipment|coming soon',
         'pulsehabits': r'coming soon',
