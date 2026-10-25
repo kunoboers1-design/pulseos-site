@@ -4,8 +4,8 @@ import { mapSnapshot, RECORD_TYPES } from './mapper.mjs';
 const companions = names => names.flatMap(name => [name, `${name}_ckAsset`]);
 export const DESIRED_KEYS = Object.freeze({
   CD_Account: ['CD_id', 'CD_entityName', ...companions(['CD_name', 'CD_currencyRaw', 'CD_kindRaw']), 'CD_balance', 'CD_startBalance', 'CD_isArchived', 'CD_isFavorite', 'CD_createdAt', 'CD_archivedAt'],
-  CD_Trade: ['CD_id', 'CD_entityName', 'CD_account', ...companions(['CD_pair', 'CD_outcomeRaw']), 'CD_lotSize', 'CD_riskPercent', 'CD_profitLoss', 'CD_createdAt', 'CD_closedAt'],
-  CD_OpenTrade: ['CD_id', 'CD_entityName', 'CD_linkedAccountId', ...companions(['CD_symbol', 'CD_statusRaw', 'CD_resultRaw', 'CD_directionRaw']), 'CD_lotSize', 'CD_riskPercent', 'CD_profitLoss', 'CD_openedAt', 'CD_closedAt'],
+  CD_Trade: ['CD_id', 'CD_entityName', 'CD_account', ...companions(['CD_pair', 'CD_outcomeRaw']), 'CD_lotSize', 'CD_riskPercent', 'CD_profitLoss', 'CD_stopLossPips', 'CD_pipValue', 'CD_createdAt', 'CD_closedAt'],
+  CD_OpenTrade: ['CD_id', 'CD_entityName', 'CD_linkedAccountId', ...companions(['CD_symbol', 'CD_statusRaw', 'CD_resultRaw', 'CD_directionRaw']), 'CD_lotSize', 'CD_riskPercent', 'CD_profitLoss', 'CD_finalRR', 'CD_entryPrice', 'CD_stopLossPlacement', 'CD_actualExitPrice', 'CD_openedAt', 'CD_closedAt'],
 });
 const allowedErrors = new Set(['AUTHENTICATION_REQUIRED', 'AUTHENTICATION_FAILED', 'ACCESS_DENIED', 'ZONE_NOT_FOUND', 'UNKNOWN_ITEM', 'BAD_REQUEST', 'INVALID_ARGUMENTS', 'QUOTA_EXCEEDED', 'SERVICE_UNAVAILABLE', 'NETWORK_ERROR', 'REQUEST_RATE_LIMITED', 'CONFIGURATION_ERROR', 'MANAGED_ACCOUNT_RESTRICTED']);
 

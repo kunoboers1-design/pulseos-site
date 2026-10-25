@@ -1,3 +1,11 @@
 dist/
 __pycache__/
 *.csv
+node_modules/
+.env
+.env.*
+!.env.example
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.p8

@@ -1,0 +1,9 @@
+**
+!services/
+!services/pulsefx-premium/
+!services/pulsefx-premium/*.mjs
+!services/pulsefx-premium/package.json
+!services/pulsefx-premium/package-lock.json
+!pulsefx/
+!pulsefx/app/
+!pulsefx/app/statistics.mjs

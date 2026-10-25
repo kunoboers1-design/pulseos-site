@@ -1,0 +1,29 @@
+/* MARK: - Wachtwoordscherm in de bestaande PulseOS-huisstijl */
+.access-page { min-height: 100vh; margin: 0; display: flex; flex-direction: column; background: var(--bg, #08080a); color: var(--text, #f5f5f5); }
+.access-page header, .access-page footer { width: min(1120px, calc(100% - 40px)); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 24px 0; }
+.access-brand { font-size: 1.6rem; font-weight: 800; text-decoration: none; letter-spacing: -.04em; }
+.access-brand span { color: var(--accent, #ff7a00); }
+.access-page main { flex: 1; display: grid; place-items: center; padding: 40px 20px 72px; }
+.access-card { width: 100%; max-width: 480px; padding: clamp(24px, 5vw, 44px); border: 1px solid var(--line, #29292d); border-radius: 24px; background: var(--surface, #121214); box-sizing: border-box; }
+.access-eyebrow { color: var(--accent, #ff7a00); letter-spacing: .18em; font-size: .7rem; font-weight: 700; }
+.access-card h1 { font-size: clamp(2rem, 5vw, 2.8rem); line-height: 1.08; letter-spacing: -.05em; margin: 18px 0; }
+.access-card p { line-height: 1.65; color: var(--muted, #a0a0aa); }
+.access-card .access-eyebrow { color: var(--accent, #ff7a00); }
+.access-card form { display: grid; gap: 12px; margin-top: 28px; }
+.access-card label { font-size: .85rem; font-weight: 600; }
+.access-card input { width: 100%; box-sizing: border-box; padding: 14px; min-height: 48px; border: 1px solid var(--line-strong, #44444c); border-radius: 10px; color: var(--text, #f5f5f5); background: var(--bg, #08080a); font: inherit; }
+.access-card button { margin-top: 6px; display: flex; justify-content: space-between; gap: 16px; padding: 15px 18px; min-height: 48px; border: 0; border-radius: 10px; background: var(--accent, #ff7a00); color: #111; font: inherit; font-weight: 700; cursor: pointer; }
+.access-card button:disabled, .access-card input:disabled { opacity: .5; cursor: default; }
+.access-page :is(input, button, a):focus-visible { outline: 2px solid var(--accent, #ff7a00); outline-offset: 4px; }
+.access-caption, .access-page footer { font-size: .8rem; color: var(--muted, #a0a0aa); }
+.access-notice { border-left: 3px solid var(--accent, #ff7a00); padding: 12px 14px; background: var(--bg, #08080a); border-radius: 4px 10px 10px 4px; overflow-wrap: anywhere; }
+.access-back, .access-secondary { display: inline-block; padding: 12px 0; color: var(--muted, #a0a0aa); font-size: .85rem; }
+.access-page footer { border-top: 1px solid var(--line, #29292d); }
+html[data-theme="light"] .access-card { background: #fff; border-color: #dedee3; }
+html[data-theme="light"] .access-card :is(input, .access-notice) { background: #f5f5f7; color: #202024; }
+@media (max-width: 400px) { .access-page main { padding: 20px 16px 40px; } .access-page footer { flex-direction: column; align-items: flex-start; gap: 4px; } }
+/* Comment NL: Oranje PulseFX-accent en leesbare tekst in beide modi. */
+.access-page { --accent: #ff7a00; --muted: #aaaab2; color-scheme: dark; }
+.access-page .theme-toggle { width: auto; min-width: 118px; min-height: 44px; padding: 10px 14px; gap: 8px; font-size: .82rem; color: var(--text); }
+html[data-theme="light"] .access-page { --accent: #b34d00; --muted: #60606a; color-scheme: light; }
+html[data-theme="light"] .access-card button { color: #fff; }

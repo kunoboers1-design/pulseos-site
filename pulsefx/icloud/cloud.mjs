@@ -1,3 +1,6 @@
+import { mountPremium } from './premium.mjs';
+const premium = mountPremium(document.getElementById('premium-statistics'));
+
 import { createReader, readOnlyFetch, deadline, errorCode, isAuthError } from './reader.mjs';
 
 // MARK: - Veilige DOM-weergave
@@ -27,6 +30,7 @@ const describe = code => messages[code] || `The read could not be completed (${c
 
 // MARK: - Sessie-isolatie
 function clearView() {
+  premium.clear();
   state.reader?.cancel(); state.reader = null; state.generation++; state.busy = false;
   state.zones = []; state.snapshot = null; state.stale = false;
   $('zone').replaceChildren(); $('zone-panel').hidden = true; $('results').hidden = true;
@@ -127,6 +131,7 @@ async function readSelected() {
   if (!state.identity || !selected || $('zone').value === '' || state.busy) return;
   const generation = ++state.generation;
   const reader = makeReader();
+  premium.setSnapshot(null);
   busy(true); status('Reading accounts and trades…');
   try {
     // Comment NL: Sessieverval en een ander Apple-account eerst detecteren; geen oude gegevens vermengen.
@@ -155,6 +160,7 @@ async function readSelected() {
 // MARK: - Accounts, journal en datakwaliteit
 function render(resetFilters = false) {
   const data = state.snapshot;
+  premium.setSnapshot(data, state.stale);
   if (!data) return;
   $('results').hidden = false;
   $('fetched').textContent = `Last fetched from iCloud: ${utc(data.fetchedAt)} · ${data.environment} · ${data.zone.zoneName}`;
@@ -210,6 +216,7 @@ $('disconnect').addEventListener('click', () => endSession());
 $('read').addEventListener('click', readSelected); $('refresh').addEventListener('click', readSelected);
 $('zones-refresh').addEventListener('click', () => { if (state.identity && !state.busy) void listZones(); });
 $('zone').addEventListener('change', () => {
+  premium.clear();
   state.reader?.cancel(); state.generation++; state.busy = false; state.snapshot = null; state.stale = false;
   $('results').hidden = true;
   for (const id of ['accounts', 'trades', 'balances', 'coverage', 'issues']) $(id).replaceChildren();
@@ -217,7 +224,7 @@ $('zone').addEventListener('change', () => {
 });
 $('archive').addEventListener('change', () => render());
 for (const id of ['account-filter', 'trade-status', 'trade-model']) $(id).addEventListener('change', renderTrades);
-addEventListener('pagehide', () => { endSession(); });
+addEventListener('pagehide', () => { endSession(); premium.dispose(); });
 addEventListener('pageshow', event => { if (event.persisted) location.reload(); });
 
 try {

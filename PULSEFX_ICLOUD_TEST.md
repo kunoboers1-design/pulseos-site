@@ -65,3 +65,11 @@ Zet `PULSEFX_CLOUDKIT_ENABLED=false` en deploy opnieuw. Nieuwe paginaladingen on
 - [Apple API-tokenauthenticatie en callback](https://developer.apple.com/library/archive/documentation/DataManagement/Conceptual/CloudKitWebServicesReference/SettingUpWebServices.html)
 - [performQuery en pagination](https://developer.apple.com/documentation/cloudkitjs/cloudkit.database/performquery)
 - [Core Data-records lezen](https://developer.apple.com/documentation/coredata/reading-cloudkit-records-for-core-data)
+
+## Premium-uitbreiding (lokaal, nog niet gedeployed)
+
+Het bestaande leesonderzoek bevat nu een statistiekpaneel met een afzonderlijke fictieve preview. Live berekeningen vereisen servermatig geverifieerde Premium-toegang via een tijdelijke koppeling met de native app. Installatie, privacycontract, native buildinstellingen en beperkingen staan in `services/pulsefx-premium/README.md`. Er is geen CloudKit-schrijfroute toegevoegd. Alleen de benodigde numerieke R-velden zijn aan de gewenste leesvelden toegevoegd.
+
+## Friends access vóór publicatie
+
+De rootmiddleware beschermt nu de webapp en browser-API met een gedeeld wachtwoord. Configureer eerst de D1-binding, secrets, exacte HTTPS-origin en Cloudflare **Fail closed** volgens [de installatie-instructies](server/pulsefx-access/README.md). Zonder die configuratie blijft de webapp gesloten. De marketingpagina blijft openbaar. Deze toegang vervangt geen iCloud-authenticatie of Premium-verificatie en voegt geen CloudKit-schrijfacties toe.

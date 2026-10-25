@@ -40,6 +40,10 @@ def main():
         if path.suffix == ".html":
             for url in links(path.read_text()):
                 if url.startswith("/") and not url.startswith("//"):
+                    # Comment NL: Deze route wordt uitsluitend door de servermiddleware gerenderd.
+                    if url == "/pulsefx/access/logout":
+                        assert (ROOT / "functions/_middleware.js").is_file()
+                        continue
                     local = output / unquote(urlparse(url).path).lstrip("/")
                     assert local.exists(), f"Broken asset/link: {path}: {url}"
     for app in ("pulsefx", "pulsevinyl", "pulserecipes", "pulsereflect", "pulsewiish"):

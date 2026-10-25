@@ -3,6 +3,8 @@ import { createRequire } from 'node:module';
 import { readFileSync, mkdirSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { tmpdir } from 'node:os';
+import { calculateStatistics } from '../pulsefx/app/statistics.mjs';
+import { validateSnapshot } from '../services/pulsefx-premium/application.mjs';
 import { sample, zone } from '../tests/pulsefx-cloudkit/fixtures.mjs';
 
 // MARK: - Browserproef met uitsluitend fictieve SDK-responses
@@ -46,7 +48,7 @@ window.CloudKit = { configure: settings => { if (settings.containers[0].apiToken
 const browser = await chromium.launch({ headless: true });
 const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
 const errors = [], external = [];
-let enabled = false, useVendor = false;
+let enabled = false, useVendor = false, premiumState = 'disabled', premiumDelay = 0, premiumRequests = 0;
 await context.route('**/*', async route => {
   const url = new URL(route.request().url());
   if (url.origin === 'https://cdn.apple-cloudkit.com' && url.pathname === '/ck/2/cloudkit.js') {
@@ -56,6 +58,22 @@ await context.route('**/*', async route => {
     return route.fulfill({ status: 401, headers: { 'Access-Control-Allow-Origin': origin, 'Access-Control-Allow-Headers': '*', 'Content-Type': 'application/json' }, body: JSON.stringify({ serverErrorCode: 'AUTHENTICATION_REQUIRED', reason: 'Offline authentication fixture', redirectURL: 'https://idmsa.apple.com/offline-test' }) });
   }
   if (url.origin !== origin) { external.push(url.origin + url.pathname); return route.abort(); }
+  if (url.pathname.startsWith('/api/pulsefx-premium/')) {
+    if (premiumState === 'disabled') return route.fulfill({ status: 503, json: { error: 'NOT_CONFIGURED' } });
+    const path = url.pathname.split('/').pop();
+    if (path === 'pair') { premiumState = 'pending'; return route.fulfill({ json: { code: 'abcd-1234-ffff-2222-3333-4444-5555-6666', expiresAt: Date.now() + 300000 } }); }
+    if (route.request().method() === 'DELETE') { premiumState = 'locked'; return route.fulfill({ json: { state: 'disconnected' } }); }
+    if (path === 'session') return route.fulfill({ json: { state: premiumState, expiresAt: Date.now() + 3600000 } });
+    premiumRequests++;
+    if (premiumState !== 'verified') return route.fulfill({ status: 403, json: { error: 'PREMIUM_REQUIRED' } });
+    const body = route.request().postDataJSON();
+    assert.ok(!route.request().postData().includes('synthetic-user'));
+    assert.ok(!route.request().postData().includes('SyntheticOwner'));
+    const statistics = calculateStatistics(validateSnapshot(body.snapshot), body.filters);
+    delete statistics.records;
+    await new Promise(resolve => setTimeout(resolve, premiumDelay));
+    return route.fulfill({ json: { state: 'verified', expiresAt: Date.now() + 3600000, statistics } });
+  }
   if (url.pathname === '/api/pulsefx-config') return route.fulfill({ json: enabled ? config : { enabled: false }, headers: { 'Cache-Control': 'no-store' } });
   let path = resolve(output, '.' + decodeURIComponent(url.pathname));
   if (!path.startsWith(output + '/')) return route.abort();
@@ -80,6 +98,9 @@ const read = async () => {
   await page.waitForFunction(() => !document.getElementById('read').disabled);
 };
 try {
+  await page.goto(origin + '/pulsefx/icloud/?statistics=demo#premium-statistics');
+  await page.locator('#premium-statistics .stats-metrics').getByText('48 closed trades', { exact: true }).waitFor();
+  assert.equal(premiumRequests, 0);
   await visit(); await page.getByText(/Not configured\. The site owner/).waitFor();
   assert.ok(await page.getByRole('button', { name: 'Start iCloud test' }).isDisabled());
   assert.equal(await page.locator('script[src*="cloudkit.com"]').count(), 0);
@@ -97,7 +118,7 @@ try {
   await page.locator('#accounts button').first().click(); assert.equal(await page.locator('#trades tr').count(), 3);
   await page.getByLabel('Record type', { exact: true }).selectOption('CD_OpenTrade');
   await page.getByText('No trades match these filters.').waitFor();
-  await page.getByLabel('Account', { exact: true }).selectOption('all'); assert.equal(await page.locator('#trades tr').count(), 1);
+  await page.locator('#account-filter').selectOption('all'); assert.equal(await page.locator('#trades tr').count(), 1);
   await page.getByLabel('Trade status', { exact: true }).selectOption('open'); await page.getByText('No trades match these filters.').waitFor();
   await page.getByLabel('Record type', { exact: true }).selectOption('all'); await page.getByLabel('Trade status', { exact: true }).selectOption('all');
   for (const width of [1440, 1024, 768, 390, 320]) {
@@ -106,6 +127,58 @@ try {
     assert.ok(await page.getByText('Read-only test', { exact: true }).isVisible());
     if (width === 390) await page.screenshot({ path: join(screenshots, 'connected-mobile.png'), fullPage: true });
   }
+  // MARK: - Premium-demo, vergrendeling, servercontrole en mobiele statistieken
+  const premium = page.locator('#premium-statistics');
+  await premium.getByRole('button', { name: 'Connect Premium', exact: true }).click();
+  await premium.getByText(/Web Premium verification is not configured/).waitFor();
+  await premium.getByRole('button', { name: 'Calculate statistics', exact: true }).click();
+  assert.equal(premiumRequests, 0);
+  await premium.getByRole('button', { name: 'Explore statistics demo', exact: true }).click();
+  await premium.getByText('48 closed trades', { exact: true }).waitFor();
+  assert.equal(premiumRequests, 0);
+  for (const theme of ['dark', 'light']) {
+    await page.evaluate(value => document.documentElement.dataset.theme = value, theme);
+    for (const width of [1440, 768, 390, 320]) {
+      await page.setViewportSize({ width, height: 1000 });
+      assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `Statistics overflow at ${width}/${theme}`);
+      if (width === 1440 || width === 390) await premium.screenshot({ path: join(screenshots, `premium-${theme}-${width}.png`) });
+    }
+  }
+  await page.locator('#stats-from').fill('2026-10-20');
+  await page.locator('#stats-through').fill('2026-10-10');
+  await premium.getByRole('button', { name: 'Calculate statistics', exact: true }).click();
+  await premium.getByText('The start date must be on or before the end date.').waitFor();
+  await premium.getByRole('button', { name: 'Reset filters', exact: true }).click();
+  await page.locator('#stats-account').selectOption('a0');
+  await premium.getByText('24 closed trades', { exact: true }).waitFor();
+  await premium.getByRole('button', { name: 'Use iCloud data', exact: true }).click();
+  assert.equal(await premium.locator('.stats-metrics').count(), 0);
+  premiumState = 'locked';
+  await premium.getByRole('button', { name: 'Connect Premium', exact: true }).click();
+  await premium.locator('code').filter({ hasText: 'abcd-1234' }).waitFor();
+  await premium.getByRole('button', { name: 'Check connection', exact: true }).click();
+  await premium.getByText(/Waiting for native confirmation/).waitFor();
+  premiumState = 'verified';
+  await premium.getByRole('button', { name: 'Check connection', exact: true }).click();
+  await premium.getByText('Premium verified', { exact: true }).waitFor();
+  await premium.getByRole('button', { name: 'Calculate statistics', exact: true }).click();
+  await premium.locator('.stats-metrics').getByText('5 closed trades', { exact: true }).waitFor();
+  assert.equal(premiumRequests, 1);
+  assert.equal(await premium.locator('img').count(), 0);
+  premiumState = 'locked';
+  await premium.getByRole('button', { name: 'Calculate statistics', exact: true }).click();
+  await premium.getByText(/Connect Premium from the native app/).waitFor();
+  assert.equal(await premium.locator('.stats-metrics').count(), 0);
+  premiumState = 'verified';
+  await premium.getByRole('button', { name: 'Check connection', exact: true }).click();
+  await premium.getByText('Premium verified', { exact: true }).waitFor();
+  premiumDelay = 400;
+  await premium.getByRole('button', { name: 'Calculate statistics', exact: true }).click();
+  await premium.getByRole('button', { name: 'Explore statistics demo', exact: true }).click();
+  await page.waitForTimeout(500);
+  await premium.getByText('48 closed trades', { exact: true }).waitFor();
+  await premium.getByRole('button', { name: 'Use iCloud data', exact: true }).click();
+  premiumDelay = 0;
   await page.evaluate(() => { testControl.fail = true; });
   await page.getByRole('button', { name: 'Refresh selected zone' }).click();
   await page.getByText(/Stale results\. The latest refresh/).waitFor();
@@ -139,7 +212,7 @@ try {
     await page.screenshot({ path: join(screenshots, 'vendor-sdk-offline-signin.png'), fullPage: true });
     assert.deepEqual(errors, []);
   }
-  console.log(`PASS: disabled deployment, opt-in auth, filtering, currencies, XSS, partial/stale/empty data, session expiry, late responses and responsive layouts. Screenshots: ${screenshots}`);
+  console.log(`PASS: disabled deployment, opt-in auth, filtering, currencies, XSS, partial/stale/empty data, session expiry, late responses, Premium gating/pairing, pseudonymous payloads, filters, and responsive dark/light statistics. Screenshots: ${screenshots}`);
 } catch (error) {
   await page.screenshot({ path: join(screenshots, 'failure.png'), fullPage: true });
   console.error('Fixture page status:', await page.locator('#status').textContent());
