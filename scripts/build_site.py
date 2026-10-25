@@ -17,7 +17,7 @@ def build():
         shutil.rmtree(DEST)
     DEST.mkdir()
     paths = [path for path in ROOT.iterdir() if path.is_file() and path.suffix in ASSETS]
-    paths += [ROOT / "robots.txt", ROOT / "sitemap.xml", ROOT / "data/prices.json"]
+    paths += [ROOT / "robots.txt", ROOT / "sitemap.xml", ROOT / "data/prices.json", ROOT / "_headers"]
     for directory in (*PAGES, "images"):
         paths += [path for path in (ROOT / directory).rglob("*") if path.is_file() and path.suffix in ASSETS]
     for path in paths:

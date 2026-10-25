@@ -28,11 +28,17 @@ Calculator: `risk amount = balance × risk / 100`, `lots = risk amount / (stop p
 
 ## Future CloudKit integration
 
-No Apple authentication, CloudKit calls/writes, payments, subscription checks or Pro verification are implemented. `Connect with iCloud` is disabled and labeled `Coming soon`. Demo data is never represented as linked user data.
+**Update:** an opt-in, read-only test now lives at `/pulsefx/icloud/`. See [online test setup](PULSEFX_ICLOUD_TEST.md) for the required Cloudflare Pages variables and environment-specific CloudKit API token. It stays disabled without configuration. The instructions below describe the original demo boundary and historical design; the separate test adds authentication and read calls, but no writes or Pro verification. The user requested a deployable test instead of the earlier local-only hosting proposal.
+
+The source-based investigation and phased integration proposal are documented in [PulseFX CloudKit integration plan](PULSEFX_CLOUDKIT_PLAN.md). This is a plan only; no live connection has been implemented.
+
+The 25 October schema review and concrete field mapping are documented in the local [CloudKit read-probe design](</Users/kunoboers/Desktop/PulseOS/3. Appstore Connect bestanden/PulseFX/PulseFX-Web-Read-Probe-2026-10-25.md>). Production schema inspection and native data exchange have since been confirmed; CloudKit JS access remains unverified. The proposed probe belongs outside this website's build inputs. No runtime or access configuration was changed for this design.
+
+The demo routes do not authenticate or load CloudKit data. Their `Connect with iCloud` button remains disabled and labeled `Coming soon`; the separate iCloud test is linked explicitly. Neither mode implements CloudKit writes, payments, subscription checks or Pro verification. Demo data is never represented as linked user data.
 
 Before creating a separate real-data repository adapter:
 
-1. Inspect the native **PulseFX** SwiftData/CloudKit schema, entitlements, container identifier, record naming, relationships, private database access and production environment. Do not assume another PulseOS app's container or web compatibility.
+1. Use the inspected **PulseFX** schema and native entitlements as the starting point. Confirm the actual user's private zones and record responses in the separate browser probe; schema inspection and native synchronization do not prove web compatibility.
 2. Research and validate browser CloudKit authentication and access to that native storage. Ordinary Sign in with Apple establishes identity; it does **not** automatically grant access to iCloud records.
 3. Define authenticated loading, account isolation, supported writes, conflict handling, errors, permission revocation and sign-out before enabling any real-data route.
 4. Keep demo and authenticated modes explicitly separate. Decide subscription entitlements independently; no demo state is proof of Pro access.
