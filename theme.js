@@ -23,6 +23,14 @@ document.addEventListener('DOMContentLoaded', function () {
   function applyIcon(theme) {
     btn.innerHTML = theme === 'dark' ? SUN : MOON;
     btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+    // Comment NL: Sommige pagina's tonen naast het pictogram ook een zichtbaar actielabel.
+    if (btn.hasAttribute('data-theme-label')) {
+      var label = document.createElement('span');
+      label.textContent = theme === 'dark' ? 'Light mode' : 'Dark mode';
+      btn.append(label);
+      var themeColor = document.querySelector('meta[name="theme-color"]');
+      if (themeColor) themeColor.content = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
+    }
   }
 
   applyIcon(getTheme());
