@@ -6,7 +6,11 @@ Dit identificeert geen individuele vrienden, vervangt geen iCloud-login en geeft
 
 ## Voor activering in Cloudflare Pages
 
-Er is nog niets online geconfigureerd of gepubliceerd. Publiceer deze middleware pas nadat onderstaande configuratie klaarstaat: ontbrekende instellingen sluiten de webapp af (503).
+Er is nog niets gepubliceerd. Op 25 oktober 2026 is in Safari de aparte D1-database `pulsefx-friends-access` aangemaakt (EU-jurisdictie, database-ID `46469e0e-c39f-4877-9a51-3d92e35c737b`) met beide tabellen en indexen. Pages Production staat op **Fail closed**. De Production-binding `PULSEFX_ACCESS_DB` is in Safari opgeslagen en verwijst naar `pulsefx-friends-access`. De foutieve binding `P` is verwijderd; de database en tabellen zijn behouden. Deze bindinginstelling wordt bij de volgende deployment actief. Origin en beide secrets zijn nog niet ingesteld; onderstaande lijst beschrijft de volledige vereisten. Ontbrekende instellingen sluiten de webapp af (503).
+
+De middleware bundelt succesvol met Cloudflares officiële Wrangler 4.152.0 (`pages functions build`); dit was uitsluitend een lokale build.
+
+De Production-buildinstellingen zijn in Safari opgeslagen en na herladen geverifieerd: build command `python3 scripts/build_site.py`, build output directory `dist`, root directory leeg (repositoryroot). Dit heeft geen deployment gestart. Het toevoegen van de origin via de knop Add reageerde tijdens deze controle niet; origin en beide secrets blijven dus openstaande stappen.
 
 1. Maak een Cloudflare D1-database voor uitsluitend website-toegang, bijvoorbeeld `pulsefx-friends-access`. Voer `server/pulsefx-access/schema.sql` uit in die nieuwe database. Dit raakt CloudKit niet.
 2. Koppel de database in het bestaande Pages-project als D1-binding `PULSEFX_ACCESS_DB`.
