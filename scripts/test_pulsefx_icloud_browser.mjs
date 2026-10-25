@@ -19,19 +19,19 @@ const records = sample().records;
 records[0].fields.CD_name.value = '<img src=x onerror="window.injected=true"> Synthetic A';
 const fakeSDK = `
 const records = ${JSON.stringify(records)};
-let signedIn = false, signOutResolve, signInResolve;
+let signedIn = false, persist = false, signOutResolve, signInResolve;
 const signInPromise = new Promise(r => signInResolve = r);
 const signOutPromise = new Promise(r => signOutResolve = r);
 window.testControl = { fail: false, authLost: false, delay: 0, empty: false, calls: 0 };
 const user = () => signedIn && !testControl.authLost ? { userRecordName: 'synthetic-user' } : null;
 const authUI = () => {
   const target = document.getElementById('apple-sign-in-button'); target.replaceChildren();
-  if (!signedIn) { const b = document.createElement('button'); b.textContent = 'Test Apple sign in'; b.onclick = () => { signedIn = true; target.replaceChildren(); signInResolve(user()); }; target.append(b); }
+  if (!signedIn) { const b = document.createElement('button'); b.textContent = 'Test Apple sign in'; b.onclick = () => { signedIn = true; if (persist) document.cookie = 'fixtureAppleSession=yes; path=/; Secure; SameSite=Strict'; target.replaceChildren(); signInResolve(user()); }; target.append(b); }
 };
 const container = {
   setUpAuth: async () => { authUI(); return user(); },
   whenUserSignsIn: () => signInPromise, whenUserSignsOut: () => signOutPromise,
-  signOut: () => { signedIn = false; signOutResolve(); },
+  signOut: () => { signedIn = false; document.cookie = 'fixtureAppleSession=; Max-Age=0; path=/'; signOutResolve(); },
   privateCloudDatabase: new Proxy({
     fetchAllRecordZones: async () => ({ hasErrors: false, zones: [{ zoneID: ${JSON.stringify(zone)} }] }),
     performQuery: async (query, options) => {
@@ -43,7 +43,7 @@ const container = {
     }
   }, { get(object,key) { if (!(key in object)) throw new Error('Write API used: '+String(key)); return object[key]; } })
 };
-window.CloudKit = { configure: settings => { if (settings.containers[0].apiTokenAuth.persist !== false) throw Error('Persistent tokens'); }, getDefaultContainer: () => container };
+window.CloudKit = { configure: settings => { persist = settings.containers[0].apiTokenAuth.persist; testControl.persist = persist; signedIn = persist && document.cookie.includes('fixtureAppleSession=yes'); }, getDefaultContainer: () => container };
 `;
 const browser = await chromium.launch({ headless: true });
 const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
@@ -97,6 +97,7 @@ page.on('pageerror', error => errors.push(error.message));
 const visit = () => page.goto(origin + '/pulsefx/icloud/');
 const connect = async () => {
   enabled = true; await visit();
+  await page.getByLabel('Remember iCloud on this browser', { exact: true }).uncheck();
   await page.getByRole('button', { name: 'Connect iCloud' }).click();
   await page.getByRole('button', { name: 'Test Apple sign in' }).click();
   await page.getByLabel('Private zone', { exact: true }).selectOption('0');
@@ -126,7 +127,7 @@ try {
   assert.match(await page.locator('#balances').textContent(), /€1,200.00/);
   assert.match(await page.locator('#balances').textContent(), /\$2,300.00/);
   assert.match(await page.locator('#trades').textContent(), /breakEven/);
-  assert.equal(await page.evaluate(() => localStorage.length + sessionStorage.length), 0);
+  assert.equal(await page.evaluate(() => Object.keys(localStorage).filter(k => k !== 'pulsefx-remember-icloud').length + sessionStorage.length), 0);
   await page.getByRole('tab', { name: 'Accounts', exact: true }).click();
   await page.screenshot({ path: join(screenshots, 'connected-desktop.png'), fullPage: true });
   await page.locator('#accounts button').first().click(); assert.equal(await page.locator('#trades tr').count(), 3);
@@ -240,6 +241,25 @@ try {
   await page.getByRole('button', { name: 'Reset demo data', exact: true }).click();
   assert.equal(await page.locator('.open-trade').count(), 2);
   assert.equal(premiumRequests, 0);
+  // MARK: - Bewust onthouden, herstellen en vergeten van een fictieve Apple-sessie
+  await visit();
+  await page.getByRole('button', { name: 'Connect iCloud', exact: true }).waitFor();
+  await page.evaluate(() => localStorage.removeItem('pulsefx-remember-icloud'));
+  await page.reload();
+  assert.ok(await page.getByLabel('Remember iCloud on this browser', { exact: true }).isChecked());
+  await page.getByRole('button', { name: 'Connect iCloud', exact: true }).click();
+  await page.getByRole('button', { name: 'Test Apple sign in', exact: true }).click();
+  await page.locator('#zone-panel').waitFor();
+  assert.equal(await page.evaluate(() => testControl.persist), true);
+  await page.reload();
+  await page.locator('#zone-panel').waitFor();
+  assert.equal(await page.getByRole('button', { name: 'Test Apple sign in', exact: true }).count(), 0);
+  assert.equal(await page.locator('#accounts').textContent(), '');
+  await page.getByRole('button', { name: 'Disconnect and clear data', exact: true }).click();
+  assert.equal(await page.evaluate(() => localStorage.getItem('pulsefx-remember-icloud')), 'false');
+  assert.equal(await page.evaluate(() => document.cookie.includes('fixtureAppleSession=yes')), false);
+  await page.reload();
+  assert.equal(await page.locator('script[src*="cloudkit.com"]').count(), 0);
   assert.deepEqual(errors, []); assert.deepEqual(external, []);
   if (process.env.PULSEFX_VENDOR_SDK_PATH) {
     useVendor = true; await page.setViewportSize({ width: 1000, height: 900 }); await visit();
@@ -259,7 +279,26 @@ try {
       return true;
     }, { zone, config });
     assert.equal(result, true); assert.equal(vendorModify, 1); assert.deepEqual(external, []);
-    assert.deepEqual(errors, []);
+    // MARK: - Bewust onthouden, herstellen en vergeten van een fictieve Apple-sessie
+  await visit();
+  await page.getByRole('button', { name: 'Connect iCloud', exact: true }).waitFor();
+  await page.evaluate(() => localStorage.removeItem('pulsefx-remember-icloud'));
+  await page.reload();
+  assert.ok(await page.getByLabel('Remember iCloud on this browser', { exact: true }).isChecked());
+  await page.getByRole('button', { name: 'Connect iCloud', exact: true }).click();
+  await page.getByRole('button', { name: 'Test Apple sign in', exact: true }).click();
+  await page.locator('#zone-panel').waitFor();
+  assert.equal(await page.evaluate(() => testControl.persist), true);
+  await page.reload();
+  await page.locator('#zone-panel').waitFor();
+  assert.equal(await page.getByRole('button', { name: 'Test Apple sign in', exact: true }).count(), 0);
+  assert.equal(await page.locator('#accounts').textContent(), '');
+  await page.getByRole('button', { name: 'Disconnect and clear data', exact: true }).click();
+  assert.equal(await page.evaluate(() => localStorage.getItem('pulsefx-remember-icloud')), 'false');
+  assert.equal(await page.evaluate(() => document.cookie.includes('fixtureAppleSession=yes')), false);
+  await page.reload();
+  assert.equal(await page.locator('script[src*="cloudkit.com"]').count(), 0);
+  assert.deepEqual(errors, []);
   }
   console.log(`PASS: shared demo close/balance/stats, notes/search, SDK atomic-write fixture (when configured), disabled deployment, opt-in auth, filtering, currencies, XSS, partial/stale/empty data, session expiry, late responses, local friends statistics, filters, and responsive dark/light tabs. Screenshots: ${screenshots}`);
 } catch (error) {

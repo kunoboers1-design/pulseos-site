@@ -77,7 +77,8 @@ function busy(value) {
   $('zone').disabled = value;
   $('refresh').disabled = value; $('zones-refresh').disabled = value;
 }
-function endSession(message = 'Disconnected. Data has been cleared from this page.') {
+function endSession(message = 'Disconnected. Data and the remembered Apple session have been cleared.') {
+  forgetRememberedSession();
   clearView(); state.identity = null; state.networkActive = false;
   try { state.container?.signOut(); } catch { /* Comment NL: Lokale data wordt ook bij SDK-fouten gewist. */ }
   $('disconnect').hidden = true;
@@ -122,9 +123,33 @@ async function loadSDK() {
   if (!globalThis.CloudKit) throw new Error('SDK unavailable');
   return globalThis.CloudKit;
 }
+// MARK: - Optionele Apple-sessie; nooit zelf een token of wachtwoord opslaan
+const rememberKey = 'pulsefx-remember-icloud';
+let rememberSession = true, restoreSession = false;
+try {
+  const saved = localStorage.getItem(rememberKey);
+  rememberSession = saved !== 'false';
+  restoreSession = saved === 'true';
+} catch { rememberSession = false; }
+$('remember-icloud').checked = rememberSession;
+function forgetRememberedSession() {
+  rememberSession = false; $('remember-icloud').checked = false;
+  try { localStorage.setItem(rememberKey, 'false'); } catch {}
+}
+$('remember-icloud').addEventListener('change', () => {
+  rememberSession = $('remember-icloud').checked;
+  try {
+    if (rememberSession) localStorage.setItem(rememberKey, 'true');
+    else localStorage.setItem(rememberKey, 'false');
+  } catch {
+    rememberSession = false; $('remember-icloud').checked = false;
+    $('remember-status').textContent = 'Browser storage is unavailable. This connection will last for this page only.';
+  }
+});
 async function start() {
   if (state.started) { location.reload(); return; }
-  state.started = true; $('start').disabled = true; status('Loading Apple’s sign-in service…');
+  try { localStorage.setItem(rememberKey, String(rememberSession)); } catch { rememberSession = false; $('remember-icloud').checked = false; }
+  state.started = true; $('remember-icloud').disabled = true; $('start').disabled = true; status('Loading Apple’s sign-in service…');
   const initialGeneration = state.generation;
   try {
     const sdk = await loadSDK();
@@ -134,7 +159,7 @@ async function start() {
     transport = closeTransport(state.config, globalThis.fetch.bind(globalThis));
     const guardedFetch = transport.fetch;
     sdk.configure({ containers: [{ containerIdentifier: state.config.containerIdentifier, environment: state.config.environment,
-      apiTokenAuth: { apiToken: state.config.apiToken, persist: false, signInButton: { id: 'apple-sign-in-button', theme: 'white-with-outline' }, signOutButton: { id: 'apple-sign-out-button', theme: 'white-with-outline' } } }],
+      apiTokenAuth: { apiToken: state.config.apiToken, persist: rememberSession, signInButton: { id: 'apple-sign-in-button', theme: 'white-with-outline' }, signOutButton: { id: 'apple-sign-out-button', theme: 'white-with-outline' } } }],
       services: { fetch: (...args) => state.networkActive ? guardedFetch(...args) : Promise.reject(new Error('Session closed')), logger: { info: quiet, log: quiet, warn: quiet, error: quiet } } });
     state.container = sdk.getDefaultContainer();
     // Comment NL: Eén aanmelding per paginalevensduur. Na afmelden volgt een schone herlaadactie.
@@ -265,14 +290,20 @@ $('zone').addEventListener('change', () => {
 $('archive').addEventListener('change', () => render());
 $('account-search').addEventListener('input', () => render());
 for (const id of ['account-filter', 'trade-status', 'trade-model']) $(id).addEventListener('change', renderTrades);
-addEventListener('pagehide', () => { endSession(); premium.dispose(); });
+addEventListener('pagehide', () => {
+  if (!state.started) { clearView(); premium.dispose(); return; }
+  // Comment NL: Bij navigatie de records wissen, maar een bewust onthouden Apple-sessie behouden.
+  if (rememberSession) { clearView(); state.identity = null; state.networkActive = false; }
+  else endSession();
+  premium.dispose();
+});
 addEventListener('pageshow', event => { if (event.persisted) location.reload(); });
 
 if (demoMode) {
   state.snapshot = workspaceDemo(); state.snapshot.summary = summarize(state.snapshot.accounts, state.snapshot.trades);
   $('workspace-demo-banner').hidden = false; $('environment').textContent = 'Demo mode'; $('access-capability').textContent = 'Fictional data only';
   $('configuration').textContent = 'Demo workspace. Apple connections are disabled here.';
-  $('start').disabled = true; $('refresh').hidden = true; render(true);
+  $('start').disabled = true; $('remember-icloud').disabled = true; $('refresh').hidden = true; render(true);
 } else try {
   const response = await fetch('/api/pulsefx-config', { cache: 'no-store', credentials: 'same-origin', signal: AbortSignal.timeout(10000) });
   if (!response.ok) throw new Error('Config unavailable');
@@ -287,6 +318,7 @@ if (demoMode) {
     $('configuration').textContent = `${config.environment === 'production' ? 'Production: reads the selected account’s live cloud records.' : 'Development: a separate dataset from the released apps.'} Nothing is loaded until you start and sign in through Apple.`;
     if (config.closeTradePilotId) $('access-capability').textContent = 'Closing pilot · one test trade';
     $('start').disabled = false;
+    if (restoreSession) await start();
   }
 } catch {
   $('configuration').textContent = 'Configuration unavailable. This page needs the Cloudflare Pages Function and a matching HTTPS deployment. The demo remains available.';

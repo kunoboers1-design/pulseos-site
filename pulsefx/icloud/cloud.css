@@ -194,3 +194,8 @@ body.cloud-test { --bg: #000; --surface: #1c1c1e; --surface-soft: #242426; --lin
 
 .workspace-demo #workspace-toolbar { display: none; }
 #open-panel > p:not(.fx-eyebrow), #notes-panel > p:not(.fx-eyebrow) { font-size: 13px; line-height: 1.6; }
+/* MARK: - Onthouden is een bewuste keuze voor een eigen browser */
+.remember-icloud { padding: 16px 0; }
+.remember-icloud label { display: flex; align-items: center; gap: 12px; font-weight: 600; }
+.remember-icloud input { width: 20px; height: 20px; accent-color: var(--accent); }
+.remember-icloud p { font-size: 12px; margin: 10px 0; }
