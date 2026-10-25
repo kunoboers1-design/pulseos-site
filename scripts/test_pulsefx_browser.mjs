@@ -24,7 +24,9 @@ try {
   await visit('/pulsefx/');
   assert.ok(await page.getByRole('heading', { name: 'Your trading toolkit.' }).isVisible());
   await page.getByRole('link', { name: 'Explore web preview' }).click();
-  assert.ok(await page.getByRole('button', { name: 'Connect with iCloud Coming soon' }).isDisabled());
+  assert.equal(await page.getByRole('link', { name: 'Connect with iCloud', exact: true }).getAttribute('href'), '/pulsefx/icloud/');
+  assert.ok((await page.locator('.login-card').innerText()).includes('shared website password'));
+  assert.equal(await page.getByRole('link', { name: 'Lock website' }).getAttribute('href'), '/pulsefx/access/logout');
   await page.screenshot({ path: join(screenshots, 'login-desktop.png'), fullPage: true });
   for (const route of ['/pulsefx/app', '/pulsefx/login', '/pulsefx/dashboard', '/pulsefx/dashboard/index.html']) await visit(route);
   await visit('/pulsefx/login/');
