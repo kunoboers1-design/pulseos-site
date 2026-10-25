@@ -1,3 +1,4 @@
+import { mountMacStats } from './mac-stats-view.mjs';
 import { calculateStatistics } from '../app/statistics.mjs';
 import { statisticsDemo } from './statistics-demo.mjs';
 
@@ -27,6 +28,7 @@ export function statisticsPayload(snapshot) {
 }
 
 export function mountPremium(root, { friends = false } = {}) {
+  if (friends) return mountMacStats(root);
   let source = null, stale = false, demo = false, verified = false, generation = 0, controller = null, expiresTimer = null;
   const heading = make('div', null, 'cloud-results-heading');
   const title = make('div'); title.append(make('p', 'PERFORMANCE, WITH CONTEXT', 'fx-eyebrow'), make('h2', 'Your trading statistics'));

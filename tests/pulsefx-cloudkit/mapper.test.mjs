@@ -278,3 +278,16 @@ test('A fresh mapping replaces input rather than retaining records from a prior 
   assert.equal(next.trades.length, 4);
   assert.notStrictEqual(previous.accounts[0], next.accounts[0]);
 });
+
+test('Mac journal fields retain integer counts and reject malformed/asset-backed values', () => {
+  const input=sample(), record=input.records.at(-1);
+  record.fields.CD_confluences={type:'INT64',value:4};
+  record.fields.CD_slMoved={type:'INT64',value:1};
+  record.fields.CD_setupsSelectedRaw={type:'STRING',value:'Breakout,Retest'};
+  record.fields.CD_emotionCustom_ckAsset={type:'ASSETID',value:{downloadURL:'https://example.invalid/private'}};
+  let result=mapSnapshot(input),trade=result.trades.at(-1);
+  assert.equal(trade.confluences,4);assert.equal(trade.slMoved,true);assert.equal(trade.setupsSelectedRaw,'Breakout,Retest');assert.equal(trade.emotionCustom,null);
+  assert.ok(has(result,'unsupported-field-storage'));assert.ok(!JSON.stringify(result).includes('downloadURL'));
+  record.fields.CD_confluences={type:'INT64',value:1.5};record.fields.CD_slMoved={type:'INT64',value:4};
+  result=mapSnapshot(input);trade=result.trades.at(-1);assert.equal(trade.confluences,null);assert.equal(trade.slMoved,null);
+});

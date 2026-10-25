@@ -122,7 +122,7 @@ try {
   assert.equal(await page.locator('#accounts img').count(), 0);
   assert.equal(await page.evaluate(() => window.injected), undefined);
   await page.getByRole('tab', { name: 'Stats', exact: true }).click();
-  await page.getByRole('button', { name: 'Trade journal', exact: true }).click();
+  await page.getByRole('button', { name: 'Trades', exact: true }).click();
   assert.ok(await page.locator('#trades td').evaluateAll(cells => cells.every(cell => cell.scrollWidth <= cell.clientWidth + 1)), 'Long user text must not overlap adjacent table cells');
   assert.match(await page.locator('#balances').textContent(), /€1,200.00/);
   assert.match(await page.locator('#balances').textContent(), /\$2,300.00/);
@@ -152,12 +152,13 @@ try {
     if (await page.locator('html').getAttribute('data-theme') !== theme) await page.locator('#themeToggle').click();
     for (const width of [1440, 768, 390, 320]) {
       await page.setViewportSize({ width, height: 1000 });
-      assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `Statistics overflow at ${width}/${theme}`);
+      assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `Statistics overflow at ${width}/${theme}: ${await page.evaluate(() => [...document.querySelectorAll("body *")].filter(e=>e.getBoundingClientRect().right>innerWidth+1).slice(0,12).map(e=>e.tagName+"."+e.className).join(","))}`);
     }
   }
-  await page.locator('#stats-from').fill('2026-10-20'); await page.locator('#stats-through').fill('2026-10-10');
+  await page.locator('#stats-period').selectOption('custom');
+  await premium.getByLabel('From', { exact: true }).fill('2026-10-20'); await premium.getByLabel('Through', { exact: true }).fill('2026-10-10');
   await premium.getByRole('button', { name: 'Calculate statistics', exact: true }).click();
-  await premium.getByText('The start date must be on or before the end date.').waitFor();
+  await premium.getByText(/closed trades · .*opening dates/).waitFor();
   await premium.getByRole('button', { name: 'Reset filters', exact: true }).click();
   await page.getByRole('tab', { name: 'Accounts', exact: true }).click();
   await page.evaluate(() => { testControl.fail = true; });
@@ -232,11 +233,33 @@ try {
   await page.getByRole('button', { name: 'Reset accent color', exact: true }).click();
   assert.equal(await page.getByRole('button', { name: 'Forest Green', exact: true }).getAttribute('aria-pressed'), 'true');
   await page.getByRole('tab', { name: 'Stats', exact: true }).click();
-  await page.getByRole('button', { name: 'Breakdowns', exact: true }).click();
-  await page.getByRole('heading', { name: 'Account performance', exact: true }).waitFor();
-  assert.ok(await page.locator('.stats-metrics').isHidden());
-  await page.getByRole('button', { name: 'Calendar', exact: true }).click();
-  await page.locator('.stats-days').waitFor();
+  await page.getByRole('button', { name: 'Performance', exact: true }).click();
+  await page.getByRole('heading', { name: 'Account ranking', exact: true }).waitFor();
+  assert.ok(await page.locator('[data-stats-section=overview]').isHidden());
+  await page.getByRole('button', { name: 'Timing', exact: true }).click();
+  await page.locator('.mac-calendar').waitFor();
+  for (const section of ['Overview', 'Performance', 'Timing', 'Journal', 'Trades']) {
+    await page.getByRole('button', { name: section, exact: true }).click();
+    for (const width of [1440, 390, 320]) {
+      await page.setViewportSize({ width, height: 1000 });
+      assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${section} overflows at ${width}`);
+      if (width !== 320) await page.screenshot({ path: join(screenshots, `mac-stats-${section.toLowerCase()}-${width}.png`), fullPage: true });
+    }
+  }
+  await page.getByRole('button', { name: 'Journal', exact: true }).click();
+  await page.locator('[data-stats-section=journal] .mac-bar-row').first().click();
+  await page.locator('dialog.mac-drilldown').waitFor();
+  assert.ok(await page.locator('dialog.mac-drilldown tbody tr').count() > 0);
+  await page.getByRole('button', { name: 'Close', exact: true }).click();
+  await page.getByRole('button', { name: 'Trades', exact: true }).click();
+  await page.getByLabel('Journal notes', { exact: true }).selectOption('with');
+  await page.getByLabel('Sort', { exact: true }).selectOption('high');
+  await page.getByLabel('Display', { exact: true }).selectOption('cards');
+  assert.ok(await page.locator('[data-stats-section=trades] article').count() > 0);
+  await page.getByRole('button', { name: 'Overview', exact: true }).click();
+  await page.locator('#stats-metric').selectOption('percent');
+  await page.getByRole('heading', { name: 'Equity curve', exact: true }).waitFor();
+
   await page.getByRole('tab', { name: 'Open trades', exact: false }).click();
   await page.getByRole('button', { name: 'Reset demo data', exact: true }).click();
   assert.equal(await page.locator('.open-trade').count(), 2);

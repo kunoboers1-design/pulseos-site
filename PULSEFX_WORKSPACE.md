@@ -45,3 +45,30 @@ Kleuren en vormgeving zijn gebaseerd op de native `Core/Utilities/Theme.swift` (
 De gelezen native `Core/Stores/AppSettings.swift` gebruikt `NSUbiquitousKeyValueStore.default` met CloudKey.accentColor, geen SwiftData-record. Daarom wordt automatische kleurimport uit CloudKit niet aangeboden. Hiervoor is later een expliciete native brug naar een afgesproken CloudKit-voorkeurrecord nodig, inclusief migratie/conflictbeleid. Native code, cloudschema en clouddata zijn niet gewijzigd.
 
 Gecontroleerd met 89 bestaande unittests en browserproeven voor navigatie, statistieksecties, kleurkeuze/herladen/reset, demo-sluiten en mobiel/licht/donker op 320–1440 px. Dit is een webvertaling van de native vormgeving, geen volledige implementatie van alle native instellingen en statistieksecties.
+
+## Mac Stats-uitbreiding — 25 oktober 2026
+
+De vriendenworkspace gebruikt nu `mac-statistics.mjs` (pure rekenlaag) en `mac-stats-view.mjs` (DOM). De vijf onderdelen zijn Overview, Performance, Timing, Journal en Trades. De bestaande Premium-serverroute is niet veranderd. Er zijn geen productie-deploys of CloudKit-writes uitgevoerd voor deze uitbreiding.
+
+- Globale filters: all time, afgelopen week/maand, YTD, inclusief custom kalenderdagen, account, instrument en outcome. R/%-keuze. Lokale browsertijd vervangt de eerdere UTC-groepering.
+- Overview: vier kerncijfers, details, equity en drawdown, R/P&L/%-curves, P&L per valuta, maandresultaten en maandvergelijking, outcomeverdeling, accountvergelijking, instrument/setup-heatmap en setup/session-uitsplitsing.
+- Performance: radar en gewogen edge-score, distributie, target/final-scatter met outcome-uitsplitsing, pair- en accountrankings.
+- Timing: maandkalender met dag- en weekdetails, weekdagen, sessies, instelbare uurslots, eerste vijf trades per dag. Posities worden vóór pair/outcome-filters toegekend.
+- Journal: health, setups, fouten, emoties, confluences, management, AND-combinatie van minstens twee setups, trade-typeboxplot met lineair geïnterpoleerde kwartielen. Doorklik naar onderliggende trades.
+- Trades: notesfilters, acht sorteermodi, tabel/kaarten, CSV. Browser-afdrukdialoog voor PDF van de zichtbare sectie.
+- Reader: extra journalvelden uit CD_OpenTrade. INT64-confluencetellers strikt gecontroleerd; ontbrekende waarden niet verzonnen. Asset-backed tekst blijft expliciet unsupported.
+
+### Verificatie en grenzen
+
+`scripts/test_pulsefx_mac_parity.mjs <native-root>` leest de originele StatsCalculator.swift en DrawdownControlCalculator.swift, kopieert hun pure gedeelte naar een tijdelijke map en compileert daar. 80 deterministische datasets × R/%: **2.240 numerieke uitkomsten in 160 gevallen gelijk binnen 1e-9**. Dit bewijst kernberekeningen en drawdown-control; geen volledige visuele of live-datapariteit. De oorspronkelijke native bestanden worden niet gewijzigd.
+
+Daarnaast zijn tests toegevoegd voor kalendergrenzen, percentage-noemers, trade-order vóór filters, multi-tags, kwartielen, ontbrekende data en veilige veldmapping. Browserregressie controleert vijf secties, drilldowns, filters, thema's, sessieherstel en layouts van 320–1440 px met fictieve SDK-antwoorden.
+
+Nog niet één-op-één:
+- De screenshotgallery/PencilKit-annotaties blijven native; er is nog geen asset-reader.
+- Gemengde valuta worden niet met de Mac FXRateService-cache omgerekend. Balansvergelijking vereist één valuta; Growth % werkt per eigen startsaldo.
+- De Mac-vormgeving en interactieve details zijn voor HTML aangepast; native exports en Ask your data zijn niet integraal geporteerd. PDF gebruikt de browser-afdrukdialoog.
+- De consistentiescore groepeert weken momenteel maandag–zondag. Een Mac met afwijkende kalenderregio kan daardoor verschillen.
+- Actuele live-verificatie is nog open. Kuno's screenshot toont All time / All accounts / All pairs / All outcomes / R: 46 trades, 24 wins, 15 losses, 7 break-even, +45,3R, 52% win rate en PF 4,65. Dit is referentiebewijs uit de Mac, geen bevestigde webuitkomst.
+
+Lokale preview: http://127.0.0.1:8766/pulsefx/icloud/?workspace=demo (fictieve data; Stats-tab).

@@ -1,0 +1,15 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { calculateMacStatistics, periodBounds, drawdownControl, percentile, labels } from '../../pulsefx/icloud/mac-statistics.mjs';
+import { statisticsDemo } from '../../pulsefx/icloud/statistics-demo.mjs';
+const close = (a,b) => assert.ok(Math.abs(a-b)<1e-10, `${a} ≠ ${b}`);
+test('Mac demo matches independent known R and percentage results',()=>{
+ const s=statisticsDemo(),r=calculateMacStatistics(s);assert.equal(r.summary.count,48);close(r.summary.total,37.2);assert.equal(r.summary.wins,28);assert.equal(r.summary.losses,16);assert.equal(r.summary.breakEvens,4);close(r.summary.profitFactor,51.2/14);
+ const p=calculateMacStatistics(s,{metric:'percent'});close(p.summary.total,13.68);close(p.summary.average,.285);assert.equal(p.summary.measured,48);close(p.summary.profitFactor,r.summary.profitFactor);
+});
+test('Percentage omits missing starting balance from average, without dropping outcomes',()=>{const s=statisticsDemo();s.accounts[0].startBalance=0;const r=calculateMacStatistics(s,{metric:'percent'});assert.equal(r.summary.count,48);assert.equal(r.summary.measured,24);close(r.summary.total,-2);close(r.summary.average,-2/24);});
+test('Mac date ranges clamp month-end and custom bounds include both local calendar days',()=>{const now=new Date(2026,2,31,12);const b=periodBounds('month','','',now);assert.equal(new Date(b.start).getDate(),28);const c=periodBounds('custom','2026-10-25','2026-10-24');assert.equal(new Date(c.start).getDate(),24);assert.equal(new Date(c.end).getDate(),26);});
+test('Opening order is assigned before instrument and outcome filters',()=>{const s=statisticsDemo();const r=calculateMacStatistics(s,{instrument:'GBPUSD'});const expected=r.records.filter(t=>Number(t.key.slice(1))%2===1);assert.deepEqual(r.byOrder.find(g=>g.key==='#2').records.map(t=>t.key),expected.map(t=>t.key));});
+test('Journal classification deduplicates tags, respects multiple setups, excludes zero confluences',()=>{const s=statisticsDemo();s.trades[0].setupsSelectedRaw='Breakout,Breakout,Rétest';s.trades[0].setupTag='Breakout';s.trades[0].confluences=0;assert.deepEqual(labels(s.trades[0],'setup'),['Breakout','Rétest']);const r=calculateMacStatistics(s);assert.equal(r.journal.setups.find(g=>g.key==='breakout').count,16);assert.equal(r.journal.confluences.reduce((n,g)=>n+g.count,0),47);});
+test('Drawdown penalties and linear percentiles follow native boundaries',()=>{assert.equal(drawdownControl([]),0);assert.equal(drawdownControl([1,2]),1);assert.ok(drawdownControl([10,-3,10])<=.1);assert.ok(drawdownControl([10,-2,10])<=.4);close(percentile([1,2,3,4],.25),1.75);});
+test('Partial, stale source eligibility and currency separation remain explicit',()=>{const s=statisticsDemo();s.collectionStatus='partial';assert.equal(calculateMacStatistics(s).available,false);s.collectionStatus='complete';assert.equal(calculateMacStatistics(s).summary.plByCurrency.length,2);s.accounts[0].archived=true;assert.equal(calculateMacStatistics(s).summary.count,24);});

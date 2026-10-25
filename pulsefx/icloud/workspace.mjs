@@ -28,7 +28,7 @@ export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canC
   const demoReset = button('Reset demo data', onDemoReset); demoReset.hidden = !isDemo; $('workspace-demo-banner').append(demoReset);
   const sectionBar = $('stats-sections');
   let statsSection = 'overview';
-  for (const [key, label] of [['overview', 'Overview'], ['breakdowns', 'Breakdowns'], ['calendar', 'Calendar'], ['journal', 'Trade journal']]) {
+  for (const [key, label] of [['overview', 'Overview'], ['performance', 'Performance'], ['timing', 'Timing'], ['journal', 'Journal'], ['trades', 'Trades']]) {
     const control = button(label, () => { statsSection = key; show('stats'); });
     control.dataset.section = key; sectionBar.append(control);
   }
@@ -36,13 +36,13 @@ export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canC
     sectionBar.hidden = active !== 'stats';
     for (const control of sectionBar.children) control.setAttribute('aria-pressed', String(control.dataset.section === statsSection));
     for (const group of document.querySelectorAll('[data-stats-section]')) group.hidden = group.dataset.statsSection !== statsSection;
-    $('premium-statistics').hidden = active !== 'stats' || statsSection === 'journal';
-    $('journal-panel').hidden = active !== 'stats' || statsSection !== 'journal';
-    $('results').hidden = !getSnapshot() || !(active === 'accounts' || active === 'stats' && statsSection === 'journal');
+    $('premium-statistics').hidden = active !== 'stats' || statsSection === 'records';
+    $('journal-panel').hidden = active !== 'stats' || statsSection !== 'records';
+    $('results').hidden = !getSnapshot() || !(active === 'accounts' || active === 'stats' && statsSection === 'records');
   }
   new MutationObserver(updateStatsSections).observe($('premium-statistics'), { childList: true, subtree: true });
   function show(name, focus = false) {
-    if (name === 'journal') { statsSection = 'journal'; name = 'stats'; }
+    if (name === 'journal') { statsSection = 'records'; name = 'stats'; }
 
     if (!panels[name]) return;
     active = name;

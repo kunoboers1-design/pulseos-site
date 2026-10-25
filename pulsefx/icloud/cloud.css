@@ -199,3 +199,43 @@ body.cloud-test { --bg: #000; --surface: #1c1c1e; --surface-soft: #242426; --lin
 .remember-icloud label { display: flex; align-items: center; gap: 12px; font-weight: 600; }
 .remember-icloud input { width: 20px; height: 20px; accent-color: var(--accent); }
 .remember-icloud p { font-size: 12px; margin: 10px 0; }
+
+/* MARK: - Mac-statistieken */
+.mac-stats-section { display: grid; gap: 22px; margin-top: 24px; }
+.mac-stats-section[hidden] { display: none; }
+.mac-chart, .mac-breakdown { padding: 24px; min-width: 0; }
+.mac-chart svg { width: 100%; max-height: 360px; overflow: visible; }
+.mac-chart svg text { fill: var(--muted); font-size: 12px; }
+.mac-series { color: var(--accent); fill: currentColor; }
+.mac-series.series-1 { color: #5989df; }
+.mac-series.series-2 { color: #be85e4; }
+.mac-series.series-3 { color: #dd984b; }
+.mac-chart polyline.mac-series { fill: none; }
+.mac-radar { fill: color-mix(in srgb, var(--accent) 25%, transparent); stroke: var(--accent); stroke-width: 2; }
+.mac-bar-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; width: 100%; text-align: left; border: 0; border-bottom: 1px solid var(--border, #8884); padding: 16px 0; background: transparent; color: inherit; cursor: pointer; }
+.mac-bar-row small, .mac-bar { grid-column: 1 / -1; }
+.mac-bar { height: 7px; border-radius: 4px; background: var(--accent); min-width: 2px; }
+.mac-bar.negative { background: #ed5454; }
+.mac-calendar { display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); gap: 8px; }
+.mac-calendar .stats-day { min-width: 0; padding: 12px 6px; cursor: pointer; color: inherit; background: transparent; border: 1px solid #8884; }
+.mac-calendar .stats-day strong { font-size: 14px; }
+.mac-choice { display: inline-flex; gap: 8px; padding: 12px; }
+.mac-drilldown { width: min(1100px,94vw); max-height: 85vh; padding: 24px; color: var(--text); background: var(--surface); border: 1px solid #8885; border-radius: 20px; }
+.mac-drilldown::backdrop { background: #0009; }
+[data-theme="light"] .mac-drilldown { background: #fff; color: #171717; }
+@media (max-width: 600px) { .mac-chart,.mac-breakdown { padding: 14px; } .mac-calendar { gap: 3px; } .mac-calendar small { font-size: 9px; } .mac-calendar .stats-day strong { font-size: 10px; } }
+
+.mac-stats-section, .mac-stats-section > *, .mac-stats-section .fx-card { min-width: 0; overflow-wrap: anywhere; }
+.mac-stats-section select { width: 100%; min-width: 0; max-width: 100%; }
+.mac-stats-section .stats-chart-labels { flex-wrap: wrap; gap: 12px; }
+@media (min-width: 1100px) {
+  .mac-stats-section { grid-template-columns: repeat(2,minmax(0,1fr)); align-items: start; }
+  .mac-stats-section > * { grid-column: 1 / -1; }
+  .mac-stats-section > .mac-chart, .mac-stats-section > .mac-breakdown { grid-column: auto; }
+}
+.mac-stats-section input[type="checkbox"] { width: 18px; height: 18px; min-height: 0; accent-color: var(--accent); }
+.mac-overview-row { display: grid; grid-template-columns: minmax(0,1.65fr) minmax(260px,1fr); gap: 24px; }
+.mac-overview-details .stats-chart-labels { padding: 12px 0; border-bottom: 1px solid var(--line); }
+.mac-overview-row > .fx-card { margin: 0; }
+@media (max-width: 900px) { .mac-overview-row { grid-template-columns: minmax(0,1fr); } }
+@media print { .workspace-sidebar, .workspace-tabs, .cloud-header, button, select, .stats-actions, #stats-sections { display: none !important; } .mac-stats-section:not([hidden]) { display: block; } .mac-chart { break-inside: avoid; } }

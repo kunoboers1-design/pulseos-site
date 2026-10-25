@@ -155,6 +155,7 @@ function mapTrade(entry, issues) {
     profitLoss: r.number('CD_profitLoss', { optional: status !== 'closed' }),
     preTradeNotes: legacy ? null : noteText(record, 'CD_preTradeNotes', key, issues),
     postTradeNotes: legacy ? null : noteText(record, 'CD_postTradeNotes', key, issues),
+    ...(!legacy ? journalFields(record, key, issues) : {}),
     startedAt, startedAtMeaning: legacy ? 'created' : 'opened', closedAt,
     accountKey: null, linkStatus: 'unlinked', currency: null,
   };
@@ -262,4 +263,22 @@ export function mapSnapshot({ context, records, collectionStatus }) {
     quality: issues.length ? 'needs-review' : 'validated-input',
     accounts, trades, notes, summary, issues, repeatedRecords,
   };
+}
+
+// MARK: - Mac-journalvelden
+// Comment NL: Ontbrekende waarden blijven onbekend; INT64-tellers zijn geen booleans.
+function journalFields(record, key, issues) {
+  const result = {};
+  for (const name of ['sessionRaw', 'sessionCustom', 'emotionCustom', 'emotionalStateRaw', 'tradeTypeRaw', 'setupTag', 'mistakeTag', 'setupsSelectedRaw', 'mistakesSelectedRaw', 'breakEvenHitRaw', 'weekendHoldRaw']) {
+    result[name] = record.fields[`CD_${name}`] || record.fields[`CD_${name}_ckAsset`] ? noteText(record, `CD_${name}`, key, issues) : null;
+  }
+  result.targetRR = reader(record, key, issues).number('CD_targetRR', { optional: true });
+  for (const name of ['confluences', 'slMoved']) {
+    const f = record.fields[`CD_${name}`]; result[name] = null;
+    if (f?.value == null) continue;
+    const valid = (f.type == null || f.type === 'INT64') && (name === 'slMoved' ? [0,1,true,false].includes(f.value) : Number.isSafeInteger(f.value) && f.value >= 0);
+    if (valid) result[name] = name === 'slMoved' ? Boolean(f.value) : f.value;
+    else issue(issues, 'invalid-field-value', key, `CD_${name}`);
+  }
+  return result;
 }
