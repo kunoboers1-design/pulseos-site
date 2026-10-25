@@ -75,3 +75,47 @@
 .stats-day.negative { border-top: 3px solid var(--danger); }
 @media (max-width: 1000px) { .stats-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); } .stats-days { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 @media (max-width: 500px) { .stats-days { grid-template-columns: repeat(2, minmax(0, 1fr)); } .stats-metrics .fx-card { padding: 14px; } .stats-metrics strong { font-size: 1.25rem; } .stats-actions button { flex: 1 1 170px; } }
+
+/* MARK: - Workspace met afzonderlijke tabs */
+.workspace-tabs { display: flex; gap: 6px; overflow-x: auto; padding: 8px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); margin: 28px 0; }
+.workspace-tabs button { flex: 1 0 auto; border: 0; border-radius: 10px; background: transparent; padding: 12px 16px; color: var(--muted); font: inherit; font-size: .88rem; }
+.workspace-tabs button[aria-selected="true"] { background: var(--accent-dim); color: var(--accent); font-weight: 650; }
+#open-badge { display: inline-block; margin-left: 6px; font-size: .78rem; }
+[role="tabpanel"] { min-height: 240px; }
+.stats-workspace { margin-top: 0; padding-top: 8px; border-top: 0; }
+#results .cloud-results-heading { padding: 8px 0; }
+#coverage { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+#coverage .fx-card { padding: 16px; font-size: .8rem; }
+#coverage strong { font-size: 1.1rem; }
+.trade-heading { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; align-items: center; }
+.trade-heading h3 { margin: 0; }
+.trade-lots { font-size: 1.8rem; display: block; margin: 20px 0; }
+.trade-facts { display: grid; grid-template-columns: auto minmax(0,1fr); gap: 12px; font-size: .88rem; }
+.trade-facts dt { color: var(--muted); }
+.trade-facts dd { margin: 0; text-align: right; overflow-wrap: anywhere; }
+.open-trade > button { width: 100%; }
+.notes-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
+.notes-grid .fx-card { margin: 0; min-width: 0; }
+.note-card h3 { margin: 14px 0; }
+.note-body { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30rem; overflow-y: auto; }
+.workspace-empty { padding: 36px 24px; border: 1px dashed var(--line-strong); border-radius: 16px; color: var(--muted); }
+.cloud-test input:not([type="checkbox"]) { width: 100%; min-height: 44px; border: 1px solid var(--line-strong); border-radius: 10px; padding: 10px 12px; background: var(--surface); color: var(--text); font: inherit; box-sizing: border-box; }
+.cloud-test input:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+#close-dialog { width: min(560px,calc(100vw - 32px)); max-height: calc(100dvh - 32px); box-sizing: border-box; overflow-y: auto; border: 1px solid var(--line-strong); border-radius: 22px; background: var(--surface); color: var(--text); padding: 28px; }
+#close-dialog::backdrop { background: rgb(0 0 0 / .65); backdrop-filter: blur(4px); }
+#close-dialog form { display: grid; gap: 16px; }
+#close-dialog p { margin: 0; font-size: .9rem; }
+#close-dialog .cloud-notice:empty { display: none; }
+.close-review { border: 1px solid var(--accent); border-radius: 12px; padding: 16px; }
+.close-review strong { display: block; margin-bottom: 10px; font-size: 1.3rem; }
+#close-confirm { margin: 18px 8px 0 0; width: 18px; height: 18px; accent-color: var(--accent); }
+#close-dialog button { justify-content: center; }
+@media(max-width: 650px) { .notes-grid { grid-template-columns: 1fr; } .workspace-tabs { margin-inline: -6px; } .workspace-tabs button { padding: 12px; } #close-dialog { padding: 20px; } }
+/* Comment NL: Verbindingsdetails zijn optioneel; de workspace houdt de nadruk op de gekozen tab. */
+.cloud-header { margin-bottom: 32px; }
+.cloud-test h1 { font-size: clamp(1.9rem, 4vw, 2.8rem); }
+#workspace-toolbar .cloud-results-heading { padding: 0; }
+#workspace-toolbar #fetched { font-size: .8rem; }
+#workspace-toolbar .cloud-notice { padding: 12px 16px; font-size: .8rem; }
+#workspace-demo-banner a { margin-right: 16px; }
+#open-panel .cloud-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); }

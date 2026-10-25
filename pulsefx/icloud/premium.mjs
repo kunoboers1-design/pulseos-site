@@ -26,7 +26,7 @@ export function statisticsPayload(snapshot) {
       accountKey: keys.get(t.accountKey) || null, linkStatus: ['linked', 'ambiguous'].includes(t.linkStatus) ? t.linkStatus : 'unlinked' })) };
 }
 
-export function mountPremium(root) {
+export function mountPremium(root, { friends = false } = {}) {
   let source = null, stale = false, demo = false, verified = false, generation = 0, controller = null, expiresTimer = null;
   const heading = make('div', null, 'cloud-results-heading');
   const title = make('div'); title.append(make('p', 'PERFORMANCE, WITH CONTEXT', 'fx-eyebrow'), make('h2', 'Your trading statistics'));
@@ -65,6 +65,13 @@ export function mountPremium(root) {
   const basis = make('p', 'Closed trades from active accounts only. Periods use the opening date in UTC; legacy trades use their creation date. Win rate includes break-even trades. Missing R counts as zero, matching the native calculator. Currencies are never combined.'); basis.className = 'stats-caption';
   root.append(heading, intro, actions, status, pairing, privacy, filters, output, basis);
   const current = () => demo ? statisticsDemo() : source;
+  if (friends) {
+    badge.textContent = 'Friends access';
+    intro.textContent = 'Statistics from your iCloud snapshot, calculated in this browser. Friends access does not verify a Premium purchase.';
+    privacy.textContent = 'Your account names, notes and trade metrics stay in this browser. No trade data is sent to a statistics server.';
+    for (const control of [pair, check, disconnect]) control.hidden = true;
+    status.textContent = 'Connect iCloud and load your records to calculate statistics.';
+  }
   const cancel = () => { generation++; controller?.abort(); controller = null; };
   const clear = () => { cancel(); output.replaceChildren(); };
   function lock(message) { clearTimeout(expiresTimer); verified = false; if (!demo) clear(); badge.textContent = demo ? 'Demo mode · fictional data' : 'Premium locked'; status.textContent = message; }
@@ -74,7 +81,7 @@ export function mountPremium(root) {
   }
   function populate() {
     clear(); account.replaceChildren(); instrument.replaceChildren();
-    for (const [control, rows] of [[account, [['All active accounts', 'all'], ...(current()?.accounts || []).map((a, i) => [a.name || 'Unnamed account', demo ? a.key : `a${i}`])]],
+    for (const [control, rows] of [[account, [['All active accounts', 'all'], ...(current()?.accounts || []).map((a, i) => [a.name || 'Unnamed account', demo || friends ? a.key : `a${i}`])]],
       [instrument, [['All instruments', 'all'], ...[...new Set((current()?.trades || []).map(t => t.instrument).filter(Boolean))].sort().map(v => [v, v])]]]) {
       for (const [text, v] of rows) { const o = make('option', text); o.value = v; control.append(o); }
     }
@@ -97,7 +104,7 @@ export function mountPremium(root) {
     const money = make('div', null, 'cloud-grid');
     for (const bucket of s.plByCurrency) money.append(metric(`Realized P&L · ${bucket.currency}`, value(bucket.value), `${bucket.count} trades · no currency conversion`));
     output.append(make('h3', 'Results by currency'), money, chart(result.timeline));
-    const names = new Map((current()?.accounts || []).map((a, index) => [demo ? a.key : `a${index}`, a.name || 'Unnamed account']));
+    const names = new Map((current()?.accounts || []).map((a, index) => [demo || friends ? a.key : `a${index}`, a.name || 'Unnamed account']));
     const table = (title, rows, label) => { const section = make('section'); section.append(make('h3', title)); const scroll = make('div', null, 'table-scroll'); scroll.tabIndex = 0; scroll.setAttribute('role', 'region'); scroll.setAttribute('aria-label', title);
       const table = make('table'); const head = make('thead'), header = make('tr');
       for (const item of [label, 'Trades', 'Win rate', 'Total R', 'Average R', 'Profit factor']) header.append(make('th', item)); head.append(header);
@@ -125,13 +132,14 @@ export function mountPremium(root) {
   async function run() {
     clear(); const revision = generation;
     if (!demo && (!source || stale || source.collectionStatus !== 'complete')) { status.textContent = 'Read a complete, fresh iCloud zone first. Your previous statistics have been cleared.'; return; }
-    if (!demo && !verified) { status.textContent = 'Connect Premium and check the connection first.'; return; }
+    if (!demo && !friends && !verified) { status.textContent = 'Connect Premium and check the connection first.'; return; }
     if (start.value && end.value && start.value > end.value) { status.textContent = 'The start date must be on or before the end date.'; start.focus(); return; }
     const filters = { accountKey: account.value, instrument: instrument.value, outcome: outcome.value,
       start: start.value ? `${start.value}T00:00:00Z` : null, end: end.value ? new Date(Date.parse(`${end.value}T00:00:00Z`) + 86400000).toISOString() : null };
     calculate.disabled = true;
     try {
       if (demo) { render(calculateStatistics(statisticsDemo(), filters)); status.textContent = 'Demo mode. Fictional accounts and trades only; no Premium access has been granted.'; }
+      else if (friends) { render(calculateStatistics(source, filters)); status.textContent = 'Calculated locally from your loaded records. No Premium purchase has been verified.'; }
       else {
         controller = new AbortController();
         const response = await api('statistics', 'POST', { snapshot: statisticsPayload(source), filters }, controller.signal);
@@ -164,13 +172,13 @@ export function mountPremium(root) {
     catch { status.textContent = 'Local statistics cleared, but the server could not confirm sign-out. Retry Disconnect Premium; the server session expires within 12 hours.'; }
   };
   preview.onclick = () => { demo = true; badge.textContent = 'Demo mode · fictional data'; live.hidden = false; populate(); void run(); };
-  live.onclick = () => { demo = false; badge.textContent = verified ? 'Premium verified' : 'Premium locked'; populate(); status.textContent = 'Using your iCloud snapshot. Choose Calculate statistics when ready.'; };
+  live.onclick = () => { demo = false; badge.textContent = friends ? 'Friends access' : verified ? 'Premium verified' : 'Premium locked'; populate(); status.textContent = 'Using your iCloud snapshot. Choose Calculate statistics when ready.'; };
   calculate.onclick = run;
   reset.onclick = () => { populate(); if (demo) void run(); else status.textContent = 'Filters reset. Calculate statistics to refresh the results.'; };
   for (const control of [account, instrument, outcome, start, end]) control.onchange = () => { clear(); if (demo) void run(); else status.textContent = 'Filters changed. Calculate statistics to refresh the results.'; };
   if (new URLSearchParams(location.search).get('statistics') === 'demo') preview.click();
   return {
-    setSnapshot(snapshot, isStale = false) { source = snapshot; stale = isStale; if (!demo) populate(); },
+    setSnapshot(snapshot, isStale = false) { source = snapshot; stale = isStale; if (!demo) { populate(); if (friends && source && !stale) void run(); } },
     clear() { source = null; stale = false; if (!demo) populate(); },
     dispose() { cancel(); clearTimeout(expiresTimer); output.replaceChildren(); },
   };

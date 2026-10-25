@@ -17,41 +17,56 @@
 <body class="fx-web cloud-test">
   <a class="skip-link" href="#main">Skip to content</a>
   <div class="cloud-layout">
-    <header class="cloud-header"><a class="fx-brand" href="/pulsefx/app/">Pulse<span class="accent">FX</span></a><div class="cloud-header-actions"><div class="cloud-badges"><a class="tag" href="/pulsefx/access/logout">Lock website</a><span class="tag">Read-only test</span><span class="tag" id="environment">Not connected</span></div><button type="button" id="themeToggle" class="theme-toggle" data-theme-label aria-label="Switch to light mode">Light mode</button></div></header>
+    <header class="cloud-header"><a class="fx-brand" href="/pulsefx/app/">Pulse<span class="accent">FX</span></a><div class="cloud-header-actions"><div class="cloud-badges"><a class="tag" href="/pulsefx/access/logout">Lock website</a><span class="tag" id="access-capability">Read-only iCloud</span><span class="tag" id="environment">Not connected</span></div><button type="button" id="themeToggle" class="theme-toggle" data-theme-label aria-label="Switch to light mode">Light mode</button></div></header>
     <main id="main">
       <p class="fx-eyebrow">YOUR ICLOUD DATA, A CLOSER LOOK</p>
       <h1>Your trading, in perspective.</h1>
-      <p class="cloud-lead">Your accounts, trade journal and Premium statistics in one place. iCloud access remains read-only. Compare your results with the native app.</p>
-      <nav class="stats-nav" aria-label="Workspace"><a href="#connect-title">Connection</a><a href="#premium-statistics">Statistics</a><a href="#accounts-title">Accounts</a><a href="#journal-title">Trade journal</a><a href="/pulsefx/dashboard/?view=calculator">Demo calculator</a></nav>
+      <p class="cloud-lead">Accounts, performance, notes and open trades — together in your browser.</p>
+      <div id="workspace-demo-banner" class="cloud-notice" hidden><strong>Demo mode · fictional data</strong><p>Explore the workspace and close a sample trade. Nothing is connected to iCloud or saved on a server.</p><a href="/pulsefx/icloud/">Exit demo</a></div>
+      <nav class="workspace-tabs" role="tablist" aria-label="Workspace">
+        <button id="tab-accounts" role="tab" aria-controls="accounts-panel" aria-selected="false" tabindex="-1">Accounts</button>
+        <button id="tab-stats" role="tab" aria-controls="premium-statistics" aria-selected="false" tabindex="-1">Stats</button>
+        <button id="tab-notes" role="tab" aria-controls="notes-panel" aria-selected="false" tabindex="-1">Notes</button>
+        <button id="tab-open" role="tab" aria-controls="open-panel" aria-selected="false" tabindex="-1">Open trades <span id="open-badge">—</span></button>
+        <button id="tab-journal" role="tab" aria-controls="journal-panel" aria-selected="false" tabindex="-1">Journal</button>
+        <button id="tab-connection" role="tab" aria-controls="connection-panel" aria-selected="true">Connection</button>
+      </nav>
+      <div id="workspace-toolbar" hidden><div class="cloud-results-heading"><p id="fetched"></p><button id="refresh" class="text-button">Refresh selected zone</button></div><div id="quality" class="cloud-notice" role="status"></div></div>
+      <p id="workspace-empty" class="workspace-empty" hidden>Connect iCloud and load your workspace first. Your records will appear here.</p>
+      <section id="connection-panel" role="tabpanel" aria-labelledby="tab-connection">
       <section class="fx-card cloud-connection" aria-labelledby="connect-title">
         <div><h2 id="connect-title">Connect through Apple</h2><p id="configuration">Checking this deployment…</p></div>
         <p>No Apple password is collected here. The app only reads selected data; the Apple session itself is not a read-only permission.</p>
-        <p>Notes, screenshots, alerts, deposits and withdrawals are not included in this test. Premium statistics require a separate, verified purchase connection below.</p>
-        <button id="start" class="hero-button primary-button" disabled>Start iCloud test</button>
+        <p>Read accounts, trades and plain-text notes from your private iCloud zone. Photos and formatted note attachments are not loaded. Friends statistics are calculated locally; no Premium purchase is verified.</p>
+        <button id="start" class="hero-button primary-button" disabled>Connect iCloud</button>
         <div id="apple-sign-in-button"></div><div id="apple-sign-out-button"></div>
         <button id="disconnect" class="text-button" hidden>Disconnect and clear data</button>
         <p id="status" role="status" aria-live="polite">No accounts or data connected.</p>
       </section>
       <section id="zone-panel" class="fx-card" hidden aria-labelledby="zone-title">
         <h2 id="zone-title">Choose a private zone</h2><p>A zone is a group of records in your iCloud database. Choose the PulseFX zone to inspect. Nothing will be merged or changed.</p>
-        <div class="cloud-controls"><div class="cloud-field"><label for="zone">Private zone</label><select id="zone"></select></div><button id="read" class="hero-button primary-button" disabled>Read selected zone</button><button id="zones-refresh" class="text-button">Reload zones</button></div>
+        <div class="cloud-controls"><div class="cloud-field"><label for="zone">Private zone</label><select id="zone"></select></div><button id="read" class="hero-button primary-button" disabled>Load workspace</button><button id="zones-refresh" class="text-button">Reload zones</button></div>
       </section>
-      <section id="premium-statistics" class="stats-workspace" aria-label="Premium statistics"></section>
-      <section id="results" hidden aria-labelledby="results-title">
-        <div class="cloud-results-heading"><h2 id="results-title">Accounts &amp; trades</h2><button id="refresh" class="text-button">Refresh selected zone</button></div>
-        <p id="fetched"></p><div id="quality" class="cloud-notice" role="status"></div>
-        <div id="coverage" class="cloud-grid"></div>
-        <h3 id="accounts-title">Stored balances by currency</h3><p>Includes archived accounts. No currency conversion or balance reconstruction.</p><div id="balances" class="cloud-grid"></div>
+        <details id="diagnostics" hidden><summary>Data checks</summary><p>Checks cover this selected zone and the requested record types. They do not certify that every device has synchronized. Assets and unknown fields need further investigation.</p><div id="coverage" class="cloud-grid"></div><ul id="issues"></ul></details>
+      </section>
+      <section id="premium-statistics" role="tabpanel" aria-labelledby="tab-stats" hidden class="stats-workspace" aria-label="Statistics"></section>
+      <section id="results" hidden aria-label="Accounts and journal">
+        <section id="accounts-panel" role="tabpanel" aria-labelledby="tab-accounts" hidden><h2 id="accounts-title">Accounts</h2><h3>Balances by currency</h3><p>Includes archived accounts. No currency conversion or balance reconstruction.</p><div id="balances" class="cloud-grid"></div>
         <div class="cloud-controls"><div class="cloud-field"><label for="archive">Accounts shown</label><select id="archive"><option value="all">All accounts</option><option value="active">Active accounts</option><option value="archived">Archived accounts</option></select></div></div>
         <div id="accounts" class="cloud-grid"></div>
-        <h3 id="journal-title">Trade journal</h3>
+        </section>
+        <section id="journal-panel" role="tabpanel" aria-labelledby="tab-journal" hidden><h3 id="journal-title">Trade journal</h3>
         <div class="cloud-controls"><div class="cloud-field"><label for="account-filter">Account</label><select id="account-filter"><option value="all">All accounts</option></select></div><div class="cloud-field"><label for="trade-status">Trade status</label><select id="trade-status"><option value="all">All statuses</option><option value="open">Open</option><option value="closed">Closed</option><option value="unknown">Unknown status</option></select></div><div class="cloud-field"><label for="trade-model">Record type</label><select id="trade-model"><option value="all">Both trade types</option><option value="CD_Trade">Legacy trades</option><option value="CD_OpenTrade">Modern trades</option></select></div></div>
         <p id="trade-count"></p>
         <div class="table-scroll" tabindex="0" role="region" aria-label="Read-only trade journal"><table><thead><tr><th>Instrument</th><th>Account</th><th>Date · UTC</th><th>Type</th><th>Status / result</th><th>Lots</th><th>P&amp;L</th></tr></thead><tbody id="trades"></tbody></table></div>
-        <details id="diagnostics"><summary>Data checks</summary><p>Checks cover this selected zone and three record types. They do not certify that every device has synchronized. Assets and unknown fields need further investigation.</p><ul id="issues"></ul></details>
+        </section>
+
       </section>
+      <section id="notes-panel" role="tabpanel" aria-labelledby="tab-notes" hidden></section>
+      <section id="open-panel" role="tabpanel" aria-labelledby="tab-open" hidden></section>
+      <dialog id="close-dialog" aria-labelledby="close-title"></dialog>
     </main>
-    <footer class="cloud-footer"><a href="/pulsefx/app/">Back to demo</a><span>iCloud records stay in memory. Premium calculations send only trade metrics to the server.</span><a href="/privacy/">Privacy</a></footer>
+    <footer class="cloud-footer"><a href="/pulsefx/app/">Back to demo</a><span>Your iCloud records stay in this page’s memory. Disconnect to clear them.</span><a href="/privacy/">Privacy</a></footer>
   </div>
   <noscript>This iCloud test requires JavaScript. <a href="/pulsefx/app/">Explore the demo instead.</a></noscript>
 </body>

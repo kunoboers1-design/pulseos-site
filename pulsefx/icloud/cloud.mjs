@@ -1,7 +1,10 @@
 import { mountPremium } from './premium.mjs';
-const premium = mountPremium(document.getElementById('premium-statistics'));
+const premium = mountPremium(document.getElementById('premium-statistics'), { friends: true });
+import { mountWorkspace, workspaceDemo } from './workspace.mjs';
+import { closeDemo, commitClose, closeTransport } from './close-trade.mjs';
+import { summarize } from './mapper.mjs';
 
-import { createReader, readOnlyFetch, deadline, errorCode, isAuthError } from './reader.mjs';
+import { createReader, deadline, errorCode, isAuthError } from './reader.mjs';
 
 // MARK: - Veilige DOM-weergave
 const $ = id => document.getElementById(id);
@@ -13,6 +16,28 @@ const utc = value => value ? `${new Intl.DateTimeFormat('en-GB', { dateStyle: 'm
 const card = (label, value, detail) => { const element = node('article', null, 'fx-card'); element.append(node('span', label), node('strong', value), node('small', detail)); return element; };
 const option = (label, value) => { const item = node('option', label); item.value = value; return item; };
 const state = { config: null, container: null, reader: null, identity: null, generation: 0, zones: [], snapshot: null, stale: false, started: false, busy: false, networkActive: false };
+const demoMode = new URLSearchParams(location.search).get('workspace') === 'demo';
+let transport = null;
+const workspace = mountWorkspace({ getSnapshot: () => state.snapshot, isDemo: demoMode,
+  canClose: trade => demoMode || Boolean(state.config?.closeTradePilotId && trade.id === state.config.closeTradePilotId.toLowerCase() && !state.stale && !state.busy),
+  onDemoReset: () => { state.snapshot = workspaceDemo(); state.snapshot.summary = summarize(state.snapshot.accounts, state.snapshot.trades); render(true); },
+  onClose: async plan => {
+    if (demoMode) { state.snapshot = closeDemo(state.snapshot, plan); state.snapshot.summary = summarize(state.snapshot.accounts, state.snapshot.trades); render(); return; }
+    if (state.busy || state.stale || state.snapshot?.collectionStatus !== 'complete') throw new Error('Refresh the workspace before closing a trade.');
+    const generation = state.generation, selected = state.zones[Number($('zone').value)];
+    busy(true);
+    try {
+      const identity = await deadline(state.container.setUpAuth());
+      if (generation !== state.generation || identity?.userRecordName !== state.identity) throw new Error('Your Apple session changed. Reconnect before continuing.');
+      await commitClose({ plan, config: state.config, database: state.container.privateCloudDatabase, selected, transport });
+      if (generation !== state.generation) throw new Error('Session changed during save. Reconnect and check the result.');
+      state.stale = true; render(); status('Close saved to iCloud. Refreshing the workspace; check your native app after sync.');
+    } catch (error) {
+      state.stale = true; render(); status(error.message); throw error;
+    } finally { if (generation === state.generation) busy(false); }
+    await readSelected();
+  },
+});
 const messages = {
   AUTHENTICATION_REQUIRED: 'Your Apple session expired. Disconnect and start again.',
   AUTHENTICATION_FAILED: 'Apple authentication failed. Disconnect and start again.',
@@ -31,8 +56,9 @@ const describe = code => messages[code] || `The read could not be completed (${c
 // MARK: - Sessie-isolatie
 function clearView() {
   premium.clear();
+  transport?.disarm();
   state.reader?.cancel(); state.reader = null; state.generation++; state.busy = false;
-  state.zones = []; state.snapshot = null; state.stale = false;
+  state.zones = []; state.snapshot = null; state.stale = false; workspace.clear();
   $('zone').replaceChildren(); $('zone-panel').hidden = true; $('results').hidden = true;
   for (const id of ['accounts', 'trades', 'balances', 'coverage', 'issues']) $(id).replaceChildren();
   $('account-filter').replaceChildren(option('All accounts', 'all'));
@@ -41,13 +67,14 @@ function clearView() {
 }
 function makeReader() {
   state.reader?.cancel();
-  state.reader = createReader({ database: state.container.privateCloudDatabase,
+  state.reader = createReader({ includeNotes: true, database: state.container.privateCloudDatabase,
     context: { container: state.config.containerIdentifier, environment: state.config.environment, database: 'private', sessionId: state.identity } });
   return state.reader;
 }
 function busy(value) {
   state.busy = value;
   $('read').disabled = value || !state.identity || $('zone').value === '';
+  $('zone').disabled = value;
   $('refresh').disabled = value; $('zones-refresh').disabled = value;
 }
 function endSession(message = 'Disconnected. Data has been cleared from this page.') {
@@ -104,7 +131,8 @@ async function start() {
     if (initialGeneration !== state.generation) return;
     state.networkActive = true;
     const quiet = () => {};
-    const guardedFetch = readOnlyFetch(state.config, globalThis.fetch.bind(globalThis));
+    transport = closeTransport(state.config, globalThis.fetch.bind(globalThis));
+    const guardedFetch = transport.fetch;
     sdk.configure({ containers: [{ containerIdentifier: state.config.containerIdentifier, environment: state.config.environment,
       apiTokenAuth: { apiToken: state.config.apiToken, persist: false, signInButton: { id: 'apple-sign-in-button', theme: 'white-with-outline' }, signOutButton: { id: 'apple-sign-out-button', theme: 'white-with-outline' } } }],
       services: { fetch: (...args) => state.networkActive ? guardedFetch(...args) : Promise.reject(new Error('Session closed')), logger: { info: quiet, log: quiet, warn: quiet, error: quiet } } });
@@ -132,7 +160,7 @@ async function readSelected() {
   const generation = ++state.generation;
   const reader = makeReader();
   premium.setSnapshot(null);
-  busy(true); status('Reading accounts and trades…');
+  busy(true); status('Reading accounts, trades and notes…');
   try {
     // Comment NL: Sessieverval en een ander Apple-account eerst detecteren; geen oude gegevens vermengen.
     const identity = await deadline(state.container.setUpAuth());
@@ -163,10 +191,10 @@ function render(resetFilters = false) {
   premium.setSnapshot(data, state.stale);
   if (!data) return;
   $('results').hidden = false;
-  $('fetched').textContent = `Last fetched from iCloud: ${utc(data.fetchedAt)} · ${data.environment} · ${data.zone.zoneName}`;
+  $('fetched').textContent = data.source === 'demo' ? 'Demo mode · fictional accounts, trades and notes. Changes last until this page is reloaded.' : `Last fetched from iCloud: ${utc(data.fetchedAt)} · ${data.environment} · ${data.zone.zoneName}`;
   const incomplete = data.collectionStatus !== 'complete';
   $('quality').classList.toggle('warning', incomplete || state.stale || data.issues.length > 0);
-  $('quality').textContent = `${state.stale ? 'Stale results. The latest refresh did not complete. ' : ''}${incomplete ? 'Partial results: some queries failed. Balances are withheld. ' : 'Selected queries finished. '}${data.issues.length} data check(s) need review. This covers one zone and three record types, not all PulseFX data.`;
+  $('quality').textContent = data.source === 'demo' ? 'Fictional workspace. No iCloud records have been read or changed.' : `${state.stale ? 'Stale results. The latest refresh did not complete. ' : ''}${incomplete ? 'Partial results: some queries failed. Balances are withheld. ' : 'Selected queries finished. '}${data.issues.length} data check(s) need review. This covers one zone and the requested record types. Photos and attachments are not loaded.`;
   $('coverage').replaceChildren(...data.coverage.map(c => card(c.type, String(c.received), c.complete ? 'All query pages received' : 'Incomplete query')));
   $('balances').replaceChildren(...(incomplete ? [node('p', 'Totals are unavailable while the read is incomplete.')] : data.summary.balances.map(b => card(b.currency, money(b.balance, b.currency), `${b.accounts} accounts · ${b.archivedAccounts} archived · ${data.summary.excludedAccounts} accounts excluded overall${data.issues.length ? ' · review data checks before relying on totals' : ''}`))));
   if (!incomplete && !data.summary.balances.length) $('balances').append(node('p', 'No known balances returned. This does not prove that your native data is empty.'));
@@ -180,9 +208,9 @@ function render(resetFilters = false) {
     const trades = data.trades.filter(t => t.accountKey === a.key);
     const element = card(a.name || 'Unknown account', money(a.balance, a.currency), `${a.kind || 'Unknown type'} · ${a.archived === true ? 'Archived' : a.archived === false ? 'Active' : 'Unknown archive status'}`);
     const details = node('details'); details.append(node('summary', 'Account details'));
-    for (const line of [`Starting balance: ${money(a.startBalance, a.currency)}`, `Created: ${utc(a.createdAt)}`, `${trades.filter(t => t.status === 'open').length} open · ${trades.filter(t => t.status === 'closed').length} closed · ${trades.filter(t => !t.status).length} unknown`, `Record: ${a.recordName}`]) details.append(node('p', line));
+    for (const line of [`Starting balance: ${money(a.startBalance, a.currency)}`, `Created: ${utc(a.createdAt)}`, `${trades.filter(t => t.status === 'open').length} open · ${trades.filter(t => t.status === 'closed').length} closed · ${trades.filter(t => !t.status).length} unknown`]) details.append(node('p', line));
     const button = node('button', 'View trades', 'text-button'); button.type = 'button';
-    button.onclick = () => { $('account-filter').value = a.key; $('trade-status').value = 'all'; $('trade-model').value = 'all'; renderTrades(); $('account-filter').focus(); };
+    button.onclick = () => { $('account-filter').value = a.key; $('trade-status').value = 'all'; $('trade-model').value = 'all'; renderTrades(); workspace.show('journal'); $('account-filter').focus(); };
     element.append(details, button); return element;
   }));
   if (!accounts.length) $('accounts').append(node('p', 'No accounts in this view. Check the selected zone, environment and data checks.'));
@@ -191,6 +219,7 @@ function render(resetFilters = false) {
   $('issues').replaceChildren(...[...counts].map(([label, count]) => node('li', `${label}: ${count}`)), ...data.failures.map(f => node('li', `${f.type}: ${describe(f.code)}`)));
   if (!data.issues.length && !data.failures.length) $('issues').append(node('li', 'No mapping issues detected in the returned records. Completeness still requires comparison with the native app.'));
   renderTrades();
+  workspace.update(state.stale, resetFilters);
 }
 function renderTrades() {
   const data = state.snapshot; if (!data) return;
@@ -217,7 +246,7 @@ $('read').addEventListener('click', readSelected); $('refresh').addEventListener
 $('zones-refresh').addEventListener('click', () => { if (state.identity && !state.busy) void listZones(); });
 $('zone').addEventListener('change', () => {
   premium.clear();
-  state.reader?.cancel(); state.generation++; state.busy = false; state.snapshot = null; state.stale = false;
+  state.reader?.cancel(); state.generation++; state.busy = false; state.snapshot = null; state.stale = false; workspace.clear(); transport?.disarm();
   $('results').hidden = true;
   for (const id of ['accounts', 'trades', 'balances', 'coverage', 'issues']) $(id).replaceChildren();
   busy(false); status('Zone selection changed. Read it to load its records.');
@@ -227,8 +256,13 @@ for (const id of ['account-filter', 'trade-status', 'trade-model']) $(id).addEve
 addEventListener('pagehide', () => { endSession(); premium.dispose(); });
 addEventListener('pageshow', event => { if (event.persisted) location.reload(); });
 
-try {
-  const response = await fetch('/api/pulsefx-config', { cache: 'no-store', credentials: 'omit', signal: AbortSignal.timeout(10000) });
+if (demoMode) {
+  state.snapshot = workspaceDemo(); state.snapshot.summary = summarize(state.snapshot.accounts, state.snapshot.trades);
+  $('workspace-demo-banner').hidden = false; $('environment').textContent = 'Demo mode'; $('access-capability').textContent = 'Fictional data only';
+  $('configuration').textContent = 'Demo workspace. Apple connections are disabled here.';
+  $('start').disabled = true; $('refresh').hidden = true; render(true);
+} else try {
+  const response = await fetch('/api/pulsefx-config', { cache: 'no-store', credentials: 'same-origin', signal: AbortSignal.timeout(10000) });
   if (!response.ok) throw new Error('Config unavailable');
   const config = await response.json();
   if (!config.enabled) {
@@ -239,6 +273,7 @@ try {
   } else {
     state.config = config; $('environment').textContent = `${config.environment === 'production' ? 'Production' : 'Development'} · private`;
     $('configuration').textContent = `${config.environment === 'production' ? 'Production: reads the selected account’s live cloud records.' : 'Development: a separate dataset from the released apps.'} Nothing is loaded until you start and sign in through Apple.`;
+    if (config.closeTradePilotId) $('access-capability').textContent = 'Closing pilot · one test trade';
     $('start').disabled = false;
   }
 } catch {

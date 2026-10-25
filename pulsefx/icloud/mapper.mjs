@@ -1,6 +1,6 @@
 // MARK: - Contract
 // Comment NL: Deze pure mapper verwerkt aangeleverde records; hij opent geen opslag of netwerk.
-export const RECORD_TYPES = Object.freeze(['CD_Account', 'CD_Trade', 'CD_OpenTrade']);
+export const RECORD_TYPES = Object.freeze(['CD_Account', 'CD_Trade', 'CD_OpenTrade', 'CD_TradeNote']);
 const CURRENCIES = new Set('USD EUR GBP JPY AUD CAD CHF NZD CNY INR RUB ZAR BRL MXN TRY PLN CZK HUF SEK NOK DKK KRW TWD THB MYR IDR PHP VND HKD SGD AED SAR ILS'.split(' '));
 const KINDS = ['phase', 'funded', 'own', 'demo', 'ownCapital', 'externalCapital'];
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -110,7 +110,7 @@ function mapAccount(entry, issues) {
   const currency = CURRENCIES.has(currencyRaw) ? currencyRaw : null;
   if (currencyRaw !== null && currency === null) issue(issues, 'unsupported-currency', key, 'CD_currencyRaw');
   return {
-    key, recordType: record.recordType, recordName: record.recordName, zone,
+    key, recordType: record.recordType, recordName: record.recordName, zone, recordChangeTag: record.recordChangeTag ?? null,
     id: r.uuid('CD_id'), name: r.string('CD_name', { asset: true }),
     kind: kind.value, kindRaw: kind.raw, currency, currencyRaw,
     balance: r.number('CD_balance'), startBalance: r.number('CD_startBalance'),
@@ -144,7 +144,7 @@ function mapTrade(entry, issues) {
   const startedAt = r.date(legacy ? 'CD_createdAt' : 'CD_openedAt');
   if (startedAt && closedAt && Date.parse(closedAt) < Date.parse(startedAt)) issue(issues, 'date-order-conflict', key);
   return {
-    key, recordType: record.recordType, recordName: record.recordName, zone,
+    key, recordType: record.recordType, recordName: record.recordName, zone, recordChangeTag: record.recordChangeTag ?? null,
     id: r.uuid('CD_id'), instrument: r.string(legacy ? 'CD_pair' : 'CD_symbol', { asset: true }),
     accountReference: legacy ? r.string('CD_account', { optional: true }) : r.uuid('CD_linkedAccountId', { optional: true }),
     status, result, rawStatus, rawResult, direction, directionRaw, outcomeConsistent,
@@ -153,9 +153,32 @@ function mapTrade(entry, issues) {
     finalRR: legacy ? null : r.number('CD_finalRR', { optional: true }), entryPrice: legacy ? null : r.number('CD_entryPrice', { optional: true }),
     stopLossPlacement: legacy ? null : r.number('CD_stopLossPlacement', { optional: true }), actualExitPrice: legacy ? null : r.number('CD_actualExitPrice', { optional: true }),
     profitLoss: r.number('CD_profitLoss', { optional: status !== 'closed' }),
+    preTradeNotes: legacy ? null : noteText(record, 'CD_preTradeNotes', key, issues),
+    postTradeNotes: legacy ? null : noteText(record, 'CD_postTradeNotes', key, issues),
     startedAt, startedAtMeaning: legacy ? 'created' : 'opened', closedAt,
     accountKey: null, linkStatus: 'unlinked', currency: null,
   };
+}
+
+// MARK: - Notities als platte tekst
+// Comment NL: Rich text en assets worden nooit als HTML of externe URL geladen.
+function noteText(record, name, key, issues) {
+  const field = record.fields[name], value = field?.value;
+  if ((value == null || value === '') && record.fields[`${name}_ckAsset`]?.value != null) {
+    issue(issues, 'unsupported-field-storage', key, name); return null;
+  }
+  if (value == null) return '';
+  if (typeof value !== 'string' || (field.type != null && field.type !== 'STRING') || value.length > 100000) {
+    issue(issues, 'invalid-note-text', key, name); return null;
+  }
+  return value;
+}
+function mapNote(entry, issues) {
+  const { record, key, zone } = entry, r = reader(record, key, issues);
+  return { key, recordType: record.recordType, recordName: record.recordName, zone,
+    id: r.uuid('CD_id'), title: noteText(record, 'CD_title', key, issues), body: noteText(record, 'CD_body', key, issues),
+    accountId: r.uuid('CD_accountID', { optional: true }), tradeId: r.uuid('CD_tradeID', { optional: true }),
+    createdAt: r.date('CD_createdAt'), accountKey: null, linkStatus: 'unlinked' };
 }
 
 // MARK: - Koppelingen en totalen
@@ -185,7 +208,7 @@ function linkTrades(accounts, trades, issues) {
   }
 }
 
-function summarize(accounts, trades, issues) {
+export function summarize(accounts, trades, issues = []) {
   const balances = new Map();
   let excludedAccounts = 0;
   for (const account of accounts) {
@@ -225,12 +248,18 @@ export function mapSnapshot({ context, records, collectionStatus }) {
   if (collectionStatus === 'partial') issue(issues, 'partial-collection');
   const { entries, repeatedRecords } = prepare(records, context, issues);
   const accounts = entries.filter(e => e.record.recordType === 'CD_Account').map(e => mapAccount(e, issues));
-  const trades = entries.filter(e => e.record.recordType !== 'CD_Account').map(e => mapTrade(e, issues));
+  const trades = entries.filter(e => ['CD_Trade', 'CD_OpenTrade'].includes(e.record.recordType)).map(e => mapTrade(e, issues));
   linkTrades(accounts, trades, issues);
+  const notes = entries.filter(e => e.record.recordType === 'CD_TradeNote').map(e => mapNote(e, issues));
+  for (const note of notes) {
+    const matches = accounts.filter(a => a.id && a.id === note.accountId);
+    if (matches.length === 1) { note.accountKey = matches[0].key; note.linkStatus = 'linked'; }
+    else if (matches.length > 1) note.linkStatus = 'ambiguous';
+  }
   const summary = summarize(accounts, trades, issues);
   return {
     source: 'mapped-records', collectionStatus,
     quality: issues.length ? 'needs-review' : 'validated-input',
-    accounts, trades, summary, issues, repeatedRecords,
+    accounts, trades, notes, summary, issues, repeatedRecords,
   };
 }

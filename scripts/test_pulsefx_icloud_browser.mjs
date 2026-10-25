@@ -48,6 +48,7 @@ window.CloudKit = { configure: settings => { if (settings.containers[0].apiToken
 const browser = await chromium.launch({ headless: true });
 const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
 const errors = [], external = [];
+let vendorModify = 0;
 let enabled = false, useVendor = false, premiumState = 'disabled', premiumDelay = 0, premiumRequests = 0;
 await context.route('**/*', async route => {
   const url = new URL(route.request().url());
@@ -56,6 +57,14 @@ await context.route('**/*', async route => {
   }
   if (useVendor && url.origin === 'https://api.apple-cloudkit.com' && url.pathname.endsWith('/public/users/caller')) {
     return route.fulfill({ status: 401, headers: { 'Access-Control-Allow-Origin': origin, 'Access-Control-Allow-Headers': '*', 'Content-Type': 'application/json' }, body: JSON.stringify({ serverErrorCode: 'AUTHENTICATION_REQUIRED', reason: 'Offline authentication fixture', redirectURL: 'https://idmsa.apple.com/offline-test' }) });
+  }
+  if (useVendor && url.origin === 'https://api.apple-cloudkit.com' && url.pathname.endsWith('/private/records/modify')) {
+    if (route.request().method() === 'OPTIONS') return route.fulfill({ status: 204, headers: { 'Access-Control-Allow-Origin': origin, 'Access-Control-Allow-Headers': '*', 'Access-Control-Allow-Methods': 'POST, OPTIONS' } });
+    vendorModify++;
+    const body = route.request().postDataJSON();
+    assert.equal(body.atomic, true); assert.deepEqual(body.zoneID, zone); assert.equal(body.operations.length, 2);
+    assert.ok(body.operations.every(o => o.operationType === 'update'));
+    return route.fulfill({ status: 200, headers: { 'Access-Control-Allow-Origin': origin, 'Content-Type': 'application/json' }, json: { records: body.operations.map(o => ({ ...o.record, recordChangeTag: 'saved-tag' })) } });
   }
   if (url.origin !== origin) { external.push(url.origin + url.pathname); return route.abort(); }
   if (url.pathname.startsWith('/api/pulsefx-premium/')) {
@@ -88,32 +97,35 @@ page.on('pageerror', error => errors.push(error.message));
 const visit = () => page.goto(origin + '/pulsefx/icloud/');
 const connect = async () => {
   enabled = true; await visit();
-  await page.getByRole('button', { name: 'Start iCloud test' }).click();
+  await page.getByRole('button', { name: 'Connect iCloud' }).click();
   await page.getByRole('button', { name: 'Test Apple sign in' }).click();
   await page.getByLabel('Private zone', { exact: true }).selectOption('0');
 };
 const read = async () => {
-  await page.getByRole('button', { name: 'Read selected zone', exact: true }).click();
+  await page.getByRole('button', { name: 'Load workspace', exact: true }).click();
   await page.locator('#results').waitFor({ state: 'visible' });
   await page.waitForFunction(() => !document.getElementById('read').disabled);
 };
 try {
   await page.goto(origin + '/pulsefx/icloud/?statistics=demo#premium-statistics');
+  await page.getByRole('tab', { name: 'Stats', exact: true }).click();
   await page.locator('#premium-statistics .stats-metrics').getByText('48 closed trades', { exact: true }).waitFor();
   assert.equal(premiumRequests, 0);
   await visit(); await page.getByText(/Not configured\. The site owner/).waitFor();
-  assert.ok(await page.getByRole('button', { name: 'Start iCloud test' }).isDisabled());
+  assert.ok(await page.getByRole('button', { name: 'Connect iCloud' }).isDisabled());
   assert.equal(await page.locator('script[src*="cloudkit.com"]').count(), 0);
   await page.screenshot({ path: join(screenshots, 'disabled-desktop.png'), fullPage: true });
   await connect(); await read();
   assert.equal(await page.locator('#trades tr').count(), 5);
   assert.equal(await page.locator('#accounts img').count(), 0);
   assert.equal(await page.evaluate(() => window.injected), undefined);
+  await page.getByRole('tab', { name: 'Journal', exact: true }).click();
   assert.ok(await page.locator('#trades td').evaluateAll(cells => cells.every(cell => cell.scrollWidth <= cell.clientWidth + 1)), 'Long user text must not overlap adjacent table cells');
   assert.match(await page.locator('#balances').textContent(), /€1,200.00/);
   assert.match(await page.locator('#balances').textContent(), /\$2,300.00/);
   assert.match(await page.locator('#trades').textContent(), /breakEven/);
   assert.equal(await page.evaluate(() => localStorage.length + sessionStorage.length), 0);
+  await page.getByRole('tab', { name: 'Accounts', exact: true }).click();
   await page.screenshot({ path: join(screenshots, 'connected-desktop.png'), fullPage: true });
   await page.locator('#accounts button').first().click(); assert.equal(await page.locator('#trades tr').count(), 3);
   await page.getByLabel('Record type', { exact: true }).selectOption('CD_OpenTrade');
@@ -124,61 +136,27 @@ try {
   for (const width of [1440, 1024, 768, 390, 320]) {
     await page.setViewportSize({ width, height: 900 });
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `Overflow at ${width}`);
-    assert.ok(await page.getByText('Read-only test', { exact: true }).isVisible());
+    assert.ok(await page.getByText('Read-only iCloud', { exact: true }).isVisible());
     if (width === 390) await page.screenshot({ path: join(screenshots, 'connected-mobile.png'), fullPage: true });
   }
-  // MARK: - Premium-demo, vergrendeling, servercontrole en mobiele statistieken
+  // MARK: - Vriendenstatistieken gebruiken lokaal dezelfde snapshot
+  await page.getByRole('tab', { name: 'Stats', exact: true }).click();
   const premium = page.locator('#premium-statistics');
-  await premium.getByRole('button', { name: 'Connect Premium', exact: true }).click();
-  await premium.getByText(/Web Premium verification is not configured/).waitFor();
-  await premium.getByRole('button', { name: 'Calculate statistics', exact: true }).click();
+  await premium.locator('.stats-metrics').getByText('5 closed trades', { exact: true }).waitFor();
   assert.equal(premiumRequests, 0);
-  await premium.getByRole('button', { name: 'Explore statistics demo', exact: true }).click();
-  await premium.getByText('48 closed trades', { exact: true }).waitFor();
-  assert.equal(premiumRequests, 0);
+  assert.ok(await premium.getByRole('button', { name: 'Connect Premium', exact: true }).isHidden());
   for (const theme of ['dark', 'light']) {
-    await page.evaluate(value => document.documentElement.dataset.theme = value, theme);
+    if (await page.locator('html').getAttribute('data-theme') !== theme) await page.locator('#themeToggle').click();
     for (const width of [1440, 768, 390, 320]) {
       await page.setViewportSize({ width, height: 1000 });
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `Statistics overflow at ${width}/${theme}`);
-      if (width === 1440 || width === 390) await premium.screenshot({ path: join(screenshots, `premium-${theme}-${width}.png`) });
     }
   }
-  await page.locator('#stats-from').fill('2026-10-20');
-  await page.locator('#stats-through').fill('2026-10-10');
+  await page.locator('#stats-from').fill('2026-10-20'); await page.locator('#stats-through').fill('2026-10-10');
   await premium.getByRole('button', { name: 'Calculate statistics', exact: true }).click();
   await premium.getByText('The start date must be on or before the end date.').waitFor();
   await premium.getByRole('button', { name: 'Reset filters', exact: true }).click();
-  await page.locator('#stats-account').selectOption('a0');
-  await premium.getByText('24 closed trades', { exact: true }).waitFor();
-  await premium.getByRole('button', { name: 'Use iCloud data', exact: true }).click();
-  assert.equal(await premium.locator('.stats-metrics').count(), 0);
-  premiumState = 'locked';
-  await premium.getByRole('button', { name: 'Connect Premium', exact: true }).click();
-  await premium.locator('code').filter({ hasText: 'abcd-1234' }).waitFor();
-  await premium.getByRole('button', { name: 'Check connection', exact: true }).click();
-  await premium.getByText(/Waiting for native confirmation/).waitFor();
-  premiumState = 'verified';
-  await premium.getByRole('button', { name: 'Check connection', exact: true }).click();
-  await premium.getByText('Premium verified', { exact: true }).waitFor();
-  await premium.getByRole('button', { name: 'Calculate statistics', exact: true }).click();
-  await premium.locator('.stats-metrics').getByText('5 closed trades', { exact: true }).waitFor();
-  assert.equal(premiumRequests, 1);
-  assert.equal(await premium.locator('img').count(), 0);
-  premiumState = 'locked';
-  await premium.getByRole('button', { name: 'Calculate statistics', exact: true }).click();
-  await premium.getByText(/Connect Premium from the native app/).waitFor();
-  assert.equal(await premium.locator('.stats-metrics').count(), 0);
-  premiumState = 'verified';
-  await premium.getByRole('button', { name: 'Check connection', exact: true }).click();
-  await premium.getByText('Premium verified', { exact: true }).waitFor();
-  premiumDelay = 400;
-  await premium.getByRole('button', { name: 'Calculate statistics', exact: true }).click();
-  await premium.getByRole('button', { name: 'Explore statistics demo', exact: true }).click();
-  await page.waitForTimeout(500);
-  await premium.getByText('48 closed trades', { exact: true }).waitFor();
-  await premium.getByRole('button', { name: 'Use iCloud data', exact: true }).click();
-  premiumDelay = 0;
+  await page.getByRole('tab', { name: 'Accounts', exact: true }).click();
   await page.evaluate(() => { testControl.fail = true; });
   await page.getByRole('button', { name: 'Refresh selected zone' }).click();
   await page.getByText(/Stale results\. The latest refresh/).waitFor();
@@ -187,6 +165,7 @@ try {
   await page.evaluate(() => { testControl.fail = false; testControl.empty = true; });
   await page.getByRole('button', { name: 'Refresh selected zone' }).click();
   await page.getByText('No known balances returned. This does not prove that your native data is empty.').waitFor();
+  await page.getByRole('tab', { name: 'Connection', exact: true }).click();
   await page.getByRole('button', { name: 'Disconnect and clear data' }).click();
   assert.ok(await page.locator('#results').isHidden()); assert.equal(await page.locator('#accounts').textContent(), '');
 
@@ -199,20 +178,73 @@ try {
   assert.equal(await page.locator('#trades').textContent(), '');
 
   await connect(); await page.evaluate(() => { testControl.delay = 150; });
-  await page.getByRole('button', { name: 'Read selected zone', exact: true }).click();
+  await page.getByRole('button', { name: 'Load workspace', exact: true }).click();
+  await page.getByRole('tab', { name: 'Connection', exact: true }).click();
   await page.getByRole('button', { name: 'Disconnect and clear data' }).click();
   await page.waitForTimeout(300);
   assert.ok(await page.locator('#results').isHidden()); assert.equal(await page.locator('#accounts').textContent(), '');
+  // MARK: - Eén demo voor tabs, open posities, sluiten, notes en saldo
+  await page.goto(origin + '/pulsefx/icloud/?workspace=demo');
+  await page.getByRole('tab', { name: /Open trades/ }).click();
+  assert.equal(await page.locator('.open-trade').count(), 2);
+  const first = page.locator('.open-trade').first();
+  await first.getByRole('button', { name: 'Close trade', exact: true }).click();
+  await page.getByLabel('Realized P&L · USD', { exact: true }).fill('124');
+  await page.getByLabel('Final R (optional)', { exact: true }).fill('1');
+  await page.getByRole('button', { name: 'Review balance change', exact: true }).click();
+  await page.getByText('$25,196.00 → $25,320.00', { exact: true }).waitFor();
+  await page.getByRole('button', { name: 'Confirm demo close', exact: true }).click();
+  await page.getByText('Confirm that you checked the result and balance change.', { exact: true }).waitFor();
+  await page.getByLabel('I checked the result and balance change.', { exact: true }).check();
+  await page.getByRole('button', { name: 'Confirm demo close', exact: true }).click();
+  await page.locator('#close-dialog').waitFor({ state: 'hidden' });
+  assert.equal(await page.locator('.open-trade').count(), 1);
+  await page.getByRole('tab', { name: 'Accounts', exact: true }).click();
+  await page.locator('#accounts').getByText('$25,320.00', { exact: true }).waitFor();
+  await page.getByRole('tab', { name: 'Stats', exact: true }).click();
+  await page.locator('.stats-metrics').getByText('49 closed trades', { exact: true }).waitFor();
+  await page.getByRole('tab', { name: 'Notes', exact: true }).click();
+  await page.getByLabel('Search notes', { exact: true }).fill('weekly');
+  assert.equal(await page.locator('.note-card').count(), 1);
+  await page.getByLabel('Search notes', { exact: true }).fill('does not exist');
+  assert.equal(await page.locator('.note-card').count(), 0);
+  await page.getByLabel('Search notes', { exact: true }).fill('');
+  for (const theme of ['light', 'dark']) {
+    if (await page.locator('html').getAttribute('data-theme') !== theme) await page.locator('#themeToggle').click();
+    for (const width of [1440, 768, 390, 320]) {
+      await page.setViewportSize({ width, height: 950 });
+      for (const tab of ['Accounts', 'Stats', 'Notes', 'Open trades']) {
+        await page.getByRole('tab', { name: new RegExp('^' + tab) }).click();
+        assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${tab} overflows at ${width}/${theme}`);
+        if (width === 1440 || width === 390) await page.screenshot({ path: join(screenshots, `workspace-${tab.replace(' ', '-')}-${theme}-${width}.png`), fullPage: true });
+      }
+    }
+  }
+  await page.getByRole('button', { name: 'Reset demo data', exact: true }).click();
+  assert.equal(await page.locator('.open-trade').count(), 2);
+  assert.equal(premiumRequests, 0);
   assert.deepEqual(errors, []); assert.deepEqual(external, []);
   if (process.env.PULSEFX_VENDOR_SDK_PATH) {
     useVendor = true; await page.setViewportSize({ width: 1000, height: 900 }); await visit();
-    await page.getByRole('button', { name: 'Start iCloud test' }).click();
+    await page.getByRole('button', { name: 'Connect iCloud' }).click();
     await page.getByText('Continue in Apple’s sign-in window using the button above. No data has been read.').waitFor();
     await page.locator('#apple-sign-in-button .apple-auth-button').waitFor({ state: 'visible' });
     await page.screenshot({ path: join(screenshots, 'vendor-sdk-offline-signin.png'), fullPage: true });
+    // Comment NL: De echte SDK bouwt een request; uitsluitend de fixture-router ontvangt het.
+    const result = await page.evaluate(async ({ zone, config }) => {
+      const { closeTransport, commitClose, planClose } = await import('/pulsefx/icloud/close-trade.mjs');
+      const pilot = 'abcdef00-0000-4000-8000-000000000099';
+      const configuration = { ...config, closeTradePilotId: pilot }, transport = closeTransport(configuration, fetch.bind(window));
+      CloudKit.configure({ containers: [{ containerIdentifier: config.containerIdentifier, environment: config.environment, apiTokenAuth: { apiToken: config.apiToken, persist: false } }], services: { fetch: transport.fetch, logger: { info() {}, log() {}, warn() {}, error() {} } } });
+      const snapshot = { collectionStatus: 'complete', accounts: [{ key: 'account', balance: 1000, currency: 'USD', archived: false, recordName: 'synthetic-account', recordChangeTag: 'account-tag', zone }], trades: [{ key: 'trade', id: pilot, recordType: 'CD_OpenTrade', recordName: 'synthetic-trade', recordChangeTag: 'trade-tag', zone, accountKey: 'account', linkStatus: 'linked', status: 'open', result: 'open', outcomeConsistent: true, startedAt: '2026-01-01T00:00:00Z' }] };
+      const plan = planClose(snapshot, 'trade', { profitLoss: '25', result: 'win', closedAt: '2026-01-02T00:00:00Z' });
+      await commitClose({ plan, config: configuration, database: CloudKit.getDefaultContainer().privateCloudDatabase, selected: { requestZone: zone }, transport });
+      return true;
+    }, { zone, config });
+    assert.equal(result, true); assert.equal(vendorModify, 1); assert.deepEqual(external, []);
     assert.deepEqual(errors, []);
   }
-  console.log(`PASS: disabled deployment, opt-in auth, filtering, currencies, XSS, partial/stale/empty data, session expiry, late responses, Premium gating/pairing, pseudonymous payloads, filters, and responsive dark/light statistics. Screenshots: ${screenshots}`);
+  console.log(`PASS: shared demo close/balance/stats, notes/search, SDK atomic-write fixture (when configured), disabled deployment, opt-in auth, filtering, currencies, XSS, partial/stale/empty data, session expiry, late responses, local friends statistics, filters, and responsive dark/light tabs. Screenshots: ${screenshots}`);
 } catch (error) {
   await page.screenshot({ path: join(screenshots, 'failure.png'), fullPage: true });
   console.error('Fixture page status:', await page.locator('#status').textContent());

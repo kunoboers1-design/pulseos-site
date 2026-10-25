@@ -6,11 +6,11 @@ Dit identificeert geen individuele vrienden, vervangt geen iCloud-login en geeft
 
 ## Voor activering in Cloudflare Pages
 
-Er is nog niets gepubliceerd. Op 25 oktober 2026 is in Safari de aparte D1-database `pulsefx-friends-access` aangemaakt (EU-jurisdictie, database-ID `46469e0e-c39f-4877-9a51-3d92e35c737b`) met beide tabellen en indexen. Pages Production staat op **Fail closed**. De Production-binding `PULSEFX_ACCESS_DB` is in Safari opgeslagen en verwijst naar `pulsefx-friends-access`. De foutieve binding `P` is verwijderd; de database en tabellen zijn behouden. Deze bindinginstelling wordt bij de volgende deployment actief. Bij de vervolgcontrole na invoer door de gebruiker staan alle drie de variabelen onder Production. De origin is correct (`https://pulseos.eu`). Wachtwoord en sessiesleutel voldoen aan de lengtevereisten, maar staan nog als **Text** in plaats van **Secret**; de gebruiker moet de geheime opslag nog afronden. Er zijn geen geheime waarden in dit dossier opgenomen. Onderstaande lijst beschrijft de volledige vereisten. Ontbrekende instellingen sluiten de webapp af (503).
+Op 25 oktober 2026 is na expliciete toestemming van de gebruiker Production-deployment `49b19224-572d-4478-8832-abcf62c7685b` succesvol uitgevoerd met commit `5f9e4fdece4e94a3f93053f6bf9a09aeaf011a94`. De applicatiecode hiervan is identiek aan de lokaal geteste commit `536aae3`; alleen de documentatie verschilt. Op 25 oktober 2026 is in Safari de aparte D1-database `pulsefx-friends-access` aangemaakt (EU-jurisdictie, database-ID `46469e0e-c39f-4877-9a51-3d92e35c737b`) met beide tabellen en indexen. Pages Production staat op **Fail closed**. De Production-binding `PULSEFX_ACCESS_DB` is in Safari opgeslagen en verwijst naar `pulsefx-friends-access`. De foutieve binding `P` is verwijderd; de database en tabellen zijn behouden. De binding is opgenomen in de nieuwe deployment. Bij de vervolgcontrole na invoer door de gebruiker staan alle drie de variabelen onder Production. De origin is correct (`https://pulseos.eu`). Wachtwoord en sessiesleutel voldeden bij de invoercontrole aan de lengtevereisten en zijn daarna door de gebruiker als **Secret** opgeslagen; beide opslagtypes zijn onder Production geverifieerd. Er zijn geen geheime waarden in dit dossier opgenomen. Onderstaande lijst beschrijft de volledige vereisten. Ontbrekende instellingen sluiten de webapp af (503).
 
 De middleware bundelt succesvol met Cloudflares officiële Wrangler 4.152.0 (`pages functions build`); dit was uitsluitend een lokale build.
 
-De Production-buildinstellingen zijn in Safari opgeslagen en na herladen geverifieerd: build command `python3 scripts/build_site.py`, build output directory `dist`, root directory leeg (repositoryroot). Dit heeft geen deployment gestart. De origin is vervolgens door de gebruiker toegevoegd en gecontroleerd; de opslag van beide authenticatievariabelen als Secret blijft openstaan.
+De Production-buildinstellingen zijn in Safari opgeslagen en na herladen geverifieerd: build command `python3 scripts/build_site.py`, build output directory `dist`, root directory leeg (repositoryroot). De origin en beide Secret-opslagtypes zijn vervolgens gecontroleerd. De expliciet geautoriseerde herdeployment is daarna succesvol afgerond.
 
 1. Maak een Cloudflare D1-database voor uitsluitend website-toegang, bijvoorbeeld `pulsefx-friends-access`. Voer `server/pulsefx-access/schema.sql` uit in die nieuwe database. Dit raakt CloudKit niet.
 2. Koppel de database in het bestaande Pages-project als D1-binding `PULSEFX_ACCESS_DB`.
@@ -54,3 +54,14 @@ PLAYWRIGHT_PATH=/pad/naar/playwright node scripts/test_pulsefx_friends_browser.m
 ```
 
 Referenties: [Pages middleware](https://developers.cloudflare.com/pages/functions/middleware/), [bindings en secrets](https://developers.cloudflare.com/pages/functions/bindings/), [routing en fail closed](https://developers.cloudflare.com/pages/functions/routing/).
+
+## Livecontrole 25 oktober 2026
+
+- Marketing en wachtwoordpagina: HTTP 200.
+- App, dashboard, iCloud-pagina en iCloud-script zonder sessie: HTTP 303 naar toegangsscherm.
+- Configuratie- en Premium-status-API zonder sessie: HTTP 401.
+- Eén bewust verkeerd testwachtwoord: HTTP 401 met verwachte foutmelding.
+- `pulseos-site.pages.dev/pulsefx/icloud/`: HTTP 503 wegens niet-toegestane origin.
+- Broncodepad `/server/pulsefx-access/gate.mjs` levert de publieke homepagefallback, geen serverbroncode.
+- Succesvolle live-login in Safari geverifieerd na wachtwoordinvoer door de gebruiker; de werkruimte bleef bereikbaar na herladen. Daarna via `Lock website` → `Lock this browser` uitgelogd. Rechtstreeks opnieuw openen van `/pulsefx/icloud/` verwees weer naar het wachtwoordscherm. Safari is uitgelogd achtergelaten.
+- Geen Apple-login uitgevoerd en geen CloudKit-data gelezen of gewijzigd tijdens deze test. Oude deployment-URLs zijn hiermee niet afzonderlijk afgeschermd of geaudit.
