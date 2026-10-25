@@ -103,7 +103,8 @@ const connect = async () => {
 };
 const read = async () => {
   await page.getByRole('button', { name: 'Load workspace', exact: true }).click();
-  await page.locator('#results').waitFor({ state: 'visible' });
+  await page.locator('#workspace-toolbar').waitFor({ state: 'visible' });
+  await page.getByRole('tab', { name: 'Accounts', exact: true }).click();
   await page.waitForFunction(() => !document.getElementById('read').disabled);
 };
 try {
@@ -119,7 +120,8 @@ try {
   assert.equal(await page.locator('#trades tr').count(), 5);
   assert.equal(await page.locator('#accounts img').count(), 0);
   assert.equal(await page.evaluate(() => window.injected), undefined);
-  await page.getByRole('tab', { name: 'Journal', exact: true }).click();
+  await page.getByRole('tab', { name: 'Stats', exact: true }).click();
+  await page.getByRole('button', { name: 'Trade journal', exact: true }).click();
   assert.ok(await page.locator('#trades td').evaluateAll(cells => cells.every(cell => cell.scrollWidth <= cell.clientWidth + 1)), 'Long user text must not overlap adjacent table cells');
   assert.match(await page.locator('#balances').textContent(), /€1,200.00/);
   assert.match(await page.locator('#balances').textContent(), /\$2,300.00/);
@@ -165,7 +167,7 @@ try {
   await page.evaluate(() => { testControl.fail = false; testControl.empty = true; });
   await page.getByRole('button', { name: 'Refresh selected zone' }).click();
   await page.getByText('No known balances returned. This does not prove that your native data is empty.').waitFor();
-  await page.getByRole('tab', { name: 'Connection', exact: true }).click();
+  await page.getByRole('tab', { name: 'Settings', exact: true }).click();
   await page.getByRole('button', { name: 'Disconnect and clear data' }).click();
   assert.ok(await page.locator('#results').isHidden()); assert.equal(await page.locator('#accounts').textContent(), '');
 
@@ -179,7 +181,7 @@ try {
 
   await connect(); await page.evaluate(() => { testControl.delay = 150; });
   await page.getByRole('button', { name: 'Load workspace', exact: true }).click();
-  await page.getByRole('tab', { name: 'Connection', exact: true }).click();
+  await page.getByRole('tab', { name: 'Settings', exact: true }).click();
   await page.getByRole('button', { name: 'Disconnect and clear data' }).click();
   await page.waitForTimeout(300);
   assert.ok(await page.locator('#results').isHidden()); assert.equal(await page.locator('#accounts').textContent(), '');
@@ -213,13 +215,28 @@ try {
     if (await page.locator('html').getAttribute('data-theme') !== theme) await page.locator('#themeToggle').click();
     for (const width of [1440, 768, 390, 320]) {
       await page.setViewportSize({ width, height: 950 });
-      for (const tab of ['Accounts', 'Stats', 'Notes', 'Open trades']) {
+      for (const tab of ['Open trades', 'Accounts', 'Stats', 'Notes', 'Settings']) {
         await page.getByRole('tab', { name: new RegExp('^' + tab) }).click();
         assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${tab} overflows at ${width}/${theme}`);
         if (width === 1440 || width === 390) await page.screenshot({ path: join(screenshots, `workspace-${tab.replace(' ', '-')}-${theme}-${width}.png`), fullPage: true });
       }
     }
   }
+  await page.getByRole('tab', { name: 'Settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Pulse Pink', exact: true }).click();
+  assert.equal(await page.getByRole('button', { name: 'Pulse Pink', exact: true }).getAttribute('aria-pressed'), 'true');
+  await page.reload();
+  await page.getByRole('tab', { name: 'Settings', exact: true }).click();
+  assert.equal(await page.getByRole('button', { name: 'Pulse Pink', exact: true }).getAttribute('aria-pressed'), 'true');
+  await page.getByRole('button', { name: 'Reset accent color', exact: true }).click();
+  assert.equal(await page.getByRole('button', { name: 'Forest Green', exact: true }).getAttribute('aria-pressed'), 'true');
+  await page.getByRole('tab', { name: 'Stats', exact: true }).click();
+  await page.getByRole('button', { name: 'Breakdowns', exact: true }).click();
+  await page.getByRole('heading', { name: 'Account performance', exact: true }).waitFor();
+  assert.ok(await page.locator('.stats-metrics').isHidden());
+  await page.getByRole('button', { name: 'Calendar', exact: true }).click();
+  await page.locator('.stats-days').waitFor();
+  await page.getByRole('tab', { name: 'Open trades', exact: false }).click();
   await page.getByRole('button', { name: 'Reset demo data', exact: true }).click();
   assert.equal(await page.locator('.open-trade').count(), 2);
   assert.equal(premiumRequests, 0);

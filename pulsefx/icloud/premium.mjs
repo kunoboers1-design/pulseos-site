@@ -91,30 +91,32 @@ export function mountPremium(root, { friends = false } = {}) {
   function render(result) {
     output.replaceChildren();
     if (!result.available) { output.append(make('p', 'A complete, fresh iCloud read is required. Refresh the selected zone.')); return; }
+    const groups = {};
+    for (const name of ['overview', 'breakdowns', 'calendar']) { const group = make('div'); group.dataset.statsSection = name; groups[name] = group; output.append(group); }
     const s = result.summary;
     const grid = make('div', null, 'cloud-grid stats-metrics');
     grid.append(metric('Total R', value(s.totalR, 'R'), `${s.count} closed trades`), metric('Win rate', value(s.winRate === null ? null : s.winRate * 100, '%'), `${s.wins} wins · ${s.losses} losses · ${s.breakEvens} break-even`),
       metric('Profit factor', value(s.profitFactor), 'Positive R ÷ absolute negative R'), metric('Average R', value(s.averageR, 'R'), 'Per closed trade'),
       metric('Largest drawdown', s.count ? value(result.maximumDrawdownR, 'R') : '—', 'Closed-trade R curve, opening order'), metric('Average position', value(s.averageLot, ' lots')),
       metric('Best trade', value(s.bestR, 'R')), metric('Worst trade', value(s.worstR, 'R')));
-    output.append(grid);
+    groups.overview.append(grid);
     const excluded = Object.entries(result.excluded).filter(([, count]) => count).map(([reason, count]) => `${count} ${ { unlinked: 'unlinked / ambiguous', inactiveAccount: 'archived / unknown account', invalidOutcome: 'inconsistent outcome', invalidDate: 'invalid opening date' }[reason] }`);
-    output.append(make('p', `${s.missingR} trades with missing R counted as zero · ${s.missingPL} trades without usable P&L. Excluded before filters: ${excluded.join(', ') || 'none'}.`, 'cloud-notice'));
+    groups.overview.append(make('p', `${s.missingR} trades with missing R counted as zero · ${s.missingPL} trades without usable P&L. Excluded before filters: ${excluded.join(', ') || 'none'}.`, 'cloud-notice'));
     if (!s.count) { output.append(make('p', 'No eligible closed trades match these filters. Try a different period or account.')); return; }
     const money = make('div', null, 'cloud-grid');
     for (const bucket of s.plByCurrency) money.append(metric(`Realized P&L · ${bucket.currency}`, value(bucket.value), `${bucket.count} trades · no currency conversion`));
-    output.append(make('h3', 'Results by currency'), money, chart(result.timeline));
+    groups.overview.append(make('h3', 'Results by currency'), money, chart(result.timeline));
     const names = new Map((current()?.accounts || []).map((a, index) => [demo || friends ? a.key : `a${index}`, a.name || 'Unnamed account']));
     const table = (title, rows, label) => { const section = make('section'); section.append(make('h3', title)); const scroll = make('div', null, 'table-scroll'); scroll.tabIndex = 0; scroll.setAttribute('role', 'region'); scroll.setAttribute('aria-label', title);
       const table = make('table'); const head = make('thead'), header = make('tr');
       for (const item of [label, 'Trades', 'Win rate', 'Total R', 'Average R', 'Profit factor']) header.append(make('th', item)); head.append(header);
       const body = make('tbody'); for (const row of rows) { const tr = make('tr'); for (const text of [label === 'Account' ? names.get(row.key) || 'Unknown account' : row.key, row.count, value(row.winRate * 100, '%'), value(row.totalR, 'R'), value(row.averageR, 'R'), value(row.profitFactor)]) tr.append(make('td', text)); body.append(tr); }
       table.append(head, body); scroll.append(table); section.append(scroll); return section; };
-    output.append(table('Account performance', result.byAccount, 'Account'), table('Instrument performance', result.byInstrument, 'Instrument'));
-    const timing = make('details'); timing.append(make('summary', 'Monthly & timing breakdown'), table('Monthly performance · UTC', result.byMonth, 'Month'), table('Weekday performance · UTC', result.byWeekday, 'Weekday'), table('Opening hour performance · UTC', result.byHour, 'Hour')); output.append(timing);
+    groups.breakdowns.append(table('Account performance', result.byAccount, 'Account'), table('Instrument performance', result.byInstrument, 'Instrument'));
+    const timing = make('details'); timing.append(make('summary', 'Monthly & timing breakdown'), table('Monthly performance · UTC', result.byMonth, 'Month'), table('Weekday performance · UTC', result.byWeekday, 'Weekday'), table('Opening hour performance · UTC', result.byHour, 'Hour')); timing.open = true; groups.breakdowns.append(timing);
     const calendar = make('div', null, 'stats-days');
     for (const day of result.timeline) { const card = make('article', null, `stats-day ${day.totalR > 0 ? 'positive' : day.totalR < 0 ? 'negative' : ''}`); card.append(make('time', day.key), make('strong', value(day.totalR, 'R')), make('small', `${day.count} closed trades`)); calendar.append(card); }
-    output.append(make('h3', 'Daily performance · opening date'), calendar);
+    groups.calendar.append(make('h3', 'Daily performance · opening date'), calendar);
   }
   function chart(timeline) {
     const section = make('section', null, 'fx-card stats-chart'); section.append(make('h3', 'Cumulative R'), make('p', 'Closed trades grouped by opening date. This is not account equity or unrealized P&L.'));

@@ -1,3 +1,4 @@
+import { mountAppearance } from './appearance.mjs';
 import { planClose } from './close-trade.mjs';
 import { statisticsDemo } from './statistics-demo.mjs';
 
@@ -12,7 +13,8 @@ const select = options => { const s = el('select'); for (const [value, name] of 
 
 // MARK: - Tabs en inhoud behouden dezelfde ingelogde sessie
 export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canClose }) {
-  const panels = { accounts: 'accounts-panel', stats: 'premium-statistics', notes: 'notes-panel', open: 'open-panel', journal: 'journal-panel', connection: 'connection-panel' };
+  mountAppearance();
+  const panels = { open: 'open-panel', accounts: 'accounts-panel', stats: 'premium-statistics', notes: 'notes-panel', connection: 'connection-panel' };
   let active = 'connection', stale = false, pending = false, dialogKey = null;
   const openFilter = select([['all', 'All accounts']]), noteFilter = select([['all', 'All accounts']]);
   const search = el('input'); search.type = 'search'; search.placeholder = 'Search notes';
@@ -24,7 +26,24 @@ export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canC
   $('open-panel').append(el('p', 'POSITIONS IN PROGRESS', 'fx-eyebrow'), el('h2', 'Open trades'), el('p', 'Your recorded positions, not live broker orders. Closing a journal trade does not place or close an order at your broker.'), openControls, openStatus, openList);
   $('notes-panel').append(el('p', 'YOUR TRADING JOURNAL', 'fx-eyebrow'), el('h2', 'Notes'), el('p', 'Plain-text notes from PulseFX. Photos and rich-text formatting remain in the native app.'), notesControls, notesStatus, notesList);
   const demoReset = button('Reset demo data', onDemoReset); demoReset.hidden = !isDemo; $('workspace-demo-banner').append(demoReset);
+  const sectionBar = $('stats-sections');
+  let statsSection = 'overview';
+  for (const [key, label] of [['overview', 'Overview'], ['breakdowns', 'Breakdowns'], ['calendar', 'Calendar'], ['journal', 'Trade journal']]) {
+    const control = button(label, () => { statsSection = key; show('stats'); });
+    control.dataset.section = key; sectionBar.append(control);
+  }
+  function updateStatsSections() {
+    sectionBar.hidden = active !== 'stats';
+    for (const control of sectionBar.children) control.setAttribute('aria-pressed', String(control.dataset.section === statsSection));
+    for (const group of document.querySelectorAll('[data-stats-section]')) group.hidden = group.dataset.statsSection !== statsSection;
+    $('premium-statistics').hidden = active !== 'stats' || statsSection === 'journal';
+    $('journal-panel').hidden = active !== 'stats' || statsSection !== 'journal';
+    $('results').hidden = !getSnapshot() || !(active === 'accounts' || active === 'stats' && statsSection === 'journal');
+  }
+  new MutationObserver(updateStatsSections).observe($('premium-statistics'), { childList: true, subtree: true });
   function show(name, focus = false) {
+    if (name === 'journal') { statsSection = 'journal'; name = 'stats'; }
+
     if (!panels[name]) return;
     active = name;
     for (const [key, id] of Object.entries(panels)) {
@@ -35,10 +54,14 @@ export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canC
     $('workspace-empty').hidden = Boolean(getSnapshot()) || !['accounts', 'journal'].includes(active);
     $('workspace-toolbar').hidden = !getSnapshot();
     $('diagnostics').hidden = !getSnapshot();
+    const titles = { open: ['Open trades', 'Your positions, at a glance.'], accounts: ['Accounts', 'A clear view of every trading account.'], stats: ['Stats', 'Understand your performance and trading patterns.'], notes: ['Notes', 'Your ideas and reflections, together.'], connection: ['Settings', 'Appearance, iCloud and website access.'] };
+    $('workspace-title').textContent = titles[name][0];
+    $('workspace-description').textContent = titles[name][1];
+    updateStatsSections();
     if (focus) $(`tab-${name}`).focus();
   }
   for (const key of Object.keys(panels)) {
-    const tab = $(`tab-${key}`); tab.onclick = () => show(key);
+    const tab = $(`tab-${key}`); tab.onclick = () => { if (key === 'stats') statsSection = 'overview'; show(key); };
     tab.onkeydown = event => {
       const keys = Object.keys(panels), index = keys.indexOf(key);
       if (!['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(event.key)) return;
@@ -79,7 +102,7 @@ export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canC
     }
     const query = search.value.trim().toLocaleLowerCase();
     const shown = rows.filter(n => (noteFilter.value === 'all' || (noteFilter.value === 'unlinked' ? !n.accountKey : n.accountKey === noteFilter.value)) && (noteKind.value === 'all' || n.kind === noteKind.value) && `${n.title} ${n.body || ''}`.toLocaleLowerCase().includes(query));
-    notesStatus.textContent = !data ? 'Connect iCloud and load your workspace to see notes.' : `${stale ? 'Stale snapshot. ' : ''}${shown.length} notes shown. ${data.notesStatus === 'complete' ? 'Plain-text notes loaded.' : 'Standalone notes are incomplete or unavailable. Check Connection / Data checks; this does not mean your notes are empty.'}`;
+    notesStatus.textContent = !data ? 'Connect iCloud and load your workspace to see notes.' : `${stale ? 'Stale snapshot. ' : ''}${shown.length} notes shown. ${data.notesStatus === 'complete' ? 'Plain-text notes loaded.' : 'Standalone notes are incomplete or unavailable. Check Settings / Data checks; this does not mean your notes are empty.'}`;
     for (const n of shown.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''))) {
       const card = el('article', null, 'fx-card note-card'); card.append(el('span', n.label, 'tag'), el('h3', n.title), el('small', `${data.accounts.find(a => a.key === n.accountKey)?.name || 'Standalone / unlinked'} · ${date(n.createdAt)}`), el('p', n.body === null ? 'Text is stored as an attachment or is unsupported. Open this note in the native app.' : n.body || 'This note has no plain-text body. It may contain photos or formatted content in the native app.', 'note-body')); notesList.append(card);
     }
@@ -131,7 +154,7 @@ export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canC
     show,
     update(isStale = false, first = false) {
       stale = isStale; const data = getSnapshot(); populate(openFilter, data?.accounts || []); populate(noteFilter, data?.accounts || []);
-      renderOpen(); renderNotes(); show(first && active === 'connection' ? 'accounts' : active);
+      renderOpen(); renderNotes(); show(first && active === 'connection' ? 'open' : active);
       if (dialogKey && !pending) $('close-dialog').close();
     },
     clear() { if ($('close-dialog').open) $('close-dialog').close(); openFilter.value = 'all'; noteFilter.value = 'all'; noteKind.value = 'all'; search.value = ''; this.update(); show('connection'); },

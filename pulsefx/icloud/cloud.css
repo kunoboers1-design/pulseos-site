@@ -119,3 +119,78 @@
 #workspace-toolbar .cloud-notice { padding: 12px 16px; font-size: .8rem; }
 #workspace-demo-banner a { margin-right: 16px; }
 #open-panel .cloud-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); }
+
+/* MARK: - Native PulseFX-workspace */
+/* Comment NL: Systeemtypografie, rustige glasachtige kaarten en de vijf vaste appbestemmingen. */
+body.cloud-test { --bg: #000; --surface: #1c1c1e; --surface-soft: #242426; --line: #ffffff12; --line-strong: #ffffff26; --text: #f5f5f7; --muted: #a1a1a8; --radius-md: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); }
+:root[data-theme="light"] body.cloud-test { --bg: #f2f2f7; --surface: #fff; --surface-soft: #eeeef2; --line: #0000000f; --line-strong: #00000026; --text: #1c1c1e; --muted: #63636b; }
+.cloud-test :is(h1,h2,h3,.fx-brand,.hero-button) { font-family: inherit; }
+.cloud-layout { max-width: 1500px; padding: 0 36px 0 260px; }
+.cloud-header { min-height: 90px; margin-bottom: 28px; padding: 20px 0; }
+.cloud-header .fx-brand { position: fixed; left: 34px; top: 34px; z-index: 6; }
+.cloud-test h1 { font-size: 36px; font-weight: 750; letter-spacing: -1px; }
+.workspace-heading .fx-eyebrow { display: none; }
+.cloud-lead { font-size: 15px; margin-bottom: 24px; }
+.workspace-tabs { position: fixed; top: 112px; left: 18px; bottom: 24px; width: 210px; flex-direction: column; padding: 12px; margin: 0; border-radius: 24px; background: linear-gradient(150deg,var(--surface-soft),var(--surface)); z-index: 5; overflow-y: auto; }
+.workspace-tabs button { flex: 0 0 auto; display: flex; align-items: center; gap: 12px; text-align: left; padding: 14px 12px; font-size: 14px; border-radius: 14px; }
+.workspace-tabs button svg { width: 23px; height: 23px; flex-shrink: 0; }
+.workspace-tabs button:last-child { margin-top: auto; }
+.workspace-tabs button[aria-selected="true"] { background: var(--bg); }
+.cloud-test .fx-card { border-radius: 22px; background: linear-gradient(145deg,var(--surface-soft),var(--surface)); box-shadow: inset 0 1px 0 var(--line); }
+.cloud-test .trade-lots { font-size: 32px; font-weight: 750; font-variant-numeric: tabular-nums; }
+.cloud-grid strong { font-variant-numeric: tabular-nums; }
+.cloud-test .cloud-connection { max-width: none; }
+.cloud-test .primary-button { color: var(--bg); }
+:root[data-theme="light"] .cloud-test .primary-button { color: #fff; }
+.section-switcher { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 24px; }
+.section-switcher button { border: 1px solid var(--line-strong); padding: 10px 18px; border-radius: 100px; background: var(--surface); color: var(--muted); }
+.section-switcher button[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); background: var(--accent-dim); }
+.accent-options { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; }
+.accent-options button { display: flex; align-items: center; gap: 12px; padding: 14px; border: 1px solid var(--line-strong); border-radius: 16px; background: var(--surface); color: var(--text); text-align: left; }
+.accent-options button[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.accent-swatch { width: 24px; height: 24px; flex-shrink: 0; border-radius: 50%; border: 1px solid #8886; }
+.appearance-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; border-top: 1px solid var(--line); padding: 16px 0; }
+.appearance-row h3 { margin: 0 0 8px; }
+.appearance-row p { margin: 0; }
+.settings-explanation { padding: 20px; border-radius: 16px; background: var(--surface); margin-bottom: 20px; }
+.settings-explanation p { margin: 8px 0 0; }
+#workspace-toolbar .cloud-notice { margin: 12px 0 24px; }
+#open-panel > :is(h2,.fx-eyebrow), #notes-panel > :is(h2,.fx-eyebrow), #accounts-title { display: none; }
+@media(min-width: 1800px) { .workspace-tabs { left: calc((100vw - 1500px) / 2 + 18px); } .cloud-header .fx-brand { left: calc((100vw - 1500px) / 2 + 34px); } }
+@media(max-width: 900px) {
+  .cloud-layout { padding: 0 22px 110px; }
+  .cloud-header .fx-brand { position: static; }
+  .workspace-tabs { top: auto; bottom: max(12px,env(safe-area-inset-bottom)); left: 12px; right: 12px; width: auto; max-width: 660px; margin: 0 auto; flex-direction: row; gap: 2px; padding: 7px; border-radius: 28px; backdrop-filter: blur(20px); box-shadow: 0 8px 30px #0005; overflow: visible; }
+  .workspace-tabs button { flex: 1 1 0; min-width: 0; flex-direction: column; gap: 4px; padding: 9px 2px; font-size: 11px; border-radius: 22px; text-align: center; position: relative; }
+  .workspace-tabs button:last-child { margin-top: 0; }
+  #open-badge { position: absolute; top: 2px; right: 12%; font-size: 9px; background: var(--surface); padding: 1px 4px; border-radius: 8px; }
+  .cloud-header { padding: 16px 0; margin-bottom: 24px; }
+  .cloud-badges { max-width: 220px; }
+}
+@media(max-width: 500px) {
+  .cloud-layout { padding-inline: 16px; }
+  .cloud-test h1 { font-size: 32px; }
+  .accent-options { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+  .accent-options button { padding: 12px 10px; font-size: 12px; }
+  .appearance-row { flex-wrap: wrap; }
+  .cloud-header .fx-brand { font-size: 22px; }
+}
+@media(prefers-reduced-motion: reduce) { .cloud-test * { scroll-behavior: auto !important; transition: none !important; } }
+/* MARK: - Compacte appinhoud en accountgroepen */
+#workspace-demo-banner { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 12px 16px; font-size: 12px; }
+#workspace-demo-banner p { display: none; }
+#workspace-demo-banner a { margin: 0; }
+.workspace-demo #quality { display: none; }
+.workspace-demo #fetched { max-width: 520px; }
+.account-group > h3 { font-size: 18px; color: var(--muted); margin: 28px 0 14px; }
+.account-counts { display: flex; gap: 10px; margin: 18px 0 0; }
+.account-counts span { border: 1px solid var(--line-strong); background: var(--surface-soft); border-radius: 20px; padding: 6px 12px; color: var(--muted); font-size: 12px; }
+.account-search { margin-top: 24px; }
+.account-groups .fx-card > strong { font-size: 28px; }
+#accounts-panel > h3 { font-size: 18px; }
+#accounts-panel > p { font-size: 12px; }
+.cloud-test main { scroll-padding-bottom: 120px; }
+.cloud-test :is(button,input,select,a) { scroll-margin-bottom: 120px; }
+
+.workspace-demo #workspace-toolbar { display: none; }
+#open-panel > p:not(.fx-eyebrow), #notes-panel > p:not(.fx-eyebrow) { font-size: 13px; line-height: 1.6; }

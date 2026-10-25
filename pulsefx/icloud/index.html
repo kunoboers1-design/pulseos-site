@@ -19,21 +19,19 @@
   <div class="cloud-layout">
     <header class="cloud-header"><a class="fx-brand" href="/pulsefx/app/">Pulse<span class="accent">FX</span></a><div class="cloud-header-actions"><div class="cloud-badges"><a class="tag" href="/pulsefx/access/logout">Lock website</a><span class="tag" id="access-capability">Read-only iCloud</span><span class="tag" id="environment">Not connected</span></div><button type="button" id="themeToggle" class="theme-toggle" data-theme-label aria-label="Switch to light mode">Light mode</button></div></header>
     <main id="main">
-      <p class="fx-eyebrow">YOUR ICLOUD DATA, A CLOSER LOOK</p>
-      <h1>Your trading, in perspective.</h1>
-      <p class="cloud-lead">Accounts, performance, notes and open trades — together in your browser.</p>
+      <div class="workspace-heading"><p class="fx-eyebrow">YOUR WORKSPACE</p><h1 id="workspace-title">Settings</h1><p class="cloud-lead" id="workspace-description">Appearance, iCloud and website access.</p></div>
       <div id="workspace-demo-banner" class="cloud-notice" hidden><strong>Demo mode · fictional data</strong><p>Explore the workspace and close a sample trade. Nothing is connected to iCloud or saved on a server.</p><a href="/pulsefx/icloud/">Exit demo</a></div>
       <nav class="workspace-tabs" role="tablist" aria-label="Workspace">
-        <button id="tab-accounts" role="tab" aria-controls="accounts-panel" aria-selected="false" tabindex="-1">Accounts</button>
-        <button id="tab-stats" role="tab" aria-controls="premium-statistics" aria-selected="false" tabindex="-1">Stats</button>
-        <button id="tab-notes" role="tab" aria-controls="notes-panel" aria-selected="false" tabindex="-1">Notes</button>
-        <button id="tab-open" role="tab" aria-controls="open-panel" aria-selected="false" tabindex="-1">Open trades <span id="open-badge">—</span></button>
-        <button id="tab-journal" role="tab" aria-controls="journal-panel" aria-selected="false" tabindex="-1">Journal</button>
-        <button id="tab-connection" role="tab" aria-controls="connection-panel" aria-selected="true">Connection</button>
-      </nav>
+<button id="tab-open" role="tab" aria-controls="open-panel" aria-selected="false" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17 10 11l4 4 6-9M14 6h6v6"/></svg><span>Open trades</span><span id="open-badge">—</span></button>
+<button id="tab-accounts" role="tab" aria-controls="accounts-panel" aria-selected="false" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="15" rx="3"/><path d="M7 6V3h10v3M3 11h18"/></svg><span>Accounts</span></button>
+<button id="tab-stats" role="tab" aria-controls="premium-statistics" aria-selected="false" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 3v17h17M8 15l4-5 4 2 5-7"/></svg><span>Stats</span></button>
+<button id="tab-notes" role="tab" aria-controls="notes-panel" aria-selected="false" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Notes</span></button>
+<button id="tab-connection" role="tab" aria-controls="connection-panel" aria-selected="true" tabindex="0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3"/><circle cx="15" cy="17" r="3"/></svg><span>Settings</span></button>
+</nav>
       <div id="workspace-toolbar" hidden><div class="cloud-results-heading"><p id="fetched"></p><button id="refresh" class="text-button">Refresh selected zone</button></div><div id="quality" class="cloud-notice" role="status"></div></div>
       <p id="workspace-empty" class="workspace-empty" hidden>Connect iCloud and load your workspace first. Your records will appear here.</p>
       <section id="connection-panel" role="tabpanel" aria-labelledby="tab-connection">
+      <section id="appearance-settings" class="fx-card" aria-labelledby="appearance-title"></section>
       <section class="fx-card cloud-connection" aria-labelledby="connect-title">
         <div><h2 id="connect-title">Connect through Apple</h2><p id="configuration">Checking this deployment…</p></div>
         <p>No Apple password is collected here. The app only reads selected data; the Apple session itself is not a read-only permission.</p>
@@ -47,15 +45,17 @@
         <h2 id="zone-title">Choose a private zone</h2><p>A zone is a group of records in your iCloud database. Choose the PulseFX zone to inspect. Nothing will be merged or changed.</p>
         <div class="cloud-controls"><div class="cloud-field"><label for="zone">Private zone</label><select id="zone"></select></div><button id="read" class="hero-button primary-button" disabled>Load workspace</button><button id="zones-refresh" class="text-button">Reload zones</button></div>
       </section>
+<section class="fx-card"><h2>Website access</h2><p>The shared website password unlocks this private preview. Your Apple connection is separate. Disconnect iCloud above before leaving a shared computer.</p><a class="hero-button secondary" href="/pulsefx/access/logout">Lock website</a></section>
         <details id="diagnostics" hidden><summary>Data checks</summary><p>Checks cover this selected zone and the requested record types. They do not certify that every device has synchronized. Assets and unknown fields need further investigation.</p><div id="coverage" class="cloud-grid"></div><ul id="issues"></ul></details>
       </section>
+      <nav id="stats-sections" class="section-switcher" aria-label="Statistics sections" hidden></nav>
       <section id="premium-statistics" role="tabpanel" aria-labelledby="tab-stats" hidden class="stats-workspace" aria-label="Statistics"></section>
       <section id="results" hidden aria-label="Accounts and journal">
         <section id="accounts-panel" role="tabpanel" aria-labelledby="tab-accounts" hidden><h2 id="accounts-title">Accounts</h2><h3>Balances by currency</h3><p>Includes archived accounts. No currency conversion or balance reconstruction.</p><div id="balances" class="cloud-grid"></div>
         <div class="cloud-controls"><div class="cloud-field"><label for="archive">Accounts shown</label><select id="archive"><option value="all">All accounts</option><option value="active">Active accounts</option><option value="archived">Archived accounts</option></select></div></div>
-        <div id="accounts" class="cloud-grid"></div>
+        <div class="cloud-field account-search"><label for="account-search">Search accounts</label><input id="account-search" type="search" placeholder="Search accounts"></div><div id="accounts" class="account-groups"></div>
         </section>
-        <section id="journal-panel" role="tabpanel" aria-labelledby="tab-journal" hidden><h3 id="journal-title">Trade journal</h3>
+        <section id="journal-panel" role="tabpanel" aria-labelledby="journal-title" hidden><h3 id="journal-title">Trade journal</h3>
         <div class="cloud-controls"><div class="cloud-field"><label for="account-filter">Account</label><select id="account-filter"><option value="all">All accounts</option></select></div><div class="cloud-field"><label for="trade-status">Trade status</label><select id="trade-status"><option value="all">All statuses</option><option value="open">Open</option><option value="closed">Closed</option><option value="unknown">Unknown status</option></select></div><div class="cloud-field"><label for="trade-model">Record type</label><select id="trade-model"><option value="all">Both trade types</option><option value="CD_Trade">Legacy trades</option><option value="CD_OpenTrade">Modern trades</option></select></div></div>
         <p id="trade-count"></p>
         <div class="table-scroll" tabindex="0" role="region" aria-label="Read-only trade journal"><table><thead><tr><th>Instrument</th><th>Account</th><th>Date · UTC</th><th>Type</th><th>Status / result</th><th>Lots</th><th>P&amp;L</th></tr></thead><tbody id="trades"></tbody></table></div>
@@ -66,7 +66,7 @@
       <section id="open-panel" role="tabpanel" aria-labelledby="tab-open" hidden></section>
       <dialog id="close-dialog" aria-labelledby="close-title"></dialog>
     </main>
-    <footer class="cloud-footer"><a href="/pulsefx/app/">Back to demo</a><span>Your iCloud records stay in this page’s memory. Disconnect to clear them.</span><a href="/privacy/">Privacy</a></footer>
+    <footer class="cloud-footer"><a href="/pulsefx/app/">PulseFX home</a><span>Your iCloud records stay in this page’s memory. Disconnect to clear them.</span><a href="/privacy/">Privacy</a></footer>
   </div>
   <noscript>This iCloud test requires JavaScript. <a href="/pulsefx/app/">Explore the demo instead.</a></noscript>
 </body>

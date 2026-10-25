@@ -35,3 +35,13 @@ Native referentie: `FXLotsizeNotifier/Core/Utilities/TradeEditorPersistence.swif
 - Browserproef: fictieve Apple-responses, live/demodata gescheiden, geen echt netwerk, geen XSS, filters, lege/partiële/stale data, sessiewissel, mobiele layouts, demo-close en echte SDK-serialisatie.
 - Publieke build via `scripts/build_site.py` en `scripts/test_public_output.py`; alleen `dist` wordt gepubliceerd.
 - Bronnen: [native CloudKit-mapping](https://developer.apple.com/documentation/coredata/reading-cloudkit-records-for-core-data), [batchopties](https://developer.apple.com/documentation/cloudkitjs/cloudkit.database/newrecordsbatch), [update met versiecontrole](https://developer.apple.com/library/archive/documentation/DataManagement/Conceptual/CloudKitWebServicesReference/ModifyRecords.html), [native synchronisatie](https://developer.apple.com/documentation/technotes/tn3163-understanding-the-synchronization-of-nspersistentcloudkitcontainer).
+
+## App-layout en kleurvoorkeuren — 25 oktober 2026
+
+De webworkspace gebruikt nu Open trades, Accounts, Stats, Notes en Settings. Stats groepeert Overview, Breakdowns, Calendar en Trade journal. Accounts worden op Phase, Funded en Own capital gegroepeerd; zoeken blijft lokaal. Desktop gebruikt een zijbalk, mobiel een vaste onderste tabbar.
+
+Kleuren en vormgeving zijn gebaseerd op de native `Core/Utilities/Theme.swift` (PulseAccentPalette, PulseRadius en systeemtypografie). De zes paletnamen en sleutels blijven gelijk; tekstaccenten hebben aangepaste lichte/donkere tinten voor leesbaarheid. Standaard Forest Green. De keuze staat uitsluitend in browseropslag onder `pulsefx-accent`; geen accountgegevens of tokens worden opgeslagen.
+
+De gelezen native `Core/Stores/AppSettings.swift` gebruikt `NSUbiquitousKeyValueStore.default` met CloudKey.accentColor, geen SwiftData-record. Daarom wordt automatische kleurimport uit CloudKit niet aangeboden. Hiervoor is later een expliciete native brug naar een afgesproken CloudKit-voorkeurrecord nodig, inclusief migratie/conflictbeleid. Native code, cloudschema en clouddata zijn niet gewijzigd.
+
+Gecontroleerd met 89 bestaande unittests en browserproeven voor navigatie, statistieksecties, kleurkeuze/herladen/reset, demo-sluiten en mobiel/licht/donker op 320–1440 px. Dit is een webvertaling van de native vormgeving, geen volledige implementatie van alle native instellingen en statistieksecties.

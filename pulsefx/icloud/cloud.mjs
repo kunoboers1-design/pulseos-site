@@ -193,6 +193,7 @@ function render(resetFilters = false) {
   $('results').hidden = false;
   $('fetched').textContent = data.source === 'demo' ? 'Demo mode · fictional accounts, trades and notes. Changes last until this page is reloaded.' : `Last fetched from iCloud: ${utc(data.fetchedAt)} · ${data.environment} · ${data.zone.zoneName}`;
   const incomplete = data.collectionStatus !== 'complete';
+  document.body.classList.toggle('workspace-demo', data.source === 'demo');
   $('quality').classList.toggle('warning', incomplete || state.stale || data.issues.length > 0);
   $('quality').textContent = data.source === 'demo' ? 'Fictional workspace. No iCloud records have been read or changed.' : `${state.stale ? 'Stale results. The latest refresh did not complete. ' : ''}${incomplete ? 'Partial results: some queries failed. Balances are withheld. ' : 'Selected queries finished. '}${data.issues.length} data check(s) need review. This covers one zone and the requested record types. Photos and attachments are not loaded.`;
   $('coverage').replaceChildren(...data.coverage.map(c => card(c.type, String(c.received), c.complete ? 'All query pages received' : 'Incomplete query')));
@@ -203,16 +204,26 @@ function render(resetFilters = false) {
     $('trade-status').value = 'all'; $('trade-model').value = 'all'; $('archive').value = 'all';
   }
   const archive = $('archive').value;
-  const accounts = data.accounts.filter(a => archive === 'all' || (archive === 'archived' ? a.archived === true : a.archived === false));
-  $('accounts').replaceChildren(...accounts.map(a => {
+  const query = $('account-search').value.trim().toLocaleLowerCase();
+  const accounts = data.accounts.filter(a => (archive === 'all' || (archive === 'archived' ? a.archived === true : a.archived === false)) && (a.name || '').toLocaleLowerCase().includes(query));
+  const accountCards = accounts.map(a => {
     const trades = data.trades.filter(t => t.accountKey === a.key);
-    const element = card(a.name || 'Unknown account', money(a.balance, a.currency), `${a.kind || 'Unknown type'} · ${a.archived === true ? 'Archived' : a.archived === false ? 'Active' : 'Unknown archive status'}`);
+    const element = card(a.name || 'Unknown account', money(a.balance, a.currency), `${({phase: 'Phase', funded: 'Funded', ownCapital: 'Own capital'})[a.kind] || a.kind || 'Unknown type'} · ${a.archived === true ? 'Archived' : a.archived === false ? 'Active' : 'Unknown archive status'}`);
     const details = node('details'); details.append(node('summary', 'Account details'));
     for (const line of [`Starting balance: ${money(a.startBalance, a.currency)}`, `Created: ${utc(a.createdAt)}`, `${trades.filter(t => t.status === 'open').length} open · ${trades.filter(t => t.status === 'closed').length} closed · ${trades.filter(t => !t.status).length} unknown`]) details.append(node('p', line));
     const button = node('button', 'View trades', 'text-button'); button.type = 'button';
     button.onclick = () => { $('account-filter').value = a.key; $('trade-status').value = 'all'; $('trade-model').value = 'all'; renderTrades(); workspace.show('journal'); $('account-filter').focus(); };
-    element.append(details, button); return element;
-  }));
+    const counts = node('div', null, 'account-counts');
+    counts.append(node('span', `${trades.filter(t => t.status === 'open').length} open`), node('span', `${trades.filter(t => t.status === 'closed').length} closed`));
+    element.append(counts, details, button); return { kind: a.kind, element };
+  });
+  $('accounts').replaceChildren();
+  for (const [kind, label] of [['phase', 'Phase'], ['funded', 'Funded'], ['ownCapital', 'Own capital'], ['other', 'Other accounts']]) {
+    const cards = accountCards.filter(c => kind === 'other' ? !['phase','funded','ownCapital'].includes(c.kind) : c.kind === kind);
+    if (!cards.length) continue;
+    const group = node('section', null, 'account-group'), grid = node('div', null, 'cloud-grid');
+    grid.append(...cards.map(c => c.element)); group.append(node('h3', label), grid); $('accounts').append(group);
+  }
   if (!accounts.length) $('accounts').append(node('p', 'No accounts in this view. Check the selected zone, environment and data checks.'));
   const counts = new Map();
   for (const item of data.issues) { const label = `${item.code}${item.field ? ` · ${item.field}` : ''}`; counts.set(label, (counts.get(label) || 0) + 1); }
@@ -252,6 +263,7 @@ $('zone').addEventListener('change', () => {
   busy(false); status('Zone selection changed. Read it to load its records.');
 });
 $('archive').addEventListener('change', () => render());
+$('account-search').addEventListener('input', () => render());
 for (const id of ['account-filter', 'trade-status', 'trade-model']) $(id).addEventListener('change', renderTrades);
 addEventListener('pagehide', () => { endSession(); premium.dispose(); });
 addEventListener('pageshow', event => { if (event.persisted) location.reload(); });
