@@ -1,3 +1,4 @@
+import { planEdit, commitEdit, applyDemoEdit } from './edit-trade.mjs';
 import { mountAutoRefresh } from './auto-refresh.mjs';
 import { mountPremium } from './premium.mjs';
 const premium = mountPremium(document.getElementById('premium-statistics'), { friends: true });
@@ -21,6 +22,32 @@ const demoMode = !document.body.hasAttribute('data-login-entry') && new URLSearc
 let transport = null;
 const workspace = mountWorkspace({ getSnapshot: () => state.snapshot, isDemo: demoMode,
   canClose: trade => demoMode || Boolean(state.config?.closeTradePilotId && trade.id === state.config.closeTradePilotId.toLowerCase() && !state.stale && !state.busy),
+  canEdit: () => !state.busy && !state.stale && (demoMode || state.config?.tradeEditingEnabled === true),
+  onEdit: async (key, changes) => {
+    if (state.busy || state.stale) throw new Error('Refresh before editing this trade.');
+    const plan = planEdit(state.snapshot, key, changes);
+    if (demoMode) {
+      state.snapshot = applyDemoEdit(state.snapshot, plan); state.snapshot.summary = summarize(state.snapshot.accounts, state.snapshot.trades); render();
+      return { trade: state.snapshot.trades.find(t => t.key === key), snapshot: state.snapshot };
+    }
+    const generation = state.generation, selected = state.zones[Number($('zone').value)];
+    busy(true);
+    try {
+      const identity = await deadline(state.container.setUpAuth());
+      if (generation !== state.generation || identity?.userRecordName !== state.identity) throw new Error('Apple session changed. Reconnect before saving.');
+      await commitEdit({ plan, config: state.config, database: state.container.privateCloudDatabase, selected, transport });
+      if (generation !== state.generation) throw new Error('Session changed during save. Reconnect and check the native app.');
+      state.stale = true;
+    } catch (error) {
+      state.stale = true; status(error.message); throw error;
+    } finally { if (generation === state.generation) busy(false); }
+    await readSelected();
+    if (state.stale || state.snapshot?.collectionStatus !== 'complete') throw new Error('Save was acknowledged, but refresh failed. Close this window and refresh before editing again.');
+    const saved = state.snapshot.trades.find(t => t.key === key);
+    if (!saved) throw new Error('The trade was not returned after saving. Refresh and check the native app.');
+    if (Object.entries(plan.patch).some(([field, value]) => saved[field] !== value)) { state.stale = true; throw new Error('The refreshed trade differs from your changes. Close this window and review the latest data before editing again.'); }
+    return { trade: saved, snapshot: state.snapshot };
+  },
   onDemoReset: () => { state.snapshot = workspaceDemo(); state.snapshot.summary = summarize(state.snapshot.accounts, state.snapshot.trades); render(true); },
   onClose: async plan => {
     if (demoMode) { state.snapshot = closeDemo(state.snapshot, plan); state.snapshot.summary = summarize(state.snapshot.accounts, state.snapshot.trades); render(); return; }
@@ -80,7 +107,7 @@ function busy(value) {
 }
 function endSession(message = 'Disconnected. Data and the remembered Apple session have been cleared.') {
   forgetRememberedSession();
-  clearView(); state.identity = null; state.networkActive = false;
+  clearView(); workspace.show('connection'); state.identity = null; state.networkActive = false;
   try { state.container?.signOut(); } catch { /* Comment NL: Lokale data wordt ook bij SDK-fouten gewist. */ }
   $('disconnect').hidden = true;
   $('apple-sign-in-button').hidden = true; $('apple-sign-out-button').hidden = true;
@@ -105,8 +132,8 @@ async function listZones() {
     if (isAuthError(code)) endSession(describe(code));
     else { $('zone-panel').hidden = false; status(describe(code)); }
   } finally { if (generation === state.generation) busy(false); }
-  // Comment NL: Alleen de bekende native zone automatisch openen vanuit de welkomstpagina.
-  if (generation === state.generation && document.body.hasAttribute('data-login-entry')) {
+  // Comment NL: De bekende native zone openen vanuit de welkomstpagina of een herstelde sessie.
+  if (generation === state.generation && (document.body.hasAttribute('data-login-entry') || restoreSession)) {
     const matches = state.zones.map((item, index) => ({ item, index })).filter(({ item }) => item.zone.zoneName === 'com.apple.coredata.cloudkit.zone');
     if (matches.length === 1) { $('zone').value = String(matches[0].index); await readSelected(); }
   }
@@ -202,7 +229,7 @@ async function readSelected({ automatic = false } = {}) {
     });
     if (generation !== state.generation) return;
     // Comment NL: Een tijdens de aanvraag geopend sluitformulier nooit overschrijven.
-    if (automatic && $('close-dialog').open) return;
+    if (automatic && ($('close-dialog').open || Boolean(document.getElementById('trade-detail-dialog')?.open))) return;
     if (snapshot.collectionStatus === 'partial' && state.snapshot?.collectionStatus === 'complete') {
       state.stale = true; render();
       status(`Refresh incomplete. Showing the previous fetch, now marked stale. ${snapshot.failures.map(f => `${f.type}: ${describe(f.code)}`).join(' ')}`);
@@ -215,7 +242,7 @@ async function readSelected({ automatic = false } = {}) {
     if (generation !== state.generation) return;
     const code = errorCode(error);
     if (isAuthError(code)) endSession(describe(code));
-    else { state.stale = true; if (state.snapshot && !(automatic && $('close-dialog').open)) render(); status(describe(code)); }
+    else { state.stale = true; if (state.snapshot && !(automatic && ($('close-dialog').open || Boolean(document.getElementById('trade-detail-dialog')?.open)))) render(); status(describe(code)); }
   } finally { if (generation === state.generation) busy(false); }
 }
 
@@ -327,6 +354,7 @@ if (demoMode) {
     state.config = config; $('environment').textContent = `${config.environment === 'production' ? 'Production' : 'Development'} · private`;
     $('configuration').textContent = `${config.environment === 'production' ? 'Production: reads the selected account’s live cloud records.' : 'Development: a separate dataset from the released apps.'} Nothing is loaded until you start and sign in through Apple.`;
     if (config.closeTradePilotId) $('access-capability').textContent = 'Closing pilot · one test trade';
+    if (config.tradeEditingEnabled) $('access-capability').textContent = 'Trade editing enabled';
     $('start').disabled = false;
     if (restoreSession && !document.body.hasAttribute('data-login-entry')) await start();
   }
@@ -339,6 +367,6 @@ if (demoMode) {
 mountAutoRefresh({
   document, window,
   eligible: () => !demoMode && Boolean(state.identity && state.snapshot && state.networkActive)
-    && !state.busy && !$('close-dialog').open && navigator.onLine !== false,
+    && !state.busy && !($('close-dialog').open || Boolean(document.getElementById('trade-detail-dialog')?.open)) && navigator.onLine !== false,
   refresh: () => readSelected({ automatic: true }),
 });

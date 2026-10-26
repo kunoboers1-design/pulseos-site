@@ -110,6 +110,7 @@ function mapAccount(entry, issues) {
   const currency = CURRENCIES.has(currencyRaw) ? currencyRaw : null;
   if (currencyRaw !== null && currency === null) issue(issues, 'unsupported-currency', key, 'CD_currencyRaw');
   return {
+    blockedEditFields: [...new Set([...Object.keys(record.fields).filter(k => k.endsWith('_ckAsset') && record.fields[k]?.value != null).map(k => k.slice(0, -8)), ...issues.filter(i => i.key === key && i.field).map(i => i.field)])],
     key, recordType: record.recordType, recordName: record.recordName, zone, recordChangeTag: record.recordChangeTag ?? null,
     id: r.uuid('CD_id'), name: r.string('CD_name', { asset: true }),
     kind: kind.value, kindRaw: kind.raw, currency, currencyRaw,
@@ -144,6 +145,7 @@ function mapTrade(entry, issues) {
   const startedAt = r.date(legacy ? 'CD_createdAt' : 'CD_openedAt');
   if (startedAt && closedAt && Date.parse(closedAt) < Date.parse(startedAt)) issue(issues, 'date-order-conflict', key);
   return {
+    blockedEditFields: [...new Set([...Object.keys(record.fields).filter(k => k.endsWith('_ckAsset') && record.fields[k]?.value != null).map(k => k.slice(0, -8)), ...issues.filter(i => i.key === key && i.field).map(i => i.field)])],
     key, recordType: record.recordType, recordName: record.recordName, zone, recordChangeTag: record.recordChangeTag ?? null,
     id: r.uuid('CD_id'), instrument: r.string(legacy ? 'CD_pair' : 'CD_symbol', { asset: true }),
     accountReference: legacy ? r.string('CD_account', { optional: true }) : r.uuid('CD_linkedAccountId', { optional: true }),
@@ -251,6 +253,7 @@ export function mapSnapshot({ context, records, collectionStatus }) {
   const accounts = entries.filter(e => e.record.recordType === 'CD_Account').map(e => mapAccount(e, issues));
   const trades = entries.filter(e => ['CD_Trade', 'CD_OpenTrade'].includes(e.record.recordType)).map(e => mapTrade(e, issues));
   linkTrades(accounts, trades, issues);
+  for (const trade of trades) trade.blockedEditFields = [...new Set([...(trade.blockedEditFields || []), ...issues.filter(i => i.key === trade.key && i.field && i.code !== 'missing-field').map(i => i.field)])];
   const notes = entries.filter(e => e.record.recordType === 'CD_TradeNote').map(e => mapNote(e, issues));
   for (const note of notes) {
     const matches = accounts.filter(a => a.id && a.id === note.accountId);

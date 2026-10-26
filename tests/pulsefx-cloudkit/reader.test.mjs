@@ -144,3 +144,13 @@ test('Only exact HTTPS config enables the browser key; private user data is neve
   assert.equal(body.containerIdentifier, 'iCloud.PulseOS.FX');
   assert.equal(onRequest({ request: new Request('https://pulseos.eu/api/pulsefx-config', { method: 'POST' }), env }).status, 405);
 });
+
+test('trade editing requires explicit deployment activation', async () => {
+  const request = new Request('https://pulseos.eu/api/pulsefx-config');
+  for (const value of [undefined, 'false', 'yes']) {
+    const body = await onRequest({ request, env: { ...env, PULSEFX_TRADE_EDITING_ENABLED: value } }).json();
+    assert.equal(body.tradeEditingEnabled, undefined);
+  }
+  const body = await onRequest({ request, env: { ...env, PULSEFX_TRADE_EDITING_ENABLED: 'true' } }).json();
+  assert.equal(body.tradeEditingEnabled, true);
+});

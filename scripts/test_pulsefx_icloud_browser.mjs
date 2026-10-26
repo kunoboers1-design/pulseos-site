@@ -62,7 +62,12 @@ await context.route('**/*', async route => {
     if (route.request().method() === 'OPTIONS') return route.fulfill({ status: 204, headers: { 'Access-Control-Allow-Origin': origin, 'Access-Control-Allow-Headers': '*', 'Access-Control-Allow-Methods': 'POST, OPTIONS' } });
     vendorModify++;
     const body = route.request().postDataJSON();
-    assert.equal(body.atomic, true); assert.deepEqual(body.zoneID, zone); assert.equal(body.operations.length, 2);
+    assert.equal(body.atomic, true); assert.deepEqual(body.zoneID, zone); assert.ok([1, 2].includes(body.operations.length));
+    if (body.operations.length === 1) {
+      assert.equal(body.operations[0].record.fields.CD_entryPrice.value, null);
+      assert.equal(body.operations[0].record.fields.CD_slMoved.value, 0);
+      assert.equal(body.operations[0].record.fields.CD_preTradeNotes.value, 'SDK edit fixture');
+    }
     assert.ok(body.operations.every(o => o.operationType === 'update'));
     return route.fulfill({ status: 200, headers: { 'Access-Control-Allow-Origin': origin, 'Content-Type': 'application/json' }, json: { records: body.operations.map(o => ({ ...o.record, recordChangeTag: 'saved-tag' })) } });
   }
@@ -114,7 +119,7 @@ assert.equal(await page.locator('.cloud-layout').isVisible(), false);
 await page.getByRole('button', { name: 'Test Apple sign in' }).click();
 await page.getByLabel('Private zone', { exact: true }).selectOption('0');
 await page.getByRole('button', { name: 'Load workspace', exact: true }).click();
-await page.waitForURL(origin + '/pulsefx/icloud/');
+await page.waitForURL(url => url.pathname === '/pulsefx/icloud/');
 assert.equal(await page.evaluate(() => testControl.persist), false);
 assert.equal(await page.locator('#tab-open').getAttribute('aria-selected'), 'true');
 assert.equal(await page.locator('.login-page').count(), 0);
@@ -124,10 +129,20 @@ assert.match(await page.locator('#status').innerText(), /Disconnected/);
 nativeLoginZone = true;
 await page.goto(origin + '/pulsefx/login/');
 await page.getByRole('button', { name: 'Connect with iCloud' }).click();
+await page.getByLabel('Remember iCloud on this browser', { exact: true }).check();
 await page.getByRole('button', { name: 'Continue with Apple' }).click();
 await page.getByRole('button', { name: 'Test Apple sign in' }).click();
-await page.waitForURL(origin + '/pulsefx/icloud/');
+await page.waitForURL(url => url.pathname === '/pulsefx/icloud/');
 assert.equal(await page.locator('#tab-open').getAttribute('aria-selected'), 'true');
+await page.reload();
+await page.waitForFunction(() => document.getElementById('workspace-toolbar').hidden === false);
+assert.equal(await page.locator('#tab-open').getAttribute('aria-selected'), 'true');
+await page.getByRole('tab', { name: 'Notes', exact: true }).click();
+await page.reload();
+await page.waitForFunction(() => document.getElementById('workspace-toolbar').hidden === false);
+assert.equal(await page.locator('#tab-notes').getAttribute('aria-selected'), 'true');
+await page.getByRole('tab', { name: 'Settings', exact: true }).click();
+await page.locator('#disconnect').click();
 nativeLoginZone = false;
 enabled = false;
 const visit = () => page.goto(origin + '/pulsefx/icloud/');
@@ -239,6 +254,48 @@ try {
   await page.goto(origin + '/pulsefx/icloud/?workspace=demo');
   await page.getByRole('tab', { name: /Open trades/ }).click();
   assert.equal(await page.locator('.open-trade').count(), 2);
+  await page.getByRole('tab', { name: /Open trades/ }).click();
+  await page.getByRole('button', { name: 'View trade', exact: true }).first().click();
+  const detail = page.locator('#trade-detail-dialog');
+  await detail.getByRole('heading', { name: 'Risk & reward', exact: true }).waitFor();
+  for (const name of ['Strategy', 'Psychology', 'Notes', 'Summary', 'Details']) {
+    await detail.getByRole('tab', { name, exact: true }).click();
+    assert.equal(await detail.getByRole('tab', { name, exact: true }).getAttribute('aria-selected'), 'true');
+  }
+  for (const width of [1440, 390, 320]) {
+    await page.setViewportSize({ width, height: 900 });
+    assert.ok(await detail.evaluate(el => el.scrollWidth <= el.clientWidth + 1));
+    await page.screenshot({ path: join(screenshots, `trade-details-${width}.png`), fullPage: true });
+  }
+  await detail.getByRole('button', { name: 'Edit trade', exact: true }).click();
+  await detail.getByLabel('Entry', { exact: true }).fill('-1');
+  await detail.getByRole('button', { name: 'Save demo changes', exact: true }).click();
+  await detail.getByText('Entry is outside the allowed range.', { exact: true }).waitFor();
+  await detail.getByLabel('Entry', { exact: true }).fill('1.085');
+  await detail.getByRole('tab', { name: 'Strategy', exact: true }).click();
+  await detail.getByLabel('Custom session', { exact: true }).fill('London review');
+  await detail.getByRole('tab', { name: 'Psychology', exact: true }).click();
+  await detail.getByLabel('Custom emotion', { exact: true }).fill('Patient');
+  await detail.getByRole('tab', { name: 'Notes', exact: true }).click();
+  await detail.getByLabel('Before the trade', { exact: true }).fill('Edited note <script>safe text</script>');
+  await page.screenshot({ path: join(screenshots, 'edit-notes-mobile.png'), fullPage: true });
+  await detail.getByRole('button', { name: 'Save demo changes', exact: true }).click();
+  await detail.getByText('Demo changes saved for this page.', { exact: true }).waitFor();
+  await detail.getByText('1.085', { exact: true }).waitFor();
+  await detail.getByRole('tab', { name: 'Notes', exact: true }).click();
+  await detail.getByText('Edited note <script>safe text</script>', { exact: true }).waitFor();
+  assert.equal(await detail.locator('script').count(), 0);
+  await detail.getByRole('button', { name: 'Edit trade', exact: true }).click();
+  await detail.getByLabel('Entry', { exact: true }).fill('1.2');
+  page.once('dialog', d => d.dismiss());
+  await detail.getByRole('button', { name: 'Close details', exact: true }).click();
+  assert.equal(await detail.isVisible(), true);
+  page.once('dialog', d => d.accept());
+  await detail.getByRole('button', { name: 'Close details', exact: true }).click();
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.screenshot({ path: join(screenshots, 'compact-open-trades.png'), fullPage: true });
+  await page.getByRole('tab', { name: /Open trades/ }).click();
+
   const first = page.locator('.open-trade').first();
   await first.getByRole('button', { name: 'Close trade', exact: true }).click();
   await page.getByLabel('Realized P&L · USD', { exact: true }).fill('124');
@@ -327,6 +384,8 @@ try {
   await page.getByRole('tab', { name: 'Open trades', exact: false }).click();
   await page.getByRole('button', { name: 'Reset demo data', exact: true }).click();
   assert.equal(await page.locator('.open-trade').count(), 2);
+
+
   assert.equal(premiumRequests, 0);
   // MARK: - Bewust onthouden, herstellen en vergeten van een fictieve Apple-sessie
   await visit();
@@ -358,14 +417,19 @@ try {
     const result = await page.evaluate(async ({ zone, config }) => {
       const { closeTransport, commitClose, planClose } = await import('/pulsefx/icloud/close-trade.mjs');
       const pilot = 'abcdef00-0000-4000-8000-000000000099';
-      const configuration = { ...config, closeTradePilotId: pilot }, transport = closeTransport(configuration, fetch.bind(window));
+      const configuration = { ...config, closeTradePilotId: pilot, tradeEditingEnabled: true }, transport = closeTransport(configuration, fetch.bind(window));
       CloudKit.configure({ containers: [{ containerIdentifier: config.containerIdentifier, environment: config.environment, apiTokenAuth: { apiToken: config.apiToken, persist: false } }], services: { fetch: transport.fetch, logger: { info() {}, log() {}, warn() {}, error() {} } } });
       const snapshot = { collectionStatus: 'complete', accounts: [{ key: 'account', balance: 1000, currency: 'USD', archived: false, recordName: 'synthetic-account', recordChangeTag: 'account-tag', zone }], trades: [{ key: 'trade', id: pilot, recordType: 'CD_OpenTrade', recordName: 'synthetic-trade', recordChangeTag: 'trade-tag', zone, accountKey: 'account', linkStatus: 'linked', status: 'open', result: 'open', outcomeConsistent: true, startedAt: '2026-01-01T00:00:00Z' }] };
       const plan = planClose(snapshot, 'trade', { profitLoss: '25', result: 'win', closedAt: '2026-01-02T00:00:00Z' });
       await commitClose({ plan, config: configuration, database: CloudKit.getDefaultContainer().privateCloudDatabase, selected: { requestZone: zone }, transport });
+      const { planEdit, commitEdit } = await import('/pulsefx/icloud/edit-trade.mjs');
+      snapshot.trades[0].entryPrice = 1.1;
+      const edit = planEdit(snapshot, 'trade', { entryPrice: '', slMoved: false, preTradeNotes: 'SDK edit fixture' });
+      await commitEdit({ plan: edit, config: configuration, database: CloudKit.getDefaultContainer().privateCloudDatabase, selected: { requestZone: zone }, transport });
       return true;
     }, { zone, config });
-    assert.equal(result, true); assert.equal(vendorModify, 1); assert.deepEqual(external, []);
+    assert.equal(result, true); assert.equal(vendorModify, 2); assert.deepEqual(external, []);
+    useVendor = false;
     // MARK: - Bewust onthouden, herstellen en vergeten van een fictieve Apple-sessie
   await visit();
   await page.getByRole('button', { name: 'Connect iCloud', exact: true }).waitFor();

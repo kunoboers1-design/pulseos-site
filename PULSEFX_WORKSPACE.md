@@ -90,3 +90,19 @@ Validated with synthetic browser responses: disabled configuration, inline sign-
 ## Automatic refresh
 
 After a workspace snapshot is loaded, the web app reads the selected zone every 30 seconds while the tab is visible and immediately on a visibility return. It skips demo/offline/disconnected states, overlapping requests, and open trade-closing dialogs. A response arriving after a closing dialog opens is discarded. Automatic reads preserve filters and use the existing read-only reader, session checks, and stale-result handling. The timer is disposed on page exit. Native uploads can still take time to reach CloudKit.
+
+## Compact open trades and detail viewer
+
+Open trades now use a compact single-column list. View trade opens a read-only modal with Details, Strategy, Psychology, Notes and Summary, following the native OpenTradeEditSheet tab structure and supplied Mac screenshot. Existing mapped risk/reward and journal fields are displayed; missing/unsupported values remain explicitly unavailable. No additional CloudKit writes, asset downloads or Premium entitlement claims were added. Review close opens the existing controlled closing flow. Background refresh pauses while either modal is open, and session cleanup removes the detail viewer.
+
+Browser fixtures cover tab navigation, mobile widths (320/390 px), the desktop list and the existing demo closing flow. Images/rich-text attachments and full native editing are not implemented by this change.
+
+## Editing open trades (26 October 2026)
+
+The detail viewer now offers Edit trade for modern open trades. Supported fields: direction, account link, lot size, risk percentage, entry/stop/exit prices, target/final R, trade type, session/custom session, setup tags/selection, confluences, stop-loss moved, break-even/weekend outcomes, emotion/custom emotion, mistake tags/selection, and pre/post plain-text notes. Summary and realized P/L remain computed/read-only. Result and balance mutations remain in the separate existing close flow. Legacy/closed trades and assets are not editable by this path.
+
+Native contracts were inspected read-only in `FXLotsizeNotifier/Core/Models/OpenTrade.swift` and `UI/Views/OpenTradeEditSheet+Persistence.swift`. The web writes only changed allowlisted fields, preserves unrelated data and asset companions, and rejects invalid/unsupported mapped values. One atomic `update` with the existing recordChangeTag prevents silent overwriting of newer server records; force writes, retries and record creation are not used. Account reassignment is limited to a unique active account in the same zone. A save is followed by a fresh read and value comparison. Unconfirmed saves require refresh/review before retrying. Draft inputs stay in memory and closing prompts before discarding them.
+
+Deployment: set `PULSEFX_TRADE_EDITING_ENABLED=true` on the intended Cloudflare Pages environment, alongside the existing CloudKit config, to enable the real Save changes to iCloud button. It defaults off. This flag is an application guard, not a narrower Apple permission. No production configuration or live records were changed during development. Before wider rollout, verify one explicitly chosen testtrade round trip (web save → native display → native edit → web refresh), including conflict handling; tests do not prove native/device sync. Trade closure still requires its separate pilot setting.
+
+Verification: pure planner/transport/writer tests cover field validation, explicit zero/false/null, asset protection, account constraints, duplicate identities, change tags, one-shot requests, conflicts and no retry. Browser fixtures cover invalid input, multi-tab edits, demo save/readback, text escaping, discard confirmation, mobile layout and existing close flow. The optional local Apple SDK fixture also checks request serialization without reaching Apple services.

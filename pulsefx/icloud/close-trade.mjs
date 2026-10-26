@@ -1,3 +1,4 @@
+import { EDIT_CLOUD_FIELDS } from './edit-trade.mjs';
 import { readOnlyFetch, deadline, ReadError } from './reader.mjs';
 
 // MARK: - Gecontroleerde sluitopdracht
@@ -38,7 +39,12 @@ export function planClose(snapshot, tradeKey, input, now = Date.now()) {
 export function closeTransport(config, fetcher = globalThis.fetch) {
   const read = readOnlyFetch(config, fetcher); let permit = null;
   return {
-    arm(plan, zone) { permit = { records: plan.records, zone: { ...zone } }; },
+    arm(plan, zone) { permit = { records: structuredClone(plan.records), zone: { ...zone }, kind: 'close' }; },
+    armEdit(plan, zone) {
+      if (!config.tradeEditingEnabled || plan.records.length !== 1 || plan.records[0].recordType !== 'CD_OpenTrade'
+        || Object.keys(plan.records[0].fields).some(key => !EDIT_CLOUD_FIELDS.has(key))) throw new ReadError('OPERATION_BLOCKED');
+      permit = { records: structuredClone(plan.records), zone: { ...zone }, kind: 'edit' };
+    },
     disarm() { permit = null; },
     async fetch(input, init = {}) {
       const url = new URL(typeof input === 'string' || input instanceof URL ? input : input.url);
@@ -46,12 +52,12 @@ export function closeTransport(config, fetcher = globalThis.fetch) {
       const allowed = permit; permit = null;
       let body; try { body = JSON.parse(init.body); } catch { throw new ReadError('OPERATION_BLOCKED'); }
       const sameFields = (a, b) => Object.keys(a || {}).length === Object.keys(b).length && Object.entries(b).every(([key, f]) => a[key]?.value === f.value);
-      if (!allowed || !config.closeTradePilotId || (init.method || 'GET').toUpperCase() !== 'POST'
+      if (!allowed || !(allowed.kind === 'edit' ? config.tradeEditingEnabled === true : config.closeTradePilotId) || (init.method || 'GET').toUpperCase() !== 'POST'
         || url.origin !== 'https://api.apple-cloudkit.com' || url.pathname !== `/database/1/${config.containerIdentifier}/${config.environment}/private/records/modify`
         || body.atomic !== true || body.zoneID?.zoneName !== allowed.zone.zoneName || body.zoneID?.ownerRecordName !== allowed.zone.ownerRecordName
-        || !Array.isArray(body.operations) || body.operations.length !== 2
+        || !Array.isArray(body.operations) || body.operations.length !== allowed.records.length
         || !body.operations.every((operation, i) => operation.operationType === 'update' && operation.record?.recordName === allowed.records[i].recordName
-          && operation.record.recordChangeTag === allowed.records[i].recordChangeTag && sameFields(operation.record.fields, allowed.records[i].fields))) throw new ReadError('OPERATION_BLOCKED');
+          && operation.record.recordType === allowed.records[i].recordType && operation.record.recordChangeTag === allowed.records[i].recordChangeTag && sameFields(operation.record.fields, allowed.records[i].fields))) throw new ReadError('OPERATION_BLOCKED');
       return fetcher(input, { ...init, cache: 'no-store', credentials: 'omit', referrerPolicy: 'no-referrer', redirect: 'error' });
     },
   };

@@ -1,3 +1,4 @@
+import { openTradeDetail } from './trade-detail.mjs';
 import { mountAppearance } from './appearance.mjs';
 import { planClose } from './close-trade.mjs';
 import { statisticsDemo } from './statistics-demo.mjs';
@@ -12,14 +13,16 @@ const field = (label, control) => { const wrap = el('div', null, 'cloud-field'),
 const select = options => { const s = el('select'); for (const [value, name] of options) { const o = el('option', name); o.value = value; s.append(o); } return s; };
 
 // MARK: - Tabs en inhoud behouden dezelfde ingelogde sessie
-export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canClose }) {
+export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canClose, canEdit, onEdit }) {
   mountAppearance();
   const panels = { open: 'open-panel', accounts: 'accounts-panel', stats: 'premium-statistics', notes: 'notes-panel', connection: 'connection-panel' };
-  let active = 'connection', stale = false, pending = false, dialogKey = null;
+  const requestedView = new URLSearchParams(location.search).get('view');
+  const initialView = Object.hasOwn(panels, requestedView) ? requestedView : 'connection';
+  let active = initialView, stale = false, pending = false, dialogKey = null;
   const openFilter = select([['all', 'All accounts']]), noteFilter = select([['all', 'All accounts']]);
   const search = el('input'); search.type = 'search'; search.placeholder = 'Search notes';
   const noteKind = select([['all', 'All notes'], ['note', 'Notes'], ['pre', 'Pre-trade'], ['post', 'Post-trade']]);
-  const openList = el('div', null, 'cloud-grid'), notesList = el('div', null, 'notes-grid');
+  const openList = el('div', null, 'open-trade-list'), notesList = el('div', null, 'notes-grid');
   const openStatus = el('p'), notesStatus = el('p'); openStatus.setAttribute('role', 'status'); notesStatus.setAttribute('role', 'status');
   const openControls = el('div', null, 'cloud-controls'); openControls.append(field('Open trade account', openFilter));
   const notesControls = el('div', null, 'cloud-controls'); notesControls.append(field('Note account', noteFilter), field('Note type', noteKind), field('Search notes', search));
@@ -51,12 +54,17 @@ export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canC
 
     if (!panels[name]) return;
     active = name;
+    // Comment NL: Alleen de navigatie bewaren, nooit accountgegevens of Apple-tokens.
+    if (!document.body.hasAttribute('data-login-entry')) {
+      const url = new URL(location.href); url.searchParams.set('view', active);
+      history.replaceState(null, '', url);
+    }
     for (const [key, id] of Object.entries(panels)) {
       $(id).hidden = key !== active;
       const b = $(`tab-${key}`); b.setAttribute('aria-selected', String(key === active)); b.tabIndex = key === active ? 0 : -1;
     }
     $('results').hidden = !getSnapshot() || !['accounts', 'journal'].includes(active);
-    $('workspace-empty').hidden = Boolean(getSnapshot()) || !['accounts', 'journal'].includes(active);
+    $('workspace-empty').hidden = Boolean(getSnapshot()) || active === 'connection';
     $('workspace-toolbar').hidden = !getSnapshot();
     $('diagnostics').hidden = !getSnapshot();
     const titles = { open: ['Open trades', 'Your positions, at a glance.'], accounts: ['Accounts', 'A clear view of every trading account.'], stats: ['Stats', 'Understand your performance and trading patterns.'], notes: ['Notes', 'Your ideas and reflections, together.'], connection: ['Settings', 'Appearance, iCloud and website access.'] };
@@ -89,10 +97,8 @@ export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canC
     for (const t of trades) {
       const account = data.accounts.find(a => a.key === t.accountKey), card = el('article', null, 'fx-card open-trade');
       const top = el('div', null, 'trade-heading'); top.append(el('h3', t.instrument || 'Unknown instrument'), el('span', t.direction || 'Direction unknown', 'tag')); card.append(top, el('p', account?.name || 'Unlinked account'), el('strong', `${t.lotSize ?? '—'} lots`, 'trade-lots'));
-      const dl = el('dl', null, 'trade-facts');
-      for (const [label, value] of [['Opened', date(t.startedAt)], ['Entry', t.entryPrice ?? '—'], ['Stop loss', t.stopLossPlacement ?? '—'], ['Risk', t.riskPercent == null ? '—' : `${t.riskPercent}%`]]) dl.append(el('dt', label), el('dd', String(value)));
-      card.append(dl);
-      const details = el('details'); details.append(el('summary', 'Trade notes'), el('h4', 'Before the trade'), el('p', t.preTradeNotes ?? 'Text stored as an attachment; view it in the native app.', 'note-body'), el('h4', 'After the trade'), el('p', t.postTradeNotes ?? 'Text stored as an attachment; view it in the native app.', 'note-body')); card.append(details);
+      card.append(el('small', `${date(t.startedAt)} · Risk ${t.riskPercent == null ? 'unknown' : `${t.riskPercent}%`}`));
+      card.append(button('View trade', () => openTradeDetail(t, getSnapshot(), () => openClose(t.key), { canEdit: () => canEdit(t), onSave: changes => onEdit(t.key, changes) })));
       const enabled = t.recordType === 'CD_OpenTrade' && t.linkStatus === 'linked' && !stale;
       card.append(button(enabled ? (canClose(t) ? 'Close trade' : 'Review close') : 'View closing requirements', () => openClose(t.key)));
       openList.append(card);
@@ -154,7 +160,7 @@ export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canC
     dialog.showModal(); pnl.focus();
   }
   openFilter.onchange = renderOpen; for (const c of [noteFilter, noteKind, search]) c.oninput = renderNotes;
-  show('connection'); renderOpen(); renderNotes();
+  show(initialView); renderOpen(); renderNotes();
   return {
     show,
     update(isStale = false, first = false) {
@@ -162,17 +168,17 @@ export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canC
       renderOpen(); renderNotes(); show(first && active === 'connection' ? 'open' : active);
       if (dialogKey && !pending) $('close-dialog').close();
     },
-    clear() { if ($('close-dialog').open) $('close-dialog').close(); openFilter.value = 'all'; noteFilter.value = 'all'; noteKind.value = 'all'; search.value = ''; this.update(); show('connection'); },
+    clear() { document.getElementById('trade-detail-dialog')?.close(); if ($('close-dialog').open) $('close-dialog').close(); openFilter.value = 'all'; noteFilter.value = 'all'; noteKind.value = 'all'; search.value = ''; this.update(); show(active); },
   };
 }
 
 // MARK: - Eén fictieve dataset voor alle workspace-tabs
 export function workspaceDemo() {
   const base = statisticsDemo();
-  const accounts = base.accounts.map((a, i) => ({ ...a, id: `demo-account-${i}`, recordName: `demo-account-${i}`, balance: i ? 10420 : 25196, startBalance: i ? 10000 : 25000, kind: i ? 'phase' : 'funded', createdAt: '2026-10-01T08:00:00Z' }));
+  const accounts = base.accounts.map((a, i) => ({ ...a, zone: { zoneName: 'DemoZone', ownerRecordName: 'demo' }, archived: false, id: `demo-account-${i}`, recordName: `demo-account-${i}`, balance: i ? 10420 : 25196, startBalance: i ? 10000 : 25000, kind: i ? 'phase' : 'funded', createdAt: '2026-10-01T08:00:00Z' }));
   const openedAt = new Date(Date.now() - 3600000).toISOString();
   const open = accounts.map((a, i) => ({ key: `open-${i}`, id: `demo-trade-${i}`, recordName: `demo-trade-${i}`, recordType: 'CD_OpenTrade', accountKey: a.key, currency: a.currency,
-    linkStatus: 'linked', instrument: i ? 'GBPUSD' : 'EURUSD', lotSize: i ? .35 : 1.24, status: 'open', result: 'open', outcomeConsistent: true, direction: i ? 'short' : 'long', riskPercent: 1,
+    zone: a.zone, accountReference: a.id, directionRaw: i ? 'short' : 'long', linkStatus: 'linked', instrument: i ? 'GBPUSD' : 'EURUSD', lotSize: i ? .35 : 1.24, status: 'open', result: 'open', outcomeConsistent: true, direction: i ? 'short' : 'long', riskPercent: 1,
     entryPrice: i ? 1.31 : 1.08, stopLossPlacement: i ? 1.315 : 1.075, startedAt: openedAt, profitLoss: null, finalRR: null,
     preTradeNotes: 'Wait for a confirmed setup. Keep risk within the account plan.', postTradeNotes: '' }));
   return { ...base, source: 'demo', accounts, trades: [...open, ...base.trades], notesStatus: 'complete', notes: [{ key: 'note-demo', title: 'Weekly review', body: 'Focus on execution and record the reason for each trade.\nReview the journal at the end of the week.', accountKey: accounts[0].key, createdAt: openedAt }],
