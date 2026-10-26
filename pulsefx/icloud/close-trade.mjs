@@ -58,7 +58,7 @@ export function closeTransport(config, fetcher = globalThis.fetch) {
       const allowed = permit; permit = null;
       let body; try { body = JSON.parse(init.body); } catch { throw new ReadError('OPERATION_BLOCKED'); }
       const sameFields = (a, b) => Object.keys(a || {}).length === Object.keys(b).length && Object.entries(b).every(([key, f]) => a[key]?.value === f.value);
-      if (!allowed || !(allowed.kind === 'note' ? config.noteEditingEnabled === true : allowed.kind === 'edit' ? config.tradeEditingEnabled === true : config.closeTradePilotId) || (init.method || 'GET').toUpperCase() !== 'POST'
+      if (!allowed || !(allowed.kind === 'note' ? config.noteEditingEnabled === true : allowed.kind === 'edit' ? config.tradeEditingEnabled === true : (config.tradeClosingEnabled === true || config.closeTradePilotId)) || (init.method || 'GET').toUpperCase() !== 'POST'
         || url.origin !== 'https://api.apple-cloudkit.com' || url.pathname !== `/database/1/${config.containerIdentifier}/${config.environment}/private/records/modify`
         || body.atomic !== true || body.zoneID?.zoneName !== allowed.zone.zoneName || body.zoneID?.ownerRecordName !== allowed.zone.ownerRecordName
         || !Array.isArray(body.operations) || body.operations.length !== allowed.records.length
@@ -71,9 +71,9 @@ export function closeTransport(config, fetcher = globalThis.fetch) {
 
 // MARK: - Pilotwriter met optimistische concurrency
 // Comment NL: Atomic + change tags voorkomt gedeeltelijke writes en overschrijven van nieuwere cloudrecords.
-// Comment NL: Offline native wijzigingen blijven een integratietestrisico; activering gebeurt alleen voor één expliciete testtrade.
+// Comment NL: Offline native wijzigingen blijven een integratietestrisico; activering vereist de sluitinstelling of één expliciete testtrade.
 export async function commitClose({ plan, config, database, selected, transport }) {
-  if (!config.closeTradePilotId || plan.trade.id !== config.closeTradePilotId.toLowerCase()) throw new Error('Web closing is awaiting the native sync test. Close this trade in the app for now.');
+  if (config.tradeClosingEnabled !== true && (!config.closeTradePilotId || plan.trade.id !== config.closeTradePilotId.toLowerCase())) throw new Error('Web closing is awaiting the native sync test. Close this trade in the app for now.');
   const zone = selected?.requestZone;
   if (!zone || zone.zoneName === '_defaultZone' || plan.trade.zone.zoneName !== zone.zoneName || plan.account.zone.zoneName !== zone.zoneName
     || plan.trade.zone.ownerRecordName !== plan.account.zone.ownerRecordName || plan.records.some(r => typeof r.recordChangeTag !== 'string' || !r.recordChangeTag)) throw new Error('Record versions or a supported private zone are missing. Refresh before trying again.');

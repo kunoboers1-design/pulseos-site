@@ -164,3 +164,12 @@ test('note editing requires its own explicit deployment flag', async () => {
   const body = await onRequest({ request, env: { ...env, PULSEFX_NOTE_EDITING_ENABLED: 'true' } }).json();
   assert.equal(body.noteEditingEnabled, true);
 });
+
+test('closing is separate from editing and requires explicit activation', async () => {
+  const request = new Request('https://pulseos.eu/api/pulsefx-config');
+  for (const value of [undefined, 'false', 'yes']) {
+    const body = await onRequest({ request, env: { ...env, PULSEFX_TRADE_EDITING_ENABLED: 'true', PULSEFX_TRADE_CLOSING_ENABLED: value } }).json();
+    assert.equal(body.tradeClosingEnabled, undefined);
+  }
+  assert.equal((await onRequest({ request, env: { ...env, PULSEFX_TRADE_CLOSING_ENABLED: 'true' } }).json()).tradeClosingEnabled, true);
+});

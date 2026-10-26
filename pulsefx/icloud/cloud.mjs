@@ -31,7 +31,7 @@ const state = { config: null, container: null, reader: null, identity: null, gen
 const demoMode = !document.body.hasAttribute('data-login-entry') && new URLSearchParams(location.search).get('workspace') === 'demo';
 let transport = null;
 const workspace = mountWorkspace({ getSnapshot: () => state.snapshot, isDemo: demoMode,
-  canClose: trade => demoMode || Boolean(state.config?.closeTradePilotId && trade.id === state.config.closeTradePilotId.toLowerCase() && !state.stale && !state.busy),
+  canClose: trade => demoMode || Boolean((state.config?.tradeClosingEnabled === true || (state.config?.closeTradePilotId && trade.id === state.config.closeTradePilotId.toLowerCase())) && !state.stale && !state.busy),
   canEdit: () => !state.busy && !state.stale && (demoMode || state.config?.tradeEditingEnabled === true),
   onEdit: async (key, changes) => {
     if (state.busy || state.stale) throw new Error('Refresh before editing this trade.');

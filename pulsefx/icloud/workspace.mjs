@@ -141,7 +141,7 @@ export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canC
     const submit = el('button', 'Review balance change', 'hero-button primary-button'); submit.type = 'submit';
     const cancel = button('Cancel', () => dialog.close());
     const allowed = canClose(trade) && !stale;
-    const notice = isDemo ? 'Demo mode. This changes fictional data in this page only.' : allowed ? 'This updates your journal and account balance in iCloud. It does not close a broker order. Let your native apps finish syncing first.' : 'Closing from the web is not enabled for this trade yet. You can review the calculation; save the close in the native app until the sync test is complete.';
+    const notice = isDemo ? 'Demo mode. This changes fictional data in this page only.' : allowed ? 'This updates your journal and account balance in iCloud. It does not close a broker order. Let your native apps finish syncing first.' : 'Saving a close is not enabled on this website yet. You can preview the balance change below; your trade will stay open.';
     form.append(title, el('p', `${trade.instrument || 'Trade'} · ${trade.lotSize ?? '—'} lots · ${account?.name || 'Unlinked'}`), el('p', notice), field('Result', outcome), field(`Realized P&L · ${account?.currency || 'unknown currency'}`, pnl), field('Final R (optional)', rr), field('Closed at · UTC', when), message, review, submit, cancel);
     const invalidate = () => { review.hidden = true; review.replaceChildren(); confirm.checked = false; submit.textContent = 'Review balance change'; };
     for (const c of [outcome, pnl, rr, when]) c.oninput = invalidate;
@@ -157,7 +157,7 @@ export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canC
           if (allowed) { review.append(confirm, confirmLabel); submit.textContent = isDemo ? 'Confirm demo close' : 'Confirm close in iCloud'; }
           return;
         }
-        if (!allowed) { message.textContent = 'Close this trade in the native app until web closing is enabled.'; return; }
+        if (!allowed) { message.textContent = 'Preview only — your trade is still open. Web closing must be enabled before you can save.'; return; }
         if (!confirm.checked) { message.textContent = 'Confirm that you checked the result and balance change.'; confirm.focus(); return; }
         pending = true; submit.disabled = true; cancel.disabled = true; message.textContent = isDemo ? 'Updating demo…' : 'Saving once to iCloud…';
         await onClose(plan); dialog.close();

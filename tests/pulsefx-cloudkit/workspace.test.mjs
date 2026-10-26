@@ -77,3 +77,12 @@ test('duplicate trade identity cannot be used to select a write target', () => {
   const s = fixture(), t = s.trades.at(-1); s.trades.push({ ...t, key: 'duplicate-record', recordName: 'duplicate-record' });
   assert.throws(() => planClose(s, t.key, input), /duplicate identity/);
 });
+
+test('enabled closing retains atomic writes and version requirements', async () => {
+  const p = plan(); let calls = 0;
+  const database = { newRecordsBatch(options) { assert.equal(options.atomic, true); return { update(records) { assert.deepEqual(records, p.records); return this; }, async commit() { calls++; return { records: p.records }; } }; } };
+  const args = { plan: p, config: { tradeClosingEnabled: true }, database, selected: { requestZone: zone }, transport: { arm() {}, disarm() {} } };
+  await commitClose(args); assert.equal(calls, 1);
+  p.records[0].recordChangeTag = null;
+  await assert.rejects(commitClose(args), /versions/); assert.equal(calls, 1);
+});
