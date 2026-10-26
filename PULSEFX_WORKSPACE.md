@@ -72,3 +72,9 @@ Nog niet één-op-één:
 - Actuele live-verificatie is nog open. Kuno's screenshot toont All time / All accounts / All pairs / All outcomes / R: 46 trades, 24 wins, 15 losses, 7 break-even, +45,3R, 52% win rate en PF 4,65. Dit is referentiebewijs uit de Mac, geen bevestigde webuitkomst.
 
 Lokale preview: http://127.0.0.1:8766/pulsefx/icloud/?workspace=demo (fictieve data; Stats-tab).
+
+## Visuele aansluiting op Mac — 26 oktober 2026
+
+De desktopvormgeving volgt de aangeleverde Mac-screenshot nu met een Stats-subnavigatie onder de actieve zijbalkknop, een compacte sectiekop, periodeknoppen, accentgekleurde filters en kernkaarten met SVG-iconen. Overview toont een data-afgeleide maandobservatie, een gevulde equitycurve met hover-/focusinformatie naast Details, en een maandstaafgrafiek naast Outcome mix. Maandstaven openen de onderliggende trades. Technische snapshotinformatie en demo/live-acties zitten onder een expliciete disclosure; Demo mode blijft permanent zichtbaar.
+
+Mobiel blijft de onderste hoofdnavigatie behouden; de Stats-subnavigatie staat daar boven de inhoud. Donker/licht en 320–1440 px gecontroleerd met de offline browserregressie. Numerieke rekenlaag en CloudKit-read/write-contract zijn niet aangepast. De bekende beperkingen uit de vorige pariteitsinventaris blijven gelden. Geen deployment uitgevoerd.

@@ -34,12 +34,17 @@ export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canC
   }
   function updateStatsSections() {
     sectionBar.hidden = active !== 'stats';
+    document.body.classList.toggle('workspace-stats',active === 'stats');
+    const panel=$('premium-statistics');
+    if(panel.dataset.activeSection!==statsSection){panel.dataset.activeSection=statsSection;panel.dispatchEvent(new CustomEvent('stats-section-change',{detail:statsSection}));}
+    requestAnimationFrame(()=>sectionBar.style.setProperty('--stats-nav-top',`${$('tab-stats').getBoundingClientRect().bottom+8}px`));
     for (const control of sectionBar.children) control.setAttribute('aria-pressed', String(control.dataset.section === statsSection));
     for (const group of document.querySelectorAll('[data-stats-section]')) group.hidden = group.dataset.statsSection !== statsSection;
     $('premium-statistics').hidden = active !== 'stats' || statsSection === 'records';
     $('journal-panel').hidden = active !== 'stats' || statsSection !== 'records';
     $('results').hidden = !getSnapshot() || !(active === 'accounts' || active === 'stats' && statsSection === 'records');
   }
+  window.addEventListener('resize',updateStatsSections);
   new MutationObserver(updateStatsSections).observe($('premium-statistics'), { childList: true, subtree: true });
   function show(name, focus = false) {
     if (name === 'journal') { statsSection = 'records'; name = 'stats'; }

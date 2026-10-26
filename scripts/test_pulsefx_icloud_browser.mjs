@@ -155,7 +155,8 @@ try {
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `Statistics overflow at ${width}/${theme}: ${await page.evaluate(() => [...document.querySelectorAll("body *")].filter(e=>e.getBoundingClientRect().right>innerWidth+1).slice(0,12).map(e=>e.tagName+"."+e.className).join(","))}`);
     }
   }
-  await page.locator('#stats-period').selectOption('custom');
+  await premium.getByText('Data source & calculation details', { exact: true }).click();
+  await premium.getByRole('button', { name: 'Custom', exact: true }).click();
   await premium.getByLabel('From', { exact: true }).fill('2026-10-20'); await premium.getByLabel('Through', { exact: true }).fill('2026-10-10');
   await premium.getByRole('button', { name: 'Calculate statistics', exact: true }).click();
   await premium.getByText(/closed trades · .*opening dates/).waitFor();
@@ -240,9 +241,11 @@ try {
   await page.locator('.mac-calendar').waitFor();
   for (const section of ['Overview', 'Performance', 'Timing', 'Journal', 'Trades']) {
     await page.getByRole('button', { name: section, exact: true }).click();
+    assert.equal(await page.locator('.mac-header-title h2').textContent(), section);
     for (const width of [1440, 390, 320]) {
       await page.setViewportSize({ width, height: 1000 });
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${section} overflows at ${width}`);
+      if(section === 'Overview' && width === 1440) await page.screenshot({path:join(screenshots,'mac-stats-overview-preview.png')});
       if (width !== 320) await page.screenshot({ path: join(screenshots, `mac-stats-${section.toLowerCase()}-${width}.png`), fullPage: true });
     }
   }
@@ -257,8 +260,22 @@ try {
   await page.getByLabel('Display', { exact: true }).selectOption('cards');
   assert.ok(await page.locator('[data-stats-section=trades] article').count() > 0);
   await page.getByRole('button', { name: 'Overview', exact: true }).click();
+  await page.getByLabel('Equity metric', { exact: true }).selectOption('pl');
+  await page.getByText('Select one currency/account to view a P&L curve. Different currencies cannot be added.', { exact: true }).waitFor();
+  await page.getByLabel('Equity metric', { exact: true }).selectOption('r');
   await page.locator('#stats-metric').selectOption('percent');
   await page.getByRole('heading', { name: 'Equity curve', exact: true }).waitFor();
+  await page.setViewportSize({width:1440,height:1000});
+  await page.locator('svg[aria-label="Equity curve"] circle').first().focus();
+  await page.locator('.mac-chart-tooltip').filter({hasText:'Result'}).waitFor();
+  if(await page.locator('html').getAttribute('data-theme')!=='light') await page.locator('#themeToggle').click();
+  await page.screenshot({path:join(screenshots,'mac-stats-light-preview.png')});
+  for(const section of ['Overview','Performance','Timing','Journal','Trades']) {
+    await page.getByRole('button',{name:section,exact:true}).click();
+    await page.setViewportSize({width:390,height:900});
+    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`Light ${section} overflow`);
+  }
+
 
   await page.getByRole('tab', { name: 'Open trades', exact: false }).click();
   await page.getByRole('button', { name: 'Reset demo data', exact: true }).click();

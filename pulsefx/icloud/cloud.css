@@ -239,3 +239,80 @@ body.cloud-test { --bg: #000; --surface: #1c1c1e; --surface-soft: #242426; --lin
 .mac-overview-row > .fx-card { margin: 0; }
 @media (max-width: 900px) { .mac-overview-row { grid-template-columns: minmax(0,1fr); } }
 @media print { .workspace-sidebar, .workspace-tabs, .cloud-header, button, select, .stats-actions, #stats-sections { display: none !important; } .mac-stats-section:not([hidden]) { display: block; } .mac-chart { break-inside: avoid; } }
+
+/* MARK: - Mac-werkruimte en visuele hiërarchie */
+.workspace-stats .workspace-heading { display: none; }
+.mac-stats-header { padding: 24px 28px; background: var(--surface); border: 1px solid var(--line-strong); border-radius: 22px; }
+.mac-header-title { display: flex; justify-content: space-between; align-items: center; gap: 24px; }
+.mac-header-title h2 { font-size: 24px; margin: 0 0 5px; letter-spacing: -.5px; }
+.mac-header-title p { font-size: 14px; margin: 0; color: var(--muted); }
+.mac-periods { display: flex; background: var(--surface-soft); border-radius: 8px; padding: 3px; flex-shrink: 0; }
+.mac-periods button { padding: 6px 14px; min-height: 32px; border: 0; border-radius: 6px; background: transparent; color: var(--muted); font-size: 13px; white-space: nowrap; }
+.mac-periods button[aria-pressed="true"] { background: var(--accent); color: var(--bg); box-shadow: 0 2px 6px #0002; }
+.mac-main-filters { gap: 14px; margin: 24px 0 0; align-items: center; }
+.mac-main-filters .cloud-field { font-size: 0; flex: 1 1 140px; gap: 0; }
+.mac-main-filters .cloud-field select { padding: 8px 30px 8px 12px; min-height: 36px; font-size: 14px; font-weight: 600; color: var(--accent); border: 0; background-color: var(--accent-dim); border-radius: 8px; }
+.mac-main-filters .cloud-field input { font-size: 14px; }
+.mac-main-filters .mac-period-select { display: none; }
+.mac-main-filters > button { background: var(--accent); color: var(--bg); padding: 8px 16px; min-height: 36px; border: 0; font-weight: 650; }
+.mac-data-controls { margin: 12px 4px 0; color: var(--muted); font-size: 12px; }
+.mac-data-controls summary { cursor: pointer; width: fit-content; }
+.mac-data-controls[open] { padding: 16px; border: 1px solid var(--line); border-radius: 12px; }
+.mac-data-controls .tag { margin-top: 14px; }
+.mac-data-controls .stats-actions { margin-bottom: 0; }
+.mac-stats-section { gap: 22px; margin-top: 20px; }
+.mac-stats-section .fx-card { background: var(--surface); box-shadow: inset 0 1px 0 var(--line); border: 1px solid var(--line-strong); }
+.mac-stats-section > .stats-metrics { gap: 16px; }
+.mac-stats-section .mac-headline { display: grid; grid-template-columns: 48px minmax(0,1fr); column-gap: 14px; align-items: center; padding: 20px !important; border-top: 1px solid var(--line-strong); }
+.mac-headline .mac-metric-icon { grid-row: 1 / 4; width: 48px; height: 48px; border-radius: 14px; background: var(--accent-dim); color: var(--accent); display: grid; place-items: center; }
+.mac-metric-icon svg { width: 27px; height: 27px; }
+.mac-stats-section .mac-headline > span:not(.mac-metric-icon) { font-size: 11px; color: var(--muted); font-weight: 600; }
+.mac-stats-section .mac-headline > strong { font-size: 25px; color: var(--accent); line-height: 1.3; }
+.mac-stats-section .mac-headline:first-child > strong { color: var(--text); }
+.mac-headline small { font-size: 10px; color: var(--muted); }
+.mac-insight { display: grid; grid-template-columns: 1fr auto; gap: 5px 20px; text-align: left; border: 1px solid var(--line-strong); background: var(--surface); color: var(--text); padding: 20px 26px; border-radius: 20px; cursor: pointer; }
+.mac-insight > span:first-child { font-size: 12px; color: var(--muted); }
+.mac-insight strong { font-size: 14px; font-weight: 600; grid-column: 1; }
+.mac-insight-arrow { grid-column: 2; grid-row: 1 / 3; align-self: center; color: var(--accent); }
+.mac-chart { position: relative; }
+.mac-chart-subtitle { font-size: 12px; color: var(--muted); margin: -8px 0 24px; }
+.mac-equity-area { fill: var(--accent); opacity: .12; }
+.mac-chart-tooltip { position: absolute; top: 15px; right: 20px; max-width: 65%; border: 1px solid var(--line); background: var(--surface-soft); box-shadow: 0 8px 24px #0003; border-radius: 10px; padding: 10px 12px; color: var(--text); font-size: 12px; pointer-events: none; z-index: 2; }
+.mac-chart circle:focus { outline: none; stroke: var(--text); stroke-width: 2; }
+.mac-overview-row { grid-template-columns: minmax(0,1.7fr) minmax(260px,1fr); }
+.mac-overview-row > .mac-chart svg { min-height: 280px; max-height: 420px; }
+.mac-overview-details .stats-chart-labels { font-size: 14px; padding: 10px 0; }
+.mac-overview-details h3, .mac-chart h3, .mac-breakdown h3 { font-size: 17px; letter-spacing: -.25px; }
+@media(min-width: 901px) and (min-height: 700px) {
+  .workspace-tabs { border-radius: 0; top: 94px; left: 0; bottom: 0; width: 238px; border-right: 1px solid var(--line); background: var(--surface); padding: 14px; }
+  .workspace-tabs button { border-radius: 10px; }
+  .workspace-tabs button[aria-selected="true"] { background: var(--accent); color: var(--bg); }
+  .workspace-stats #tab-stats { margin-bottom: 216px; }
+  .workspace-stats #stats-sections { position: fixed; left: 52px; top: var(--stats-nav-top,280px); width: 166px; display: flex; flex-direction: column; gap: 3px; z-index: 7; margin: 0; }
+  .workspace-stats #stats-sections button { text-align: left; border: 0; padding: 10px 12px; min-height: 38px; background: transparent; font-size: 14px; border-radius: 8px; }
+  .workspace-stats #stats-sections button[aria-pressed="true"] { color: var(--accent); font-weight: 650; background: var(--accent-dim); }
+}
+@media(max-width: 1150px) { .mac-header-title { flex-wrap: wrap; gap: 16px; } .mac-stats-section .mac-headline { grid-template-columns: 36px minmax(0,1fr); gap: 10px; padding: 16px !important; } .mac-headline .mac-metric-icon { width: 36px; height: 42px; } .mac-stats-section .mac-headline > strong { font-size: 21px; } }
+@media(max-width: 900px) { .mac-overview-row { grid-template-columns: minmax(0,1fr); } .mac-stats-header { padding: 20px; } .mac-periods { width: 100%; } .mac-periods button { flex: 1; padding-inline: 8px; } .mac-header-title { gap: 18px; } .mac-header-title > div:first-child { width: 100%; } }
+@media(max-width: 500px) { .mac-stats-header { padding: 18px 14px; border-radius: 18px; } .mac-periods button { font-size: 11px; padding-inline: 6px; } .mac-main-filters { gap: 8px; margin-top: 16px; } .mac-main-filters .cloud-field { flex-basis: 42%; } .mac-main-filters .cloud-field select { font-size: 12px; } .mac-stats-section > .stats-metrics { gap: 8px; } .mac-stats-section .mac-headline { grid-template-columns: 1fr; gap: 4px; padding: 14px !important; } .mac-headline .mac-metric-icon { display: none; } .mac-insight { padding: 16px; } .mac-overview-row > .mac-chart svg { min-height: 190px; } }
+.mac-stats-section .mac-drawdown-detail { order: 2; }
+.mac-overview-details .mac-negative { color: var(--danger, #ff5b62); }
+.mac-overview-details .mac-positive { color: var(--accent); }
+.mac-overview-details .mac-neutral { color: var(--text); }
+.mac-chart svg text.mac-donut-total { font-size: 30px; font-weight: 700; fill: var(--text); }
+.mac-monthly-chart svg [role="button"] { cursor: pointer; }
+.mac-monthly-chart svg [role="button"]:focus { outline: none; stroke: var(--text); stroke-width: 2; }
+.mac-outcome-mix > button { margin: 0 6px 6px 0; font-size: 12px; }
+@media(min-width: 1100px) { .mac-monthly-chart, .mac-outcome-mix { align-self: stretch; } }
+/* Comment NL: Schermruimte voor de grafieken; de oude leesproef had ruimere standaardmarges. */
+.cloud-test .mac-data-controls { padding: 4px 0; }
+.cloud-test .mac-data-controls[open] { padding: 16px; }
+.cloud-test .mac-stats-section .fx-card { margin-block: 0; }
+.cloud-test .mac-stats-section h3 { margin-top: 0; }
+.mac-stats-section .mac-headline > strong { margin: 3px 0; }
+.mac-equity-controls { margin: 12px 0 0; max-width: 180px; }
+.mac-equity-controls .cloud-field { font-size: 11px; gap: 4px; }
+.mac-equity-controls select { min-height: 30px; padding-block: 5px; font-size: 12px; }
+.workspace-stats #workspace-demo-banner { padding-block: 7px; margin-block: 12px; }
+.workspace-stats #workspace-demo-banner button { min-height: 30px; padding-block: 5px; }
+.cloud-test #themeToggle { color: var(--text); border-color: var(--line-strong); opacity: 1; }

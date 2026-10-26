@@ -12,7 +12,7 @@ const field = (parent, label, options, initial, action, id) => {
 };
 const svgEl = (tag, attrs) => { const e = document.createElementNS('http://www.w3.org/2000/svg', tag); for (const [k,v] of Object.entries(attrs)) e.setAttribute(k,v); return e; };
 function lineChart(title, series, suffix = '', scatter = false, temporal = false) {
-  const box = el('section', null, 'fx-card mac-chart'); box.append(el('h3', title));
+  const box = el('section', null, 'fx-card mac-chart'); box.append(el('h3', title)); const tooltip=el('output',null,'mac-chart-tooltip');tooltip.hidden=true;box.append(tooltip);if(title==='Equity curve')box.append(el('p','Hover or focus a point to inspect','mac-chart-subtitle'));
   const points = series.flatMap(s => s.points).filter(p => Number.isFinite(p.value));
   if (!points.length) { box.append(el('p', 'No measurable results in this selection.')); return box; }
   const svg = svgEl('svg', { viewBox: '0 0 800 260', role: 'img', 'aria-label': title });
@@ -23,8 +23,9 @@ function lineChart(title, series, suffix = '', scatter = false, temporal = false
   const xs=series.flatMap(s=>s.points).map(p=>p.x).filter(Number.isFinite), xmin=temporal?Math.min(...xs):Math.min(0,...xs), xmax=Math.max(1,...xs);
   series.forEach((s,i) => {
     const coords = s.points.filter(p => Number.isFinite(p.value)).map((p,j,a) => ({ ...p,x:65+(Number.isFinite(p.x)?(p.x-xmin)/(xmax-xmin||1):j/Math.max(1,a.length-1))*715,y:y(p.value) }));
+    if(title==='Equity curve' && coords.length){svg.append(svgEl('polygon',{points:`${coords[0].x},${y(0)} `+coords.map(p=>`${p.x},${p.y}`).join(' ')+` ${coords.at(-1).x},${y(0)}`,class:'mac-equity-area'}));}
     if (!scatter) svg.append(svgEl('polyline',{points:coords.map(p=>`${p.x},${p.y}`).join(' '),fill:'none',stroke:'currentColor','stroke-width':2.5,class:`mac-series series-${i%4}`}));
-    for (const p of coords) { const dot=svgEl('circle',{cx:p.x,cy:p.y,r:scatter?4:3,class:`mac-series series-${i%4}`,tabindex:0}); const tip=svgEl('title',{}); tip.textContent=`${s.label} · ${p.date ? new Date(p.date).toLocaleString('en-GB') : p.label || ''}: ${fmt(p.value,suffix)}`; dot.append(tip); svg.append(dot); }
+    for (const p of coords) { const dot=svgEl('circle',{cx:p.x,cy:p.y,r:scatter?4:3,class:`mac-series series-${i%4}`,tabindex:0}); const tip=svgEl('title',{}); tip.textContent=`${s.label} · ${p.date ? new Date(p.date).toLocaleString('en-GB') : p.label || ''}: ${fmt(p.value,suffix)}`; dot.append(tip);dot.setAttribute('aria-label',tip.textContent);const inspect=()=>{tooltip.hidden=false;tooltip.textContent=tip.textContent;};dot.addEventListener('pointerenter',inspect);dot.addEventListener('focus',inspect);dot.addEventListener('pointerleave',()=>tooltip.hidden=true);dot.addEventListener('blur',()=>tooltip.hidden=true);svg.append(dot); }
   });
   if (temporal && xs.length) { for (const [x,timestamp] of [[65,xmin],[780,xmax]]) { const label=svgEl('text',{x,y:248,'text-anchor':x===65?'start':'end'}); label.textContent=new Date(timestamp).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); svg.append(label); } }
   box.append(svg);
@@ -37,23 +38,36 @@ export function mountMacStats(root) {
   let source=null, stale=false, demo=new URLSearchParams(location.search).get('statistics')==='demo';
   let opts={period:'all',accountKey:'all',instrument:'all',outcome:'all',metric:'r',slotHours:3}, result=null;
   let equity='r', calendar=dayKey(new Date()).slice(0,7), weekStart='Monday', comparisonMode='percent', selectedAccounts=[], notesFilter='all', sort='newest', display='table';
-  const heading=el('div',null,'cloud-results-heading'); heading.append(el('h2','Trading statistics')); const badge=el('span','Friends access','tag'); heading.append(badge);
-  const status=el('p'); status.setAttribute('role','status'); const controls=el('div',null,'cloud-controls'), output=el('div');
-  const actions=el('div',null,'stats-actions'); actions.append(button('Export PDF',()=>window.print()),button('Explore statistics demo',()=>{demo=true;populate();run();}),button('Use iCloud data',()=>{demo=false;populate();run();}));
-  root.append(heading,el('p','Your Mac statistics workspace. Calculated in this browser from the selected snapshot.'),actions,status,controls,output);
+  const heading=el('div',null,'mac-header-title');
+  const headingText=el('div'), screenTitle=el('h2','Overview'), subtitle=el('p','Headline performance and equity');
+  headingText.append(screenTitle,subtitle); heading.append(headingText);
+  const badge=el('span','Friends access','tag');
+  const status=el('p'); status.setAttribute('role','status');
+  const controls=el('div',null,'cloud-controls mac-main-filters'), output=el('div'), periods=el('div',null,'mac-periods');
+  const header=el('header',null,'mac-stats-header');heading.append(periods);header.append(heading,controls);
+  const dataControls=el('details',null,'mac-data-controls');dataControls.append(el('summary','Data source & calculation details'),badge,status);
+  const actions=el('div',null,'stats-actions');actions.append(button('Explore statistics demo',()=>{demo=true;populate();run();}),button('Use iCloud data',()=>{demo=false;populate();run();}));dataControls.append(actions);
+  root.append(header,dataControls,output);
+  const sectionNames={overview:['Overview','Headline performance and equity'],performance:['Performance','Your edge, consistency and execution'],timing:['Timing','Find your strongest trading windows'],journal:['Journal','Understand the decisions behind your results'],trades:['Trades','Review every closed trade']};
+  root.addEventListener('stats-section-change',event=>{const copy=sectionNames[event.detail]||sectionNames.overview;screenTitle.textContent=copy[0];subtitle.textContent=copy[1];});
   const current=()=>demo?statisticsDemo():source;
   const unit=()=>opts.metric==='percent'?'%':'R';
   function populate() {
-    controls.replaceChildren(); const snapshot=current();
-    field(controls,'Period',[['All time','all'],['Past week','week'],['Past month','month'],['Year to date','ytd'],['Custom','custom']],opts.period,v=>{opts.period=v;populate();run();},'stats-period');
+    controls.replaceChildren(); periods.replaceChildren(); const snapshot=current();
+    const periodSelect=field(controls,'Period',[['All time','all'],['Past week','week'],['Past month','month'],['Year to date','ytd'],['Custom','custom']],opts.period,v=>{opts.period=v;populate();run();},'stats-period');
+    periodSelect.parentElement.classList.add('mac-period-select');
+    for(const [label,value]of [['Week','week'],['Month','month'],['YTD','ytd'],['All time','all'],['Custom','custom']]){const control=button(label,()=>{opts.period=value;populate();run();});control.setAttribute('aria-pressed',String(opts.period===value));periods.append(control);}
     if(opts.period==='custom') for(const [key,label] of [['from','From'],['through','Through']]) { const wrap=el('label',label,'cloud-field'), input=el('input');input.type='date';input.value=opts[key]||dayKey(new Date());opts[key]=input.value;input.onchange=()=>{opts[key]=input.value;run();};wrap.append(input);controls.append(wrap); }
     field(controls,'Account',[['All active accounts','all'],...(snapshot?.accounts||[]).filter(a=>a.archived===false).map(a=>[a.name||'Unnamed',a.key])],opts.accountKey,v=>{opts.accountKey=v;run();},'stats-account');
     field(controls,'Instrument',[['All instruments','all'],...[...new Set((snapshot?.trades||[]).map(t=>t.instrument).filter(Boolean))].sort()],opts.instrument,v=>{opts.instrument=v;run();},'stats-instrument');
     field(controls,'Outcome',[['All outcomes','all'],['Wins','win'],['Losses','loss'],['Break-even','breakEven']],opts.outcome,v=>{opts.outcome=v;run();},'stats-outcome');
     field(controls,'Result metric',[['R multiple','r'],['Percentage','percent']],opts.metric,v=>{opts.metric=v;run();},'stats-metric');
-    controls.append(button('Calculate statistics',run),button('Reset filters',()=>{opts={period:'all',accountKey:'all',instrument:'all',outcome:'all',metric:'r',slotHours:3};populate();run();}));
+    controls.append(button('Export PDF',()=>window.print()));
+    actions.querySelectorAll('[data-filter-action]').forEach(e=>e.remove());
+    const recalculate=button('Calculate statistics',run);recalculate.dataset.filterAction='true';
+    const reset=button('Reset filters',()=>{opts={period:'all',accountKey:'all',instrument:'all',outcome:'all',metric:'r',slotHours:3};populate();run();});reset.dataset.filterAction='true';actions.append(recalculate,reset);
   }
-  function cards(parent, entries) { const grid=el('div',null,'cloud-grid stats-metrics'); for(const [label,value,note] of entries){const c=el('article',null,'fx-card');c.append(el('span',label),el('strong',value));if(note)c.append(el('small',note));grid.append(c);}parent.append(grid); }
+  function cards(parent, entries) { const grid=el('div',null,'cloud-grid stats-metrics'); for(const [label,value,note] of entries){const c=el('article',null,'fx-card');const symbol=svgEl('svg',{viewBox:'0 0 24 24',fill:'none',stroke:'currentColor','stroke-width':1.7,'aria-hidden':'true'});const paths={'Closed trades':'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18 M8 12l3 3 5-6','Win rate':'M12 2v4m0 12v4M2 12h4m12 0h4M12 5a7 7 0 1 0 0 14 7 7 0 0 0 0-14 M12 9v6m-3-3h6','Net result':'M4 3v17h17M7 15l4-6 4 3 6-7','Profit factor':'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18 M8 12h8 M12 7v1m0 8v1'};if(paths[label]){symbol.append(svgEl('path',{d:paths[label]}));const icon=el('span',null,'mac-metric-icon');icon.append(symbol);c.append(icon);c.classList.add('mac-headline');}c.append(el('span',label),el('strong',value));if(note)c.append(el('small',note));grid.append(c);}parent.append(grid); }
   function tradeTable(rows, parent) {
     const wrap=el('div',null,'table-scroll'); wrap.tabIndex=0;
     const table=el('table'),head=el('tr'); for(const h of ['Opened · local time','Instrument','Account','Outcome','Result','P&L','Lots','Notes'])head.append(el('th',h));const thead=el('thead');thead.append(head);table.append(thead);const body=el('tbody');
@@ -82,16 +96,17 @@ export function mountMacStats(root) {
     const sections={};for(const key of ['overview','performance','timing','journal','trades']){const section=el('section',null,'mac-stats-section');section.dataset.statsSection=key;sections[key]=section;output.append(section);}
     const s=result.summary,u=unit();
     cards(sections.overview,[['Closed trades',s.count,`${s.count} closed trades`],['Win rate',fmt(s.winRate*100,'%')],['Net result',fmt(s.total,u)],['Profit factor',fmt(s.profitFactor),'Based on realized R']]);
+    const positiveMonths=result.byMonth.filter(m=>m.total>0),positiveSum=positiveMonths.reduce((n,m)=>n+m.total,0),bestMonth=[...positiveMonths].sort((a,b)=>b.total-a.total)[0];
+    if(bestMonth){const insight=button('',()=>drill(bestMonth.label,bestMonth.records));insight.className='mac-insight';insight.append(el('span','Performance insight'),el('strong',`${new Date(`${bestMonth.key}-01T12:00:00`).toLocaleDateString('en-US',{month:'long'})} delivered ${fmt(bestMonth.total/positiveSum*100,'%')} of your positive monthly result, across ${bestMonth.count} trades.`),el('span','↗','mac-insight-arrow'));sections.overview.append(insight);}
     const details=el('section',null,'fx-card mac-overview-details');details.append(el('h3','Details'));
-    for(const [label,number]of [['Wins',s.wins],['Losses',s.losses],['Break even',s.breakEvens],['Average per trade',fmt(s.average,u)],['Average lot',fmt(s.averageLot)],['Best trade',fmt(s.best,u)],['Worst trade',fmt(s.worst,u)],['Longest win streak',result.streaks.wins],['Longest loss streak',result.streaks.losses]]) {const row=el('div',null,'stats-chart-labels');row.append(el('span',label),el('strong',number));details.append(row);}
-    for(const b of s.plByCurrency){const row=el('div',null,'stats-chart-labels');row.append(el('span',`Total P/L · ${b.currency}`),el('strong',fmt(b.value)));details.append(row);}
-    const ec=el('div',null,'cloud-controls');field(ec,'Equity metric',[['R multiple','r'],['P&L','pl'],['Percentage','percent']],equity,v=>{equity=v;run();});sections.overview.append(ec);
+    for(const [label,number]of [['Wins',s.wins],['Losses',s.losses],['Break even',s.breakEvens],['Average per trade',fmt(s.average,u)],['Average lot',fmt(s.averageLot)],['Best trade',fmt(s.best,u)],['Worst trade',fmt(s.worst,u)],['Longest win streak',result.streaks.wins],['Longest loss streak',result.streaks.losses]]) {const row=el('div',null,'stats-chart-labels');const numberLabel=el('strong',number);numberLabel.className=label==='Losses'||String(number).startsWith('-')?'mac-negative':label==='Wins'?'mac-positive':'mac-neutral';row.append(el('span',label),numberLabel);details.append(row);}
+    for(const b of s.plByCurrency){const row=el('div',null,'stats-chart-labels');row.append(el('span',`Total P/L · ${b.currency}`),el('strong',fmt(b.value),b.value<0?'mac-negative':'mac-positive'));details.append(row);}
+    const ec=el('div',null,'cloud-controls');field(ec,'Equity metric',[['R multiple','r'],['P&L','pl'],['Percentage','percent']],equity,v=>{equity=v;run();});ec.classList.add('mac-equity-controls');
     const currencies=[...new Set(result.records.map(t=>t.currency))];
-    if(equity==='pl'&&currencies.length>1)sections.overview.append(el('p','Select one currency/account to view a P&L curve. Different currencies cannot be added.','cloud-notice'),details);
+    if(equity==='pl'&&currencies.length>1)sections.overview.append(ec,el('p','Select one currency/account to view a P&L curve. Different currencies cannot be added.','cloud-notice'),details);
     else{const curve=sequence(result.records,t=>metricValue(t,result.accounts,equity)),suffix=equity==='r'?'R':equity==='percent'?'%':` ${currencies[0]||''}`;const timeline=[...curve];const last=timeline.at(-1);if(last){const today=new Date();today.setHours(0,0,0,0);const until=opts.period==='custom'?new Date(`${[opts.from,opts.through].sort().at(-1)}T00:00:00`):today;const tail=new Date(Math.min(today.getTime(),until.getTime()));if(tail.getTime()>Date.parse(last.date))timeline.push({...last,date:tail.toISOString()});}
-      const row=el('div',null,'mac-overview-row');row.append(lineChart('Equity curve',[{label:'Result',points:timeline}],suffix,false,true),details);sections.overview.append(row,lineChart('Drawdown',[{label:'Below peak',points:curve.map(p=>({...p,value:p.drawdown}))}],suffix));}
-    breakdown(sections.overview,'Monthly performance',result.byMonth);breakdown(sections.overview,'Outcomes',['win','loss','breakEven'].map(key=>({label:key,...result.summarize(result.records.filter(t=>t.result===key))})),{initial:'count'});
-    renderOutcomeDonut(sections.overview);comparisons(sections.overview);
+      const row=el('div',null,'mac-overview-row');const equityCard=lineChart('Equity curve',[{label:'Result',points:timeline}],suffix,false,true);equityCard.insertBefore(ec,equityCard.querySelector('svg'));row.append(equityCard,details);sections.overview.append(row);const drawdown=lineChart('Drawdown',[{label:'Below peak',points:curve.map(p=>({...p,value:p.drawdown}))}],suffix);drawdown.classList.add('mac-drawdown-detail');sections.overview.append(drawdown);}
+    renderMonthlyPerformance(sections.overview);renderOutcomeDonut(sections.overview);comparisons(sections.overview);
     cards(sections.performance,[['Edge score',fmt(result.edgeScore,' / 100'),'Score always uses R'],['Positive weeks',fmt(result.consistency*100,'%')],['Recovery factor',fmt(result.recoveryR),'R gain ÷ maximum R drawdown']]);
     const radar=el('section',null,'fx-card mac-chart');radar.append(el('h3','Performance profile'));const svg=svgEl('svg',{viewBox:'0 0 440 300',role:'img','aria-label':'Performance profile radar'}),names=['Win rate','Profit factor','Expectancy','Consistency','Drawdown control','Recovery'];
     const xy=(i,r)=>[220+Math.sin(i*Math.PI/3)*r,145-Math.cos(i*Math.PI/3)*r];
@@ -109,7 +124,23 @@ export function mountMacStats(root) {
     renderTrades(sections.trades);
   }
 
-  function renderOutcomeDonut(parent){const box=el('section',null,'fx-card mac-chart');box.append(el('h3','Trade outcomes'));const rows=[['win','Wins'],['loss','Losses'],['breakEven','Break-even']].map(([key,label])=>({label,records:result.records.filter(t=>t.result===key)}));const svg=svgEl('svg',{viewBox:'0 0 400 230',role:'img','aria-label':'Outcome distribution including break-even'});let offset=0;const circumference=2*Math.PI*75;for(const [i,row]of rows.entries()){const fraction=result.records.length?row.records.length/result.records.length:0,circle=svgEl('circle',{cx:200,cy:110,r:75,fill:'none',stroke:['var(--accent)','#ed5454','#888'][i],'stroke-width':28,'stroke-dasharray':`${fraction*circumference} ${circumference}`,'stroke-dashoffset':-offset*circumference,transform:'rotate(-90 200 110)'});offset+=fraction;const title=svgEl('title',{});title.textContent=`${row.label}: ${row.records.length}`;circle.append(title);svg.append(circle);}box.append(svg);for(const row of rows)box.append(button(`${row.label}: ${row.records.length}`,()=>drill(row.label,row.records)));parent.append(box);}
+  // MARK: - Maandgrafiek
+  // Comment NL: Elke staaf opent dezelfde onderliggende records als de maandfilters.
+  function renderMonthlyPerformance(parent) {
+    const box=el('section',null,'fx-card mac-chart mac-monthly-chart');
+    box.append(el('h3','Monthly performance'),el('p','Net result and trade volume','mac-chart-subtitle'));
+    const rows=result.byMonth;
+    if(!rows.length){box.append(el('p','No trades in this period.'));parent.append(box);return;}
+    const svg=svgEl('svg',{viewBox:'0 0 600 290',role:'img','aria-label':'Monthly results'});
+    const min=Math.min(0,...rows.map(r=>r.total)),max=Math.max(0,...rows.map(r=>r.total)),span=max-min||1,y=v=>230-(v-min)/span*190;
+    for(const v of [min,(min+max)/2,max]){const label=svgEl('text',{x:6,y:y(v)-5});label.textContent=fmt(v,unit());svg.append(label,svgEl('line',{x1:65,x2:580,y1:y(v),y2:y(v),class:'stats-zero'}));}
+    rows.forEach((row,i)=>{const step=500/rows.length,cx=75+step*(i+.5),width=Math.min(56,step*.6),bar=svgEl('rect',{x:cx-width/2,y:Math.min(y(0),y(row.total)),width,height:Math.max(2,Math.abs(y(row.total)-y(0))),rx:4,fill:row.total<0?'var(--danger)':'var(--accent)',role:'button',tabindex:0,'aria-label':`${row.label}: ${fmt(row.total,unit())}, ${row.count} trades`});
+      const open=()=>drill(row.label,row.records);bar.addEventListener('click',open);bar.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open();}});const tip=svgEl('title',{});tip.textContent=`${row.label}: ${fmt(row.total,unit())} · ${row.count} trades`;bar.append(tip);svg.append(bar);
+      const month=svgEl('text',{x:cx,y:255,'text-anchor':'middle'});month.textContent=new Date(`${row.key}-01T12:00:00`).toLocaleDateString('en-US',{month:'short'});const count=svgEl('text',{x:cx,y:276,'text-anchor':'middle'});count.textContent=String(row.count);svg.append(month,count);
+    });box.append(svg);parent.append(box);
+  }
+
+  function renderOutcomeDonut(parent){const box=el('section',null,'fx-card mac-chart');box.append(el('h3','Outcome mix'),el('p',`${result.records.length} closed trades`,'mac-chart-subtitle'));box.classList.add('mac-outcome-mix');const rows=[['win','Wins'],['loss','Losses'],['breakEven','Break-even']].map(([key,label])=>({label,records:result.records.filter(t=>t.result===key)}));const svg=svgEl('svg',{viewBox:'0 0 400 230',role:'img','aria-label':'Outcome distribution including break-even'});let offset=0;const circumference=2*Math.PI*75;for(const [i,row]of rows.entries()){const fraction=result.records.length?row.records.length/result.records.length:0,circle=svgEl('circle',{cx:200,cy:110,r:75,fill:'none',stroke:['var(--accent)','#ed5454','#888'][i],'stroke-width':28,'stroke-dasharray':`${fraction*circumference} ${circumference}`,'stroke-dashoffset':-offset*circumference,transform:'rotate(-90 200 110)'});offset+=fraction;const title=svgEl('title',{});title.textContent=`${row.label}: ${row.records.length}`;circle.append(title);svg.append(circle);}const total=svgEl('text',{x:200,y:108,'text-anchor':'middle',class:'mac-donut-total'});total.textContent=String(result.records.length);const caption=svgEl('text',{x:200,y:130,'text-anchor':'middle'});caption.textContent='closed trades';svg.append(total,caption);box.append(svg);for(const row of rows)box.append(button(`${row.label}: ${row.records.length}`,()=>drill(row.label,row.records)));parent.append(box);}
 
   function renderHeatmap(parent) {
     const box=el('section',null,'fx-card');box.append(el('h3','Instrument × setup'));const controls=el('div',null,'cloud-controls'),out=el('div',null,'table-scroll');box.append(controls,out);parent.append(box);
