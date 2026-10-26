@@ -7,7 +7,7 @@ export function openTradeDetail(trade, snapshot, onCloseTrade, options = {}) {
   document.getElementById('trade-detail-dialog')?.remove();
   const make = (tag, text, cls) => { const n = document.createElement(tag); if (text != null) n.textContent = text; if (cls) n.className = cls; return n; };
   const action = (text, fn, cls = 'text-button') => { const b = make('button', text, cls); b.type = 'button'; b.onclick = fn; return b; };
-  const value = v => v == null || v === '' ? 'Not recorded / unavailable' : typeof v === 'boolean' ? (v ? 'Yes' : 'No') : String(v);
+  const value = v => v == null || v === '' ? 'Not recorded or unavailable' : typeof v === 'boolean' ? (v ? 'Yes' : 'No') : String(v);
   const date = v => v && Number.isFinite(Date.parse(v)) ? new Date(v).toLocaleString('en-GB') : 'Unknown';
   const account = snapshot.accounts.find(a => a.key === trade.accountKey);
   const money = v => Number.isFinite(v) && trade.currency ? new Intl.NumberFormat('en-US', { style: 'currency', currency: trade.currency }).format(v) : value(v);
@@ -24,6 +24,7 @@ export function openTradeDetail(trade, snapshot, onCloseTrade, options = {}) {
   header.append(heading, make('span', (trade.status || 'Unknown').toUpperCase(), 'tag'), make('span', `${account?.name || 'Unlinked account'} · ${duration}`), make('strong', `${value(trade.lotSize)} lots`), action('Close details', requestClose));
   const nav = make('div', null, 'trade-detail-tabs'); nav.setAttribute('role', 'tablist'); nav.setAttribute('aria-label', 'Trade detail sections');
   const body = make('div', null, 'trade-detail-body');
+  const guide = make('p', 'Review your trade, add your notes, and close it when you’re ready.', 'trade-detail-guide');
   const panels = [];
   const section = (parent, title, pairs) => {
     const card = make('section', null, 'trade-detail-card'); card.append(make('h3', title));
@@ -46,8 +47,8 @@ export function openTradeDetail(trade, snapshot, onCloseTrade, options = {}) {
   section(panels[3], 'Journal notes', [['Before the trade', note(trade.preTradeNotes)], ['After the trade', note(trade.postTradeNotes)]]);
   section(panels[4], 'Trade summary', [['Instrument', trade.instrument], ['Account', account?.name || 'Unlinked account'], ['Status', trade.status], ['Direction', trade.direction], ['Lot size', trade.lotSize], ['Opened', date(trade.startedAt)], ['Closed', trade.closedAt ? date(trade.closedAt) : 'Still open'], ['Duration', duration], ['Account currency', trade.currency], ['Realized P/L', trade.status === 'open' ? 'Not realized' : money(trade.profitLoss)], ['Final R:R', trade.finalRR], ['Source', snapshot.source === 'demo' ? 'Fictional demo data' : 'Last loaded iCloud snapshot']]);
   const footer = make('footer', null, 'trade-detail-footer');
-  const status = make('small', options.message || 'Changes are saved only when you choose Save changes.'); status.setAttribute('role', 'status'); footer.append(status);
-  const closeAction = action('Close trade', () => { if (dirty) { status.textContent = 'Save or discard your edits before closing the trade.'; return; } dialog.close(); onCloseTrade(); }, 'text-button');
+  const status = make('small', options.message || 'Take your time — nothing changes until you save or confirm.'); status.setAttribute('role', 'status'); footer.append(status);
+  const closeAction = action('Close trade', () => { if (dirty) { status.textContent = 'Save your changes first, then choose Close trade to review the result.'; return; } dialog.close(); onCloseTrade(); }, 'text-button');
   const editable = trade.recordType === 'CD_OpenTrade' && trade.status === 'open' && trade.outcomeConsistent;
   if (editable && options.canEdit?.()) {
     const edit = action('Edit trade', () => {
@@ -102,11 +103,11 @@ export function openTradeDetail(trade, snapshot, onCloseTrade, options = {}) {
         } catch (error) { status.textContent = error.message; }
         finally { saving = false; disabled.forEach(([c, wasDisabled]) => c.disabled = wasDisabled); }
       }, 'hero-button primary-button');
-      footer.append(save); status.textContent = 'Edit your trade, then save. Result and P/L use Close trade.'; select(0);
+      footer.append(save); status.textContent = 'Make your changes below. Save first, then close the trade when you’re ready.'; select(0);
     }, 'hero-button primary-button');
     footer.append(edit);
   } else status.textContent = options.message || (editable ? 'iCloud editing is not enabled here yet. You can try editing in the demo.' : 'Edit this trade in the native app.');
   if (trade.status === 'open') footer.append(closeAction);
-  dialog.append(header, nav, body, footer); document.body.append(dialog); select(0);
+  dialog.append(header, guide, nav, body, footer); document.body.append(dialog); select(0);
   dialog.addEventListener('close', () => dialog.remove(), { once: true }); dialog.showModal();
 }
