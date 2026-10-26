@@ -309,6 +309,7 @@ function render(resetFilters = false) {
   const accountCards = accounts.map(a => {
     const trades = data.trades.filter(t => t.accountKey === a.key);
     const element = card(a.name || 'Unknown account', money(a.balance, a.currency), `${({phase: 'Phase', funded: 'Funded', ownCapital: 'Own capital'})[a.kind] || a.kind || 'Unknown type'} · ${a.archived === true ? 'Archived' : a.archived === false ? 'Active' : 'Unknown archive status'}`);
+    element.classList.add('workspace-account-card');
     const details = node('details'); details.append(node('summary', 'Account details'));
     for (const line of [`Starting balance: ${money(a.startBalance, a.currency)}`, `Created: ${utc(a.createdAt)}`, `${trades.filter(t => t.status === 'open').length} open · ${trades.filter(t => t.status === 'closed').length} closed · ${trades.filter(t => !t.status).length} unknown`]) details.append(node('p', line));
     const button = node('button', 'View trades', 'text-button'); button.type = 'button';

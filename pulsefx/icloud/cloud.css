@@ -455,3 +455,83 @@ html[data-icloud-restoring="true"] .icloud-restore { display: grid; min-height: 
 .cloud-test .heatmap-cell:hover { border-color:var(--accent); background:var(--accent-dim); }
 .heatmap-empty { color:var(--muted); opacity:.5; }
 @media(max-width:600px) { .heatmap-header { gap:14px; } .heatmap-metrics { width:100%; } .cloud-test .heatmap-metrics button { flex:1; padding:8px; } }
+
+/* MARK: - Consistente werkruimtedichtheid en begrensde detailvensters */
+.cloud-test .mac-drilldown { width:min(1080px,calc(100vw - 32px)); max-width:none; height:auto; max-height:82dvh; padding:0; box-sizing:border-box; overflow:hidden; }
+.cloud-test .mac-drilldown[open] { display:flex; flex-direction:column; }
+.drilldown-header { display:flex; align-items:start; justify-content:space-between; gap:20px; padding:20px 24px; border-bottom:1px solid var(--line); flex-shrink:0; }
+.drilldown-header h2 { margin:0; font-size:20px; line-height:1.35; }
+.cloud-test .drilldown-header p { margin:6px 0 0; font-size:12px; }
+.drilldown-header button { flex-shrink:0; }
+.mac-drilldown .table-scroll { min-height:0; overflow:auto; padding:0 20px 16px; }
+.cloud-test .mac-drilldown table { table-layout:auto; min-width:900px; height:auto; font-size:13px; }
+.cloud-test .mac-drilldown :is(tr,tbody,thead) { height:auto; }
+.cloud-test .mac-drilldown :is(th,td) { padding:12px; vertical-align:top; white-space:nowrap; overflow-wrap:normal; }
+.mac-drilldown td:last-child span { display:block; width:200px; max-height:90px; overflow:auto; white-space:pre-wrap; overflow-wrap:anywhere; }
+.mac-drilldown th { position:sticky; top:0; background:var(--surface); z-index:1; }
+.cloud-test .mac-stats-section > .fx-card > .cloud-controls { margin:12px 0 16px; }
+.mac-stats-section > .fx-card > .cloud-controls .cloud-field { flex:0 1 230px; }
+.cloud-test .cloud-controls select { min-height:38px; padding:8px 12px; font-size:13px; }
+.cloud-test .fx-card { padding:20px; border-radius:18px; }
+.cloud-test .fx-card h3 { margin-top:0; font-size:17px; }
+.cloud-test h1 { font-size:30px; }
+.cloud-header { min-height:72px; margin-bottom:20px; }
+.mac-choice { padding:8px; font-size:13px; }
+.cloud-test .trade-detail-dialog { width:min(840px,calc(100vw - 32px)); }
+.note-document-content { min-height:200px; padding:16px; line-height:1.65; }
+@media(max-width:600px) {
+ .cloud-test .mac-drilldown { width:calc(100vw - 20px); max-height:88dvh; }
+ .drilldown-header { padding:16px; gap:12px; }
+ .drilldown-header h2 { font-size:17px; }
+ .mac-drilldown .table-scroll { padding:0 8px 12px; }
+ .cloud-test .fx-card { padding:16px; }
+ .cloud-test .cloud-controls select { min-height:44px; font-size:16px; }
+ .mac-stats-section > .fx-card > .cloud-controls .cloud-field { flex:1 1 150px; }
+}
+@media(min-width:761px) {
+ #open-panel > .cloud-controls .cloud-field, #accounts-panel > .cloud-controls .cloud-field { flex:0 1 280px; }
+ #accounts-panel .account-search { max-width:420px; }
+ .note-detail-grid { align-items:start; }
+}
+
+/* MARK: - Verhoudingen van de Mac-workspace */
+/* Comment NL: Compacte kaarten en inhoudgedreven hoogtes, zonder de aanraakdoelen op mobiel te verkleinen. */
+.cloud-test .account-group .cloud-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; align-items:start; }
+.cloud-test .workspace-account-card { padding:16px; margin:0; border-radius:16px; }
+.cloud-test .workspace-account-card > h3 { font-size:17px; margin:0 0 6px; }
+.cloud-test .workspace-account-card > strong { font-size:24px; line-height:1.25; }
+.cloud-test .workspace-account-card > p { margin:6px 0; font-size:12px; }
+.workspace-account-card .account-counts { margin:12px 0; gap:8px; }
+.workspace-account-card .account-counts span { padding:4px 10px; }
+.workspace-account-card details { margin:10px 0; font-size:13px; }
+.workspace-account-card details p { margin:8px 0; }
+.cloud-test .workspace-account-card > button { min-height:36px; padding:7px 12px; font-size:13px; }
+.note-overview-grid { align-items:start; }
+.cloud-test .note-detail-heading { margin:12px 0 18px; }
+.cloud-test .note-detail-heading h2 { font-size:22px; }
+.cloud-test .note-detail-card { padding:16px; margin-bottom:16px; }
+.cloud-test .appearance-row { padding:12px 0; }
+.cloud-test .accent-options { gap:8px; }
+.cloud-test .accent-options button { padding:10px 12px; border-radius:12px; }
+.cloud-test .mac-stats-section { gap:16px; margin-top:16px; }
+@media(min-width:901px) {
+ .cloud-test h1 { font-size:24px; }
+ .cloud-test .open-trade-list .open-trade { padding:12px 16px; gap:4px 16px; border-radius:14px; }
+ .cloud-test .open-trade-list .open-trade > button { min-height:32px; padding:6px 12px; font-size:12px; margin:0; }
+ .cloud-test .open-trade-list .open-trade > p { font-size:13px; }
+ .cloud-test .open-trade-list .open-trade h3 { font-size:16px; }
+ .cloud-test .open-trade-list .trade-lots { font-size:17px; }
+}
+@media(max-width:650px) {
+ .cloud-test .account-group .cloud-grid { grid-template-columns:1fr; }
+ .cloud-test .workspace-account-card > button { min-height:44px; }
+}
+.cloud-test .workspace-account-card details { padding:0; margin:8px 0; }
+.cloud-test .workspace-account-card { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:6px 12px; align-items:center; }
+.workspace-account-card > :is(h3,strong,p) { grid-column:1 / -1; }
+.workspace-account-card .account-counts { grid-column:1; margin:6px 0; }
+.cloud-test .workspace-account-card > button { grid-column:2; grid-row:4; }
+.cloud-test .workspace-account-card details { grid-column:1 / -1; }
+@media(max-width:420px) {
+ .cloud-test .workspace-account-card > button { grid-column:1 / -1; grid-row:auto; justify-self:start; }
+}

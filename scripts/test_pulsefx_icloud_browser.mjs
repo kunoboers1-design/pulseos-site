@@ -403,6 +403,15 @@ try {
   await page.locator('[data-stats-section=journal] .mac-bar-row').first().click();
   await page.locator('dialog.mac-drilldown').waitFor();
   assert.ok(await page.locator('dialog.mac-drilldown tbody tr').count() > 0);
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({width, height:900});
+    const dialogBox = await page.locator('dialog.mac-drilldown').boundingBox();
+    const rowBox = await page.locator('dialog.mac-drilldown tbody tr').first().boundingBox();
+    assert.ok(dialogBox.width <= width && dialogBox.height <= 900 * .89, 'Drilldown must fit viewport');
+    assert.ok(rowBox.height < 150, 'Trade rows must not stretch to hundreds of pixels');
+    await page.screenshot({path:join(screenshots, `compact-drilldown-${width}.png`)});
+  }
+
   await page.getByRole('button', { name: 'Close', exact: true }).click();
   await page.getByRole('button', { name: 'Trades', exact: true }).click();
   await page.getByLabel('Journal notes', { exact: true }).selectOption('with');

@@ -71,11 +71,13 @@ export function mountMacStats(root) {
   function tradeTable(rows, parent) {
     const wrap=el('div',null,'table-scroll'); wrap.tabIndex=0;
     const table=el('table'),head=el('tr'); for(const h of ['Opened · local time','Instrument','Account','Outcome','Result','P&L','Lots','Notes'])head.append(el('th',h));const thead=el('thead');thead.append(head);table.append(thead);const body=el('tbody');
-    for(const t of rows){const tr=el('tr');for(const v of [new Date(t.startedAt).toLocaleString('en-GB'),t.instrument,result.accounts.get(t.accountKey)?.name,t.result,fmt(result.value(t),unit()),`${fmt(t.profitLoss)} ${t.currency||''}`,fmt(t.lotSize),[t.preTradeNotes,t.postTradeNotes].filter(Boolean).join('\n')||'—'])tr.append(el('td',v));body.append(tr);}table.append(body);wrap.append(table);parent.append(wrap);
+    for(const t of rows){const tr=el('tr');for(const v of [new Date(t.startedAt).toLocaleString('en-GB'),t.instrument,result.accounts.get(t.accountKey)?.name,t.result,fmt(result.value(t),unit()),`${fmt(t.profitLoss)} ${t.currency||''}`,fmt(t.lotSize),[t.preTradeNotes,t.postTradeNotes].filter(Boolean).join('\n')||'—']){const td=el('td');const text=el('span',v);td.append(text);tr.append(td);}body.append(tr);}table.append(body);wrap.append(table);parent.append(wrap);
     if(!rows.length)parent.append(el('p','No trades match this selection.'));
   }
   function drill(label, rows) {
-    const dialog=el('dialog',null,'mac-drilldown');dialog.append(el('h2',label),button('Close',()=>dialog.close()));
+    const dialog=el('dialog',null,'mac-drilldown'),header=el('header',null,'drilldown-header'),heading=el('div');
+    const title=el('h2',label);title.id='drilldown-title';dialog.setAttribute('aria-labelledby',title.id);
+    heading.append(title,el('p',`${rows.length} trades · Scroll horizontally for all fields`));header.append(heading,button('Close',()=>dialog.close()));dialog.append(header);
     tradeTable(rows,dialog);document.body.append(dialog);dialog.onclose=()=>dialog.remove();dialog.showModal();
   }
   function breakdown(parent,title,rows,{pf='metricProfitFactor',initial='total',metricSelect=true}={}) {

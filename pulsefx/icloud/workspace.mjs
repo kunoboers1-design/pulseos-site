@@ -23,7 +23,7 @@ export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canC
   let active = initialView, stale = false, pending = false, dialogKey = null;
   const openFilter = select([['all', 'All accounts']]), noteFilter = select([['all', 'All accounts']]);
   const search = el('input'); search.type = 'search'; search.placeholder = 'Search notes';
-  const noteKind = select([['all', 'All notes'], ['note', 'Notes'], ['pre', 'Pre-trade'], ['post', 'Post-trade']]);
+  const noteKind = select([['note', 'Notes'], ['all', 'All notes'], ['pre', 'Pre-trade'], ['post', 'Post-trade']]);
   const openList = el('div', null, 'open-trade-list'), notesList = el('div', null, 'notes-list');
   const openStatus = el('p'), notesStatus = el('p'); openStatus.setAttribute('role', 'status'); notesStatus.setAttribute('role', 'status');
   const openControls = el('div', null, 'cloud-controls'); openControls.append(field('Open trade account', openFilter));
@@ -38,7 +38,7 @@ export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canC
   function editNote(note) {
     openNoteEditor({ note, snapshot: getSnapshot(), canSave: canEditNotes, onSave: async (key, input, identity) => {
       const saved = await onSaveNote(key, input, identity);
-      noteFilter.value = 'all'; noteKind.value = 'all'; search.value = ''; notesView.select(saved.key); renderNotes();
+      noteFilter.value = 'all'; noteKind.value = 'note'; search.value = ''; notesView.select(saved.key); renderNotes();
       notesStatus.textContent = isDemo ? 'Demo note saved for this page.' : 'Note saved to iCloud and refreshed. Native sync may take a moment.';
     } });
   }
@@ -105,7 +105,7 @@ export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canC
   }
   function renderOpen() {
     const data = getSnapshot(); openList.replaceChildren();
-    const all = data?.trades.filter(t => t.status === 'open') || [];
+    const all = data?.trades.filter(t => t.status === 'open').sort((a, b) => (Date.parse(b.startedAt) || 0) - (Date.parse(a.startedAt) || 0)) || [];
     $('open-badge').textContent = data ? String(all.length) : '—';
     const trades = all.filter(t => openFilter.value === 'all' || (openFilter.value === 'unlinked' ? !t.accountKey : t.accountKey === openFilter.value));
     openStatus.textContent = !data ? 'Connect iCloud and load your workspace to see open trades.' : `${stale ? 'Stale snapshot — refresh before taking action. ' : ''}${trades.length} open trades shown. ${data.collectionStatus !== 'complete' ? 'Incomplete read: other trades may be missing.' : 'No live market prices or unrealized P&L.'}`;
@@ -178,7 +178,7 @@ export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canC
       renderOpen(); renderNotes(); show(first && active === 'connection' ? 'open' : active);
       if (dialogKey && !pending) $('close-dialog').close();
     },
-    clear() { document.getElementById('note-editor-dialog')?.close(); document.getElementById('trade-detail-dialog')?.close(); if ($('close-dialog').open) $('close-dialog').close(); openFilter.value = 'all'; noteFilter.value = 'all'; noteKind.value = 'all'; search.value = ''; this.update(); show(active); },
+    clear() { document.getElementById('note-editor-dialog')?.close(); document.getElementById('trade-detail-dialog')?.close(); if ($('close-dialog').open) $('close-dialog').close(); openFilter.value = 'all'; noteFilter.value = 'all'; noteKind.value = 'note'; search.value = ''; this.update(); show(active); },
   };
 }
 
