@@ -270,7 +270,9 @@ async function readSelected({ automatic = false } = {}) {
       state.stale = true; render();
       status(`Refresh incomplete. Showing the previous fetch, now marked stale. ${snapshot.failures.map(f => `${f.type}: ${describe(f.code)}`).join(' ')}`);
     } else {
-      state.snapshot = snapshot; state.stale = false; render(!automatic);
+      state.snapshot = snapshot; state.stale = false;
+      // Comment NL: De leesactie is klaar; render opslagknoppen met de actuele beschikbaarheid.
+      busy(false); render(!automatic);
       if (snapshot.collectionStatus === 'complete') document.dispatchEvent(new Event('pulsefx:workspace-ready'));
       status(snapshot.collectionStatus === 'complete' ? 'Selected queries finished. Compare these records with your native app; this does not confirm full device synchronization.' : `Partial results. ${snapshot.failures.map(f => `${f.type}: ${describe(f.code)}`).join(' ')}`);
     }
