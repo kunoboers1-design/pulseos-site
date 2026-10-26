@@ -433,3 +433,25 @@ html[data-icloud-restoring="true"] .icloud-restore { display: grid; min-height: 
 .note-edit-form .cloud-notice { display: flex; align-items: start; gap: 12px; }
 .note-edit-form small, .note-edit-form > p { color: var(--muted); }
 @media(max-width: 760px) { .notes-actions { align-items: flex-start; flex-wrap: wrap; } }
+
+/* MARK: - Compacte statistiekheatmap */
+.mac-heatmap { min-width: 0; }
+.heatmap-header { display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; margin-bottom:20px; }
+.heatmap-header h3 { margin:0 0 6px; }
+.heatmap-header p { margin:0; }
+.heatmap-metrics { display:flex; gap:4px; padding:4px; border:1px solid var(--line); border-radius:12px; background:var(--bg); }
+.cloud-test .heatmap-metrics button { padding:8px 12px; min-height:36px; border:0; border-radius:8px; background:transparent; white-space:nowrap; font-size:13px; }
+.cloud-test .heatmap-metrics button[aria-pressed="true"] { background:var(--accent-dim); color:var(--accent); box-shadow:inset 0 0 0 1px var(--accent); }
+.mac-heatmap table { width:100%; border-collapse:separate; border-spacing:0; table-layout:fixed; min-width:650px; }
+.mac-heatmap th, .mac-heatmap td { padding:10px 8px; text-align:center; vertical-align:middle; border-bottom:1px solid var(--line); }
+.mac-heatmap thead th { font-size:12px; font-weight:500; white-space:normal; line-height:1.4; }
+.mac-heatmap th:first-child { width:110px; text-align:left; position:sticky; left:0; background:var(--surface); z-index:1; }
+.mac-heatmap tbody th { font-size:13px; font-weight:650; }
+.cloud-test .heatmap-cell { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; width:100%; min-height:68px; padding:10px 6px; border:1px solid var(--line); border-radius:10px; background:transparent; }
+.heatmap-cell strong { font-size:16px; font-weight:650; font-variant-numeric:tabular-nums; }
+.heatmap-cell small { font-size:11px; color:var(--muted); }
+.cloud-test .heatmap-cell.is-positive { background:color-mix(in srgb,var(--success) 9%,transparent); color:var(--success); }
+.cloud-test .heatmap-cell.is-negative { background:color-mix(in srgb,var(--danger) 9%,transparent); color:var(--danger); }
+.cloud-test .heatmap-cell:hover { border-color:var(--accent); background:var(--accent-dim); }
+.heatmap-empty { color:var(--muted); opacity:.5; }
+@media(max-width:600px) { .heatmap-header { gap:14px; } .heatmap-metrics { width:100%; } .cloud-test .heatmap-metrics button { flex:1; padding:8px; } }

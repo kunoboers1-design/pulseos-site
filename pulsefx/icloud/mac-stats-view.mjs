@@ -143,10 +143,32 @@ export function mountMacStats(root) {
   function renderOutcomeDonut(parent){const box=el('section',null,'fx-card mac-chart');box.append(el('h3','Outcome mix'),el('p',`${result.records.length} closed trades`,'mac-chart-subtitle'));box.classList.add('mac-outcome-mix');const rows=[['win','Wins'],['loss','Losses'],['breakEven','Break-even']].map(([key,label])=>({label,records:result.records.filter(t=>t.result===key)}));const svg=svgEl('svg',{viewBox:'0 0 400 230',role:'img','aria-label':'Outcome distribution including break-even'});let offset=0;const circumference=2*Math.PI*75;for(const [i,row]of rows.entries()){const fraction=result.records.length?row.records.length/result.records.length:0,circle=svgEl('circle',{cx:200,cy:110,r:75,fill:'none',stroke:['var(--accent)','#ed5454','#888'][i],'stroke-width':28,'stroke-dasharray':`${fraction*circumference} ${circumference}`,'stroke-dashoffset':-offset*circumference,transform:'rotate(-90 200 110)'});offset+=fraction;const title=svgEl('title',{});title.textContent=`${row.label}: ${row.records.length}`;circle.append(title);svg.append(circle);}const total=svgEl('text',{x:200,y:108,'text-anchor':'middle',class:'mac-donut-total'});total.textContent=String(result.records.length);const caption=svgEl('text',{x:200,y:130,'text-anchor':'middle'});caption.textContent='closed trades';svg.append(total,caption);box.append(svg);for(const row of rows)box.append(button(`${row.label}: ${row.records.length}`,()=>drill(row.label,row.records)));parent.append(box);}
 
   function renderHeatmap(parent) {
-    const box=el('section',null,'fx-card');box.append(el('h3','Instrument × setup'));const controls=el('div',null,'cloud-controls'),out=el('div',null,'table-scroll');box.append(controls,out);parent.append(box);
-    function draw(key){out.replaceChildren();const rows=result.heatmap, symbols=[...new Set(rows.map(r=>JSON.parse(r.key)[0]))].sort(),setups=[...new Set(rows.map(r=>JSON.parse(r.key)[1]))].sort(),table=el('table'),head=el('tr');head.append(el('th','Instrument'));setups.forEach(s=>head.append(el('th',s)));table.append(head);
-      for(const symbol of symbols){const tr=el('tr');tr.append(el('th',symbol));for(const setup of setups){const row=rows.find(r=>r.key===JSON.stringify([symbol,setup])),td=el('td');if(row){const v=key==='winRate'?row.winRate*100:row[key],b=button(fmt(v,key==='winRate'?'%':'R'),()=>drill(`${symbol} · ${setup}`,row.records));b.title=`${row.count} trades`;b.classList.add(v<0?'negative':'positive');td.append(b,el('small',`${row.count} trades`));}else td.textContent='—';tr.append(td);}table.append(tr);}out.append(table);if(!rows.length)out.append(el('p','No eligible trades.'));}
-    field(controls,'Heatmap metric',[['Win rate','winRate'],['Average R','averageR'],['Total R','totalR']],'winRate',draw);draw('winRate');
+    const box=el('section',null,'fx-card mac-heatmap'),header=el('div',null,'heatmap-header'),heading=el('div');
+    heading.append(el('h3','Instrument × setup'),el('p','Compare setups by instrument. Select a cell to explore its trades.','mac-chart-subtitle'));
+    const controls=el('div',null,'heatmap-metrics'),out=el('div',null,'table-scroll');
+    controls.setAttribute('role','group');controls.setAttribute('aria-label','Heatmap metric');
+    out.tabIndex=0;out.setAttribute('role','region');out.setAttribute('aria-label','Instrument and setup results');
+    header.append(heading,controls);box.append(header,out);parent.append(box);
+    const options=[['Win rate','winRate'],['Average R','averageR'],['Total R','totalR']];
+    function draw(key){
+      for(const b of controls.children)b.setAttribute('aria-pressed',String(b.dataset.metric===key));
+      out.replaceChildren();const rows=result.heatmap,symbols=[...new Set(rows.map(r=>JSON.parse(r.key)[0]))].sort(),setups=[...new Set(rows.map(r=>JSON.parse(r.key)[1]))].sort();
+      if(!rows.length){out.append(el('p','No eligible trades.'));return;}
+      const table=el('table'),thead=el('thead'),head=el('tr'),corner=el('th','Instrument');corner.scope='col';head.append(corner);
+      table.setAttribute('aria-label',`Instrument × setup · ${options.find(o=>o[1]===key)[0]}`);
+      setups.forEach(s=>{const th=el('th',s);th.scope='col';head.append(th);});thead.append(head);table.append(thead);
+      const body=el('tbody');
+      for(const symbol of symbols){const tr=el('tr'),th=el('th',symbol);th.scope='row';tr.append(th);
+        for(const setup of setups){const row=rows.find(r=>r.key===JSON.stringify([symbol,setup])),td=el('td');
+          if(row){const v=key==='winRate'?row.winRate*100:row[key],value=fmt(v,key==='winRate'?'%':'R'),b=button('',()=>drill(`${symbol} · ${setup}`,row.records));
+            b.className='heatmap-cell';b.classList.add(v<0?'is-negative':v>0?'is-positive':'is-neutral');
+            b.setAttribute('aria-label',`${symbol}, ${setup}: ${value}, ${row.count} trades. View trades`);
+            b.append(el('strong',value),el('small',`${row.count} ${row.count===1?'trade':'trades'}`));td.append(b);
+          }else{td.append(el('span','—','heatmap-empty'));td.setAttribute('aria-label','No trades');}tr.append(td);
+        }body.append(tr);
+      }table.append(body);out.append(table);
+    }
+    for(const [label,key]of options){const b=button(label,()=>draw(key));b.dataset.metric=key;controls.append(b);}draw('winRate');
   }
   function renderMonthComparison(parent){const box=el('section',null,'fx-card');box.append(el('h3','Month comparison'));const chosen=new Set(result.byMonth.slice(-2).map(r=>r.key)),out=el('div');for(const row of result.byMonth){const label=el('label',row.label,'mac-choice'),input=el('input');input.type='checkbox';input.checked=chosen.has(row.key);input.onchange=()=>{input.checked?chosen.add(row.key):chosen.delete(row.key);draw();};label.prepend(input);box.append(label);}box.append(out);parent.append(box);function draw(){out.replaceChildren();const rows=result.byMonth.filter(r=>chosen.has(r.key));cards(out,rows.map(r=>{const d=new Date(`${r.key}-01T12:00:00`);d.setMonth(d.getMonth()-1);const prev=result.byMonth.find(p=>p.key===dayKey(d).slice(0,7));return[r.label,fmt(r.total,unit()),`${r.count} trades · ${fmt(r.winRate*100,'%')} wins · change ${prev?fmt(r.total-prev.total,unit()):'—'}`];}));}draw();}
   function renderBoxPlot(parent){const box=el('section',null,'fx-card mac-chart');box.append(el('h3','Trade type distribution'));const rows=result.journal.types.filter(r=>r.measured),values=rows.flatMap(r=>r.quantiles).filter(Number.isFinite);if(!values.length){box.append(el('p','No measurable trade types.'));parent.append(box);return;}const low=Math.min(...values),high=Math.max(...values),x=v=>160+(v-low)/(high-low||1)*600;const svg=svgEl('svg',{viewBox:`0 0 800 ${rows.length*70+30}`,role:'img','aria-label':'Trade type box plots: range, quartiles and median'});rows.forEach((r,i)=>{const y=35+i*70,[min,q1,median,q3,max]=r.quantiles,t=svgEl('text',{x:5,y});t.textContent=r.label;svg.append(t,svgEl('line',{x1:x(min),x2:x(max),y1:y,y2:y,class:'stats-line'}),svgEl('rect',{x:x(q1),y:y-15,width:Math.max(1,x(q3)-x(q1)),height:30,class:'mac-radar'}),svgEl('line',{x1:x(median),x2:x(median),y1:y-18,y2:y+18,class:'stats-line'}));});box.append(svg,el('p','Whiskers: min/max. Box: 25th–75th percentile. Line: median.'));parent.append(box);}
