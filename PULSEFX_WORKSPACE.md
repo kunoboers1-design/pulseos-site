@@ -86,3 +86,7 @@ The welcome page opens the existing Apple sign-in controls inside its card. It l
 After authentication, the unique `com.apple.coredata.cloudkit.zone` is selected automatically. Other zone configurations retain manual selection. A complete read reveals the workspace in the same document and updates the URL, preserving sessions even with persistence disabled. Partial reads stay on the connection card with a retry action. Settings retains connection and disconnect controls after entry.
 
 Validated with synthetic browser responses: disabled configuration, inline sign-in, persistence disabled, manual and automatic zone selection, transition to Open trades, disconnect, and mobile width. This does not certify a fresh real Apple sign-in on the deployed origin. No deployment or CloudKit data changes were performed for this change.
+
+## Automatic refresh
+
+After a workspace snapshot is loaded, the web app reads the selected zone every 30 seconds while the tab is visible and immediately on a visibility return. It skips demo/offline/disconnected states, overlapping requests, and open trade-closing dialogs. A response arriving after a closing dialog opens is discarded. Automatic reads preserve filters and use the existing read-only reader, session checks, and stale-result handling. The timer is disposed on page exit. Native uploads can still take time to reach CloudKit.

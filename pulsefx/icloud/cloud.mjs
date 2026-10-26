@@ -1,3 +1,4 @@
+import { mountAutoRefresh } from './auto-refresh.mjs';
 import { mountPremium } from './premium.mjs';
 const premium = mountPremium(document.getElementById('premium-statistics'), { friends: true });
 import { mountWorkspace, workspaceDemo } from './workspace.mjs';
@@ -184,12 +185,12 @@ async function start() {
 }
 
 // MARK: - Begrensde leesrun
-async function readSelected() {
+async function readSelected({ automatic = false } = {}) {
   const selected = state.zones[Number($('zone').value)];
   if (!state.identity || !selected || $('zone').value === '' || state.busy) return;
   const generation = ++state.generation;
   const reader = makeReader();
-  premium.setSnapshot(null);
+  if (!automatic) premium.setSnapshot(null);
   busy(true); status('Reading accounts, trades and notes…');
   try {
     // Comment NL: Sessieverval en een ander Apple-account eerst detecteren; geen oude gegevens vermengen.
@@ -200,11 +201,13 @@ async function readSelected() {
       if (generation === state.generation) status(`Reading ${progress.type} · ${progress.pages} pages · ${progress.records} records received…`);
     });
     if (generation !== state.generation) return;
+    // Comment NL: Een tijdens de aanvraag geopend sluitformulier nooit overschrijven.
+    if (automatic && $('close-dialog').open) return;
     if (snapshot.collectionStatus === 'partial' && state.snapshot?.collectionStatus === 'complete') {
       state.stale = true; render();
       status(`Refresh incomplete. Showing the previous fetch, now marked stale. ${snapshot.failures.map(f => `${f.type}: ${describe(f.code)}`).join(' ')}`);
     } else {
-      state.snapshot = snapshot; state.stale = false; render(true);
+      state.snapshot = snapshot; state.stale = false; render(!automatic);
       if (snapshot.collectionStatus === 'complete') document.dispatchEvent(new Event('pulsefx:workspace-ready'));
       status(snapshot.collectionStatus === 'complete' ? 'Selected queries finished. Compare these records with your native app; this does not confirm full device synchronization.' : `Partial results. ${snapshot.failures.map(f => `${f.type}: ${describe(f.code)}`).join(' ')}`);
     }
@@ -212,7 +215,7 @@ async function readSelected() {
     if (generation !== state.generation) return;
     const code = errorCode(error);
     if (isAuthError(code)) endSession(describe(code));
-    else { state.stale = true; if (state.snapshot) render(); status(describe(code)); }
+    else { state.stale = true; if (state.snapshot && !(automatic && $('close-dialog').open)) render(); status(describe(code)); }
   } finally { if (generation === state.generation) busy(false); }
 }
 
@@ -222,6 +225,7 @@ function render(resetFilters = false) {
   premium.setSnapshot(data, state.stale);
   if (!data) return;
   $('results').hidden = false;
+  $('auto-refresh-info').hidden = data.source === 'demo';
   $('fetched').textContent = data.source === 'demo' ? 'Demo mode · fictional accounts, trades and notes. Changes last until this page is reloaded.' : `Last fetched from iCloud: ${utc(data.fetchedAt)} · ${data.environment} · ${data.zone.zoneName}`;
   const incomplete = data.collectionStatus !== 'complete';
   document.body.classList.toggle('workspace-demo', data.source === 'demo');
@@ -329,3 +333,12 @@ if (demoMode) {
 } catch {
   $('configuration').textContent = 'Configuration unavailable. This page needs the Cloudflare Pages Function and a matching HTTPS deployment. The demo remains available.';
 }
+
+
+// MARK: - Automatisch verversen na de eerste handmatige verbinding
+mountAutoRefresh({
+  document, window,
+  eligible: () => !demoMode && Boolean(state.identity && state.snapshot && state.networkActive)
+    && !state.busy && !$('close-dialog').open && navigator.onLine !== false,
+  refresh: () => readSelected({ automatic: true }),
+});

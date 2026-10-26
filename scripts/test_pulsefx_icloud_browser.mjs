@@ -154,6 +154,17 @@ try {
   assert.equal(await page.locator('script[src*="cloudkit.com"]').count(), 0);
   await page.screenshot({ path: join(screenshots, 'disabled-desktop.png'), fullPage: true });
   await connect(); await read();
+  // MARK: - Automatisch lezen bewaart filters en respecteert het sluitformulier
+  await page.locator('#archive').selectOption('active');
+  const beforeAuto = await page.evaluate(() => testControl.calls);
+  await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
+  await page.waitForFunction(before => testControl.calls > before && !document.getElementById('read').disabled, beforeAuto);
+  assert.equal(await page.locator('#archive').inputValue(), 'active');
+  const beforePause = await page.evaluate(() => testControl.calls);
+  await page.evaluate(() => { document.getElementById('close-dialog').showModal(); document.dispatchEvent(new Event('visibilitychange')); });
+  assert.equal(await page.evaluate(() => testControl.calls), beforePause);
+  await page.evaluate(() => document.getElementById('close-dialog').close());
+  await page.locator('#archive').selectOption('all');
   assert.equal(await page.locator('#trades tr').count(), 5);
   assert.equal(await page.locator('#accounts img').count(), 0);
   assert.equal(await page.evaluate(() => window.injected), undefined);
