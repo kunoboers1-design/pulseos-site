@@ -308,3 +308,17 @@ body.fx-web {
   .login-footer > span { order: 3; flex-basis: 100%; }
 }
 @media (prefers-reduced-motion: reduce) { .fx-web *, .fx-web *::before, .fx-web *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
+
+/* MARK: - iCloud-aanmelding binnen de welkomstkaart */
+body[data-login-entry] .cloud-layout[hidden] { display: none !important; }
+#login-connection .cloud-connection, #login-connection #zone-panel { padding: 0; border: 0; background: transparent; box-shadow: none; }
+#login-connection .remember-icloud { margin: 16px 0; }
+#login-connection .remember-icloud label { display: flex; align-items: center; gap: 10px; }
+#login-connection .remember-icloud input { width: auto; }
+#login-connection #status, #login-connect-status { font-size: 13px; line-height: 1.6; }
+#login-connection .cloud-actions { flex-wrap: wrap; }
+#login-connection select { max-width: 100%; }
+#login-connection #connect-title { font-size: 20px; margin-top: 20px; }
+#login-connection details { color: var(--muted); font-size: 13px; margin: 12px 0; }
+#login-connection summary { cursor: pointer; margin-bottom: 12px; }
+#login-connection #start { width: 100%; }

@@ -16,7 +16,7 @@ const utc = value => value ? `${new Intl.DateTimeFormat('en-GB', { dateStyle: 'm
 const card = (label, value, detail) => { const element = node('article', null, 'fx-card'); element.append(node('span', label), node('strong', value), node('small', detail)); return element; };
 const option = (label, value) => { const item = node('option', label); item.value = value; return item; };
 const state = { config: null, container: null, reader: null, identity: null, generation: 0, zones: [], snapshot: null, stale: false, started: false, busy: false, networkActive: false };
-const demoMode = new URLSearchParams(location.search).get('workspace') === 'demo';
+const demoMode = !document.body.hasAttribute('data-login-entry') && new URLSearchParams(location.search).get('workspace') === 'demo';
 let transport = null;
 const workspace = mountWorkspace({ getSnapshot: () => state.snapshot, isDemo: demoMode,
   canClose: trade => demoMode || Boolean(state.config?.closeTradePilotId && trade.id === state.config.closeTradePilotId.toLowerCase() && !state.stale && !state.busy),
@@ -104,6 +104,11 @@ async function listZones() {
     if (isAuthError(code)) endSession(describe(code));
     else { $('zone-panel').hidden = false; status(describe(code)); }
   } finally { if (generation === state.generation) busy(false); }
+  // Comment NL: Alleen de bekende native zone automatisch openen vanuit de welkomstpagina.
+  if (generation === state.generation && document.body.hasAttribute('data-login-entry')) {
+    const matches = state.zones.map((item, index) => ({ item, index })).filter(({ item }) => item.zone.zoneName === 'com.apple.coredata.cloudkit.zone');
+    if (matches.length === 1) { $('zone').value = String(matches[0].index); await readSelected(); }
+  }
 }
 function acceptIdentity(identity) {
   const id = identity?.userRecordName;
@@ -200,6 +205,7 @@ async function readSelected() {
       status(`Refresh incomplete. Showing the previous fetch, now marked stale. ${snapshot.failures.map(f => `${f.type}: ${describe(f.code)}`).join(' ')}`);
     } else {
       state.snapshot = snapshot; state.stale = false; render(true);
+      if (snapshot.collectionStatus === 'complete') document.dispatchEvent(new Event('pulsefx:workspace-ready'));
       status(snapshot.collectionStatus === 'complete' ? 'Selected queries finished. Compare these records with your native app; this does not confirm full device synchronization.' : `Partial results. ${snapshot.failures.map(f => `${f.type}: ${describe(f.code)}`).join(' ')}`);
     }
   } catch (error) {
@@ -318,7 +324,7 @@ if (demoMode) {
     $('configuration').textContent = `${config.environment === 'production' ? 'Production: reads the selected account’s live cloud records.' : 'Development: a separate dataset from the released apps.'} Nothing is loaded until you start and sign in through Apple.`;
     if (config.closeTradePilotId) $('access-capability').textContent = 'Closing pilot · one test trade';
     $('start').disabled = false;
-    if (restoreSession) await start();
+    if (restoreSession && !document.body.hasAttribute('data-login-entry')) await start();
   }
 } catch {
   $('configuration').textContent = 'Configuration unavailable. This page needs the Cloudflare Pages Function and a matching HTTPS deployment. The demo remains available.';

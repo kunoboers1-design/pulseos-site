@@ -6,9 +6,10 @@
   if (saved) document.documentElement.setAttribute('data-theme', saved);
 })();
 
-document.addEventListener('DOMContentLoaded', function () {
+function initializeThemeToggle() {
   var btn = document.getElementById('themeToggle');
-  if (!btn) return;
+  if (!btn || btn.dataset.themeBound) return;
+  btn.dataset.themeBound = 'true';
 
   function getTheme() {
     return (
@@ -44,4 +45,6 @@ document.addEventListener('DOMContentLoaded', function () {
     /* Update homepage canvas colours if present */
     if (typeof window.onThemeChange === 'function') window.onThemeChange(next);
   });
-});
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initializeThemeToggle);
+else initializeThemeToggle();

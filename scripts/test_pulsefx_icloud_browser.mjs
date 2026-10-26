@@ -48,12 +48,12 @@ window.CloudKit = { configure: settings => { persist = settings.containers[0].ap
 const browser = await chromium.launch({ headless: true });
 const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
 const errors = [], external = [];
-let vendorModify = 0;
+let vendorModify = 0, nativeLoginZone = false;
 let enabled = false, useVendor = false, premiumState = 'disabled', premiumDelay = 0, premiumRequests = 0;
 await context.route('**/*', async route => {
   const url = new URL(route.request().url());
   if (url.origin === 'https://cdn.apple-cloudkit.com' && url.pathname === '/ck/2/cloudkit.js') {
-    return route.fulfill({ contentType: 'text/javascript', body: useVendor ? readFileSync(process.env.PULSEFX_VENDOR_SDK_PATH, 'utf8') : fakeSDK });
+    return route.fulfill({ contentType: 'text/javascript', body: useVendor ? readFileSync(process.env.PULSEFX_VENDOR_SDK_PATH, 'utf8') : (nativeLoginZone ? fakeSDK.replaceAll(JSON.stringify(zone), JSON.stringify({ ...zone, zoneName: 'com.apple.coredata.cloudkit.zone' })) : fakeSDK) });
   }
   if (useVendor && url.origin === 'https://api.apple-cloudkit.com' && url.pathname.endsWith('/public/users/caller')) {
     return route.fulfill({ status: 401, headers: { 'Access-Control-Allow-Origin': origin, 'Access-Control-Allow-Headers': '*', 'Content-Type': 'application/json' }, body: JSON.stringify({ serverErrorCode: 'AUTHENTICATION_REQUIRED', reason: 'Offline authentication fixture', redirectURL: 'https://idmsa.apple.com/offline-test' }) });
@@ -94,6 +94,42 @@ await context.route('**/*', async route => {
 });
 const page = await context.newPage();
 page.on('pageerror', error => errors.push(error.message));
+// MARK: - Aanmelden vanaf de welkomstkaart zonder navigatie of verplichte opslag
+await page.goto(origin + '/pulsefx/login/');
+await page.getByRole('button', { name: 'Connect with iCloud' }).click();
+await page.locator('#configuration').filter({ hasText: 'Not configured' }).waitFor();
+assert.equal(await page.locator('#start').isDisabled(), true);
+enabled = true;
+await page.goto(origin + '/pulsefx/login/');
+await page.getByRole('button', { name: 'Connect with iCloud' }).click();
+await page.getByLabel('Remember iCloud on this browser', { exact: true }).uncheck();
+await page.setViewportSize({ width: 375, height: 850 });
+assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+await page.screenshot({ path: join(screenshots, 'login-inline-mobile.png'), fullPage: true });
+await page.setViewportSize({ width: 1440, height: 1000 });
+await page.getByRole('button', { name: 'Continue with Apple' }).click();
+await page.getByRole('button', { name: 'Test Apple sign in' }).waitFor();
+assert.equal(await page.locator('.login-card #apple-sign-in-button').isVisible(), true);
+assert.equal(await page.locator('.cloud-layout').isVisible(), false);
+await page.getByRole('button', { name: 'Test Apple sign in' }).click();
+await page.getByLabel('Private zone', { exact: true }).selectOption('0');
+await page.getByRole('button', { name: 'Load workspace', exact: true }).click();
+await page.waitForURL(origin + '/pulsefx/icloud/');
+assert.equal(await page.evaluate(() => testControl.persist), false);
+assert.equal(await page.locator('#tab-open').getAttribute('aria-selected'), 'true');
+assert.equal(await page.locator('.login-page').count(), 0);
+await page.getByRole('tab', { name: 'Settings', exact: true }).click();
+await page.locator('#disconnect').click();
+assert.match(await page.locator('#status').innerText(), /Disconnected/);
+nativeLoginZone = true;
+await page.goto(origin + '/pulsefx/login/');
+await page.getByRole('button', { name: 'Connect with iCloud' }).click();
+await page.getByRole('button', { name: 'Continue with Apple' }).click();
+await page.getByRole('button', { name: 'Test Apple sign in' }).click();
+await page.waitForURL(origin + '/pulsefx/icloud/');
+assert.equal(await page.locator('#tab-open').getAttribute('aria-selected'), 'true');
+nativeLoginZone = false;
+enabled = false;
 const visit = () => page.goto(origin + '/pulsefx/icloud/');
 const connect = async () => {
   enabled = true; await visit();
