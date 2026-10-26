@@ -1,3 +1,4 @@
+import { NOTE_FIELDS, NOTE_UPDATE_FIELDS } from './note-write.mjs';
 import { EDIT_CLOUD_FIELDS } from './edit-trade.mjs';
 import { readOnlyFetch, deadline, ReadError } from './reader.mjs';
 
@@ -45,6 +46,11 @@ export function closeTransport(config, fetcher = globalThis.fetch) {
         || Object.keys(plan.records[0].fields).some(key => !EDIT_CLOUD_FIELDS.has(key))) throw new ReadError('OPERATION_BLOCKED');
       permit = { records: structuredClone(plan.records), zone: { ...zone }, kind: 'edit' };
     },
+    armNote(plan, zone) {
+      if (config.noteEditingEnabled !== true || !['create', 'update'].includes(plan.operation) || plan.records.length !== 1 || plan.records[0].recordType !== 'CD_TradeNote'
+        || Object.keys(plan.records[0].fields).some(k => !(plan.operation === 'update' ? NOTE_UPDATE_FIELDS : NOTE_FIELDS).has(k))) throw new ReadError('OPERATION_BLOCKED');
+      permit = { records: structuredClone(plan.records), zone: { ...zone }, kind: 'note', operation: plan.operation };
+    },
     disarm() { permit = null; },
     async fetch(input, init = {}) {
       const url = new URL(typeof input === 'string' || input instanceof URL ? input : input.url);
@@ -52,11 +58,11 @@ export function closeTransport(config, fetcher = globalThis.fetch) {
       const allowed = permit; permit = null;
       let body; try { body = JSON.parse(init.body); } catch { throw new ReadError('OPERATION_BLOCKED'); }
       const sameFields = (a, b) => Object.keys(a || {}).length === Object.keys(b).length && Object.entries(b).every(([key, f]) => a[key]?.value === f.value);
-      if (!allowed || !(allowed.kind === 'edit' ? config.tradeEditingEnabled === true : config.closeTradePilotId) || (init.method || 'GET').toUpperCase() !== 'POST'
+      if (!allowed || !(allowed.kind === 'note' ? config.noteEditingEnabled === true : allowed.kind === 'edit' ? config.tradeEditingEnabled === true : config.closeTradePilotId) || (init.method || 'GET').toUpperCase() !== 'POST'
         || url.origin !== 'https://api.apple-cloudkit.com' || url.pathname !== `/database/1/${config.containerIdentifier}/${config.environment}/private/records/modify`
         || body.atomic !== true || body.zoneID?.zoneName !== allowed.zone.zoneName || body.zoneID?.ownerRecordName !== allowed.zone.ownerRecordName
         || !Array.isArray(body.operations) || body.operations.length !== allowed.records.length
-        || !body.operations.every((operation, i) => operation.operationType === 'update' && operation.record?.recordName === allowed.records[i].recordName
+        || !body.operations.every((operation, i) => operation.operationType === (allowed.operation || 'update') && operation.record?.recordName === allowed.records[i].recordName
           && operation.record.recordType === allowed.records[i].recordType && operation.record.recordChangeTag === allowed.records[i].recordChangeTag && sameFields(operation.record.fields, allowed.records[i].fields))) throw new ReadError('OPERATION_BLOCKED');
       return fetcher(input, { ...init, cache: 'no-store', credentials: 'omit', referrerPolicy: 'no-referrer', redirect: 'error' });
     },

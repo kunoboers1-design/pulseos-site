@@ -1,3 +1,5 @@
+import { openNoteEditor } from './note-editor.mjs';
+import { noteRows, mountNotesView } from './notes-view.mjs';
 import { openTradeDetail } from './trade-detail.mjs';
 import { mountAppearance } from './appearance.mjs';
 import { planClose } from './close-trade.mjs';
@@ -13,7 +15,7 @@ const field = (label, control) => { const wrap = el('div', null, 'cloud-field'),
 const select = options => { const s = el('select'); for (const [value, name] of options) { const o = el('option', name); o.value = value; s.append(o); } return s; };
 
 // MARK: - Tabs en inhoud behouden dezelfde ingelogde sessie
-export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canClose, canEdit, onEdit }) {
+export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canClose, canEdit, onEdit, canEditNotes, onSaveNote }) {
   mountAppearance();
   const panels = { open: 'open-panel', accounts: 'accounts-panel', stats: 'premium-statistics', notes: 'notes-panel', connection: 'connection-panel' };
   const requestedView = new URLSearchParams(location.search).get('view');
@@ -22,12 +24,25 @@ export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canC
   const openFilter = select([['all', 'All accounts']]), noteFilter = select([['all', 'All accounts']]);
   const search = el('input'); search.type = 'search'; search.placeholder = 'Search notes';
   const noteKind = select([['all', 'All notes'], ['note', 'Notes'], ['pre', 'Pre-trade'], ['post', 'Post-trade']]);
-  const openList = el('div', null, 'open-trade-list'), notesList = el('div', null, 'notes-grid');
+  const openList = el('div', null, 'open-trade-list'), notesList = el('div', null, 'notes-list');
   const openStatus = el('p'), notesStatus = el('p'); openStatus.setAttribute('role', 'status'); notesStatus.setAttribute('role', 'status');
   const openControls = el('div', null, 'cloud-controls'); openControls.append(field('Open trade account', openFilter));
   const notesControls = el('div', null, 'cloud-controls'); notesControls.append(field('Note account', noteFilter), field('Note type', noteKind), field('Search notes', search));
   $('open-panel').append(el('p', 'POSITIONS IN PROGRESS', 'fx-eyebrow'), el('h2', 'Open trades'), el('p', 'Your recorded positions, not live broker orders. Closing a journal trade does not place or close an order at your broker.'), openControls, openStatus, openList);
-  $('notes-panel').append(el('p', 'YOUR TRADING JOURNAL', 'fx-eyebrow'), el('h2', 'Notes'), el('p', 'Plain-text notes from PulseFX. Photos and rich-text formatting remain in the native app.'), notesControls, notesStatus, notesList);
+  const notesLayout = el('div', null, 'notes-split'), notesSidebar = el('aside', null, 'notes-sidebar'), notesDetail = el('article', null, 'note-detail');
+  notesDetail.id = 'selected-note'; notesDetail.setAttribute('aria-label', 'Selected note');
+  notesSidebar.setAttribute('aria-label', 'Notes list'); notesSidebar.append(notesControls, notesList); notesLayout.append(notesSidebar, notesDetail);
+  const notesActions = el('div', null, 'notes-actions');
+  const newNote = button('New note', () => editNote(null), 'hero-button primary-button'); notesActions.append(notesStatus, newNote);
+  $('notes-panel').append(notesActions, notesLayout);
+  function editNote(note) {
+    openNoteEditor({ note, snapshot: getSnapshot(), canSave: canEditNotes, onSave: async (key, input, identity) => {
+      const saved = await onSaveNote(key, input, identity);
+      noteFilter.value = 'all'; noteKind.value = 'all'; search.value = ''; notesView.select(saved.key); renderNotes();
+      notesStatus.textContent = isDemo ? 'Demo note saved for this page.' : 'Note saved to iCloud and refreshed. Native sync may take a moment.';
+    } });
+  }
+  const notesView = mountNotesView({ list: notesList, detail: notesDetail, onEdit: editNote, canEdit: canEditNotes, onTrade: t => openTradeDetail(t, getSnapshot(), () => openClose(t.key), { canEdit: () => canEdit(t), onSave: changes => onEdit(t.key, changes) }) });
   const demoReset = button('Reset demo data', onDemoReset); demoReset.hidden = !isDemo; $('workspace-demo-banner').append(demoReset);
   const sectionBar = $('stats-sections');
   let statsSection = 'overview';
@@ -107,17 +122,12 @@ export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canC
   }
   function renderNotes() {
     const data = getSnapshot(); notesList.replaceChildren();
-    const rows = (data?.notes || []).map(n => ({ ...n, kind: 'note', label: 'Note', body: n.body, title: n.title || 'Untitled note' }));
-    for (const t of data?.trades || []) for (const [kind, label, key] of [['pre', 'Before trade', 'preTradeNotes'], ['post', 'After trade', 'postTradeNotes']]) {
-      if (t[key] || t[key] === null && t.recordType === 'CD_OpenTrade') rows.push({ key: `${t.key}:${kind}`, kind, label, title: t.instrument || 'Trade note', body: t[key], accountKey: t.accountKey, createdAt: t.startedAt });
-    }
+    newNote.hidden = !canEditNotes();
+    const rows = noteRows(data);
     const query = search.value.trim().toLocaleLowerCase();
     const shown = rows.filter(n => (noteFilter.value === 'all' || (noteFilter.value === 'unlinked' ? !n.accountKey : n.accountKey === noteFilter.value)) && (noteKind.value === 'all' || n.kind === noteKind.value) && `${n.title} ${n.body || ''}`.toLocaleLowerCase().includes(query));
     notesStatus.textContent = !data ? 'Connect iCloud and load your workspace to see notes.' : `${stale ? 'Stale snapshot. ' : ''}${shown.length} notes shown. ${data.notesStatus === 'complete' ? 'Plain-text notes loaded.' : 'Standalone notes are incomplete or unavailable. Check Settings / Data checks; this does not mean your notes are empty.'}`;
-    for (const n of shown.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''))) {
-      const card = el('article', null, 'fx-card note-card'); card.append(el('span', n.label, 'tag'), el('h3', n.title), el('small', `${data.accounts.find(a => a.key === n.accountKey)?.name || 'Standalone / unlinked'} · ${date(n.createdAt)}`), el('p', n.body === null ? 'Text is stored as an attachment or is unsupported. Open this note in the native app.' : n.body || 'This note has no plain-text body. It may contain photos or formatted content in the native app.', 'note-body')); notesList.append(card);
-    }
-    if (data && !shown.length) notesList.append(el('div', 'No notes match this view. Try another account or search term.', 'workspace-empty'));
+    notesView.render(shown, data);
   }
   function openClose(key) {
     const data = getSnapshot(), trade = data?.trades.find(t => t.key === key); if (!trade) return;
@@ -168,7 +178,7 @@ export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canC
       renderOpen(); renderNotes(); show(first && active === 'connection' ? 'open' : active);
       if (dialogKey && !pending) $('close-dialog').close();
     },
-    clear() { document.getElementById('trade-detail-dialog')?.close(); if ($('close-dialog').open) $('close-dialog').close(); openFilter.value = 'all'; noteFilter.value = 'all'; noteKind.value = 'all'; search.value = ''; this.update(); show(active); },
+    clear() { document.getElementById('note-editor-dialog')?.close(); document.getElementById('trade-detail-dialog')?.close(); if ($('close-dialog').open) $('close-dialog').close(); openFilter.value = 'all'; noteFilter.value = 'all'; noteKind.value = 'all'; search.value = ''; this.update(); show(active); },
   };
 }
 
@@ -181,6 +191,6 @@ export function workspaceDemo() {
     zone: a.zone, accountReference: a.id, directionRaw: i ? 'short' : 'long', linkStatus: 'linked', instrument: i ? 'GBPUSD' : 'EURUSD', lotSize: i ? .35 : 1.24, status: 'open', result: 'open', outcomeConsistent: true, direction: i ? 'short' : 'long', riskPercent: 1,
     entryPrice: i ? 1.31 : 1.08, stopLossPlacement: i ? 1.315 : 1.075, startedAt: openedAt, profitLoss: null, finalRR: null,
     preTradeNotes: 'Wait for a confirmed setup. Keep risk within the account plan.', postTradeNotes: '' }));
-  return { ...base, source: 'demo', accounts, trades: [...open, ...base.trades], notesStatus: 'complete', notes: [{ key: 'note-demo', title: 'Weekly review', body: 'Focus on execution and record the reason for each trade.\nReview the journal at the end of the week.', accountKey: accounts[0].key, createdAt: openedAt }],
+  return { ...base, source: 'demo', accounts, trades: [...open, ...base.trades], notesStatus: 'complete', notes: [{ key: 'note-demo', id: 'demo-note', zone: accounts[0].zone, recordType: 'CD_TradeNote', hasRichText: false, tradeId: open[0].id, title: 'Weekly review', body: 'Focus on execution and record the reason for each trade.\nReview the journal at the end of the week.', accountKey: accounts[0].key, createdAt: openedAt }],
     issues: [], failures: [], coverage: [], fetchedAt: new Date().toISOString(), environment: 'demo', zone: { zoneName: 'Fictional workspace' } };
 }

@@ -16,5 +16,5 @@ export function onRequest({ request, env }) {
   if (!['development', 'production'].includes(environment) || typeof apiToken !== 'string'
     || !/^[a-zA-Z0-9._-]{16,2048}$/.test(apiToken)) return disabled();
   const closeTradePilotId = typeof env.PULSEFX_CLOSE_TRADE_PILOT_ID === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(env.PULSEFX_CLOSE_TRADE_PILOT_ID) ? env.PULSEFX_CLOSE_TRADE_PILOT_ID.toLowerCase() : null;
-  return reply(200, { enabled: true, containerIdentifier: 'iCloud.PulseOS.FX', environment, origin, apiToken, ...(env.PULSEFX_TRADE_EDITING_ENABLED === 'true' ? { tradeEditingEnabled: true } : {}), ...(closeTradePilotId ? { closeTradePilotId } : {}) });
+  return reply(200, { enabled: true, containerIdentifier: 'iCloud.PulseOS.FX', environment, origin, apiToken, ...(env.PULSEFX_NOTE_EDITING_ENABLED === 'true' ? { noteEditingEnabled: true } : {}), ...(env.PULSEFX_TRADE_EDITING_ENABLED === 'true' ? { tradeEditingEnabled: true } : {}), ...(closeTradePilotId ? { closeTradePilotId } : {}) });
 }

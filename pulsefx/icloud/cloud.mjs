@@ -1,3 +1,4 @@
+import { planNote, commitNote, demoNote } from './note-write.mjs';
 import { planEdit, commitEdit, applyDemoEdit } from './edit-trade.mjs';
 import { mountAutoRefresh } from './auto-refresh.mjs';
 import { mountPremium } from './premium.mjs';
@@ -56,6 +57,29 @@ const workspace = mountWorkspace({ getSnapshot: () => state.snapshot, isDemo: de
     if (!saved) throw new Error('The trade was not returned after saving. Refresh and check the native app.');
     if (Object.entries(plan.patch).some(([field, value]) => saved[field] !== value)) { state.stale = true; throw new Error('The refreshed trade differs from your changes. Close this window and review the latest data before editing again.'); }
     return { trade: saved, snapshot: state.snapshot };
+  },
+  canEditNotes: () => !state.busy && !state.stale && state.snapshot?.notesStatus === 'complete' && (demoMode || state.config?.noteEditingEnabled === true),
+  onSaveNote: async (key, input, identity) => {
+    if (state.busy || state.stale) throw new Error('Refresh before saving notes.');
+    const selected = state.zones[Number($('zone').value)];
+    const zone = demoMode ? { zoneName: 'DemoZone', ownerRecordName: 'demo' } : selected?.zone;
+    const plan = planNote(state.snapshot, key, input, zone, identity);
+    if (demoMode) { state.snapshot = demoNote(state.snapshot, plan); render(); return state.snapshot.notes.find(n => n.id === plan.id); }
+    const generation = state.generation; busy(true);
+    try {
+      const user = await deadline(state.container.setUpAuth());
+      if (generation !== state.generation || user?.userRecordName !== state.identity) throw new Error('Apple session changed. Reconnect before saving.');
+      await commitNote({ plan, config: state.config, database: state.container.privateCloudDatabase, selected, transport });
+      if (generation !== state.generation) throw new Error('Session changed during save. Refresh and check whether the note exists.');
+      state.stale = true;
+    } catch (error) { state.stale = true; status(error.message); throw error; }
+    finally { if (generation === state.generation) busy(false); }
+    await readSelected();
+    const matches = state.snapshot?.notes.filter(n => n.id === plan.id) || [];
+    if (state.stale || state.snapshot?.notesStatus !== 'complete' || matches.length !== 1 || matches[0].title !== plan.title || matches[0].body !== plan.body || plan.records[0].fields.CD_richBodyData && matches[0].hasRichText) {
+      state.stale = true; throw new Error('The save could not be verified after refresh. Close the editor and check the latest notes before retrying.');
+    }
+    return matches[0];
   },
   onDemoReset: () => { state.snapshot = workspaceDemo(); state.snapshot.summary = summarize(state.snapshot.accounts, state.snapshot.trades); render(true); },
   onClose: async plan => {
@@ -241,7 +265,7 @@ async function readSelected({ automatic = false } = {}) {
     });
     if (generation !== state.generation) return;
     // Comment NL: Een tijdens de aanvraag geopend sluitformulier nooit overschrijven.
-    if (automatic && ($('close-dialog').open || Boolean(document.getElementById('trade-detail-dialog')?.open))) return;
+    if (automatic && ($('close-dialog').open || Boolean(document.getElementById('trade-detail-dialog')?.open || document.getElementById('note-editor-dialog')?.open))) return;
     if (snapshot.collectionStatus === 'partial' && state.snapshot?.collectionStatus === 'complete') {
       state.stale = true; render();
       status(`Refresh incomplete. Showing the previous fetch, now marked stale. ${snapshot.failures.map(f => `${f.type}: ${describe(f.code)}`).join(' ')}`);
@@ -254,7 +278,7 @@ async function readSelected({ automatic = false } = {}) {
     if (generation !== state.generation) return;
     const code = errorCode(error);
     if (isAuthError(code)) endSession(describe(code));
-    else { state.stale = true; if (state.snapshot && !(automatic && ($('close-dialog').open || Boolean(document.getElementById('trade-detail-dialog')?.open)))) render(); status(describe(code)); }
+    else { state.stale = true; if (state.snapshot && !(automatic && ($('close-dialog').open || Boolean(document.getElementById('trade-detail-dialog')?.open || document.getElementById('note-editor-dialog')?.open)))) render(); status(describe(code)); }
   } finally { if (generation === state.generation) { busy(false); finishRestore(!state.snapshot); } }
 }
 
@@ -368,6 +392,7 @@ if (demoMode) {
     $('configuration').textContent = `${config.environment === 'production' ? 'Production: reads the selected account’s live cloud records.' : 'Development: a separate dataset from the released apps.'} Nothing is loaded until you start and sign in through Apple.`;
     if (config.closeTradePilotId) $('access-capability').textContent = 'Closing pilot · one test trade';
     if (config.tradeEditingEnabled) $('access-capability').textContent = 'Trade editing enabled';
+    if (config.noteEditingEnabled) $('access-capability').textContent = config.tradeEditingEnabled ? 'Trade & note editing enabled' : 'Note editing enabled';
     $('start').disabled = false;
     if (restoreSession && !document.body.hasAttribute('data-login-entry')) await start();
   }
@@ -381,6 +406,6 @@ if (demoMode) {
 mountAutoRefresh({
   document, window,
   eligible: () => !demoMode && Boolean(state.identity && state.snapshot && state.networkActive)
-    && !state.busy && !($('close-dialog').open || Boolean(document.getElementById('trade-detail-dialog')?.open)) && navigator.onLine !== false,
+    && !state.busy && !($('close-dialog').open || Boolean(document.getElementById('trade-detail-dialog')?.open || document.getElementById('note-editor-dialog')?.open)) && navigator.onLine !== false,
   refresh: () => readSelected({ automatic: true }),
 });

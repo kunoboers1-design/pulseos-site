@@ -178,7 +178,9 @@ function noteText(record, name, key, issues) {
 }
 function mapNote(entry, issues) {
   const { record, key, zone } = entry, r = reader(record, key, issues);
-  return { key, recordType: record.recordType, recordName: record.recordName, zone,
+  return { key, recordType: record.recordType, recordName: record.recordName, zone, recordChangeTag: record.recordChangeTag ?? null,
+    hasRichText: Boolean(record.fields.CD_richBodyData?.value || record.fields.CD_richBodyData_ckAsset?.value),
+    blockedEditFields: ['CD_title', 'CD_body'].filter(k => record.fields[`${k}_ckAsset`]?.value != null),
     id: r.uuid('CD_id'), title: noteText(record, 'CD_title', key, issues), body: noteText(record, 'CD_body', key, issues),
     accountId: r.uuid('CD_accountID', { optional: true }), tradeId: r.uuid('CD_tradeID', { optional: true }),
     createdAt: r.date('CD_createdAt'), accountKey: null, linkStatus: 'unlinked' };

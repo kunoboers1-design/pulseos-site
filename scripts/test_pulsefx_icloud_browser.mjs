@@ -62,13 +62,14 @@ await context.route('**/*', async route => {
     if (route.request().method() === 'OPTIONS') return route.fulfill({ status: 204, headers: { 'Access-Control-Allow-Origin': origin, 'Access-Control-Allow-Headers': '*', 'Access-Control-Allow-Methods': 'POST, OPTIONS' } });
     vendorModify++;
     const body = route.request().postDataJSON();
-    assert.equal(body.atomic, true); assert.deepEqual(body.zoneID, zone); assert.ok([1, 2].includes(body.operations.length));
-    if (body.operations.length === 1) {
+    assert.equal(body.atomic, true); assert.deepEqual(body.zoneID, body.operations[0].record.recordType === 'CD_TradeNote' ? { ...zone, zoneName: 'com.apple.coredata.cloudkit.zone' } : zone); assert.ok([1, 2].includes(body.operations.length));
+    if (body.operations.length === 1 && body.operations[0].record.recordType === 'CD_OpenTrade') {
       assert.equal(body.operations[0].record.fields.CD_entryPrice.value, null);
       assert.equal(body.operations[0].record.fields.CD_slMoved.value, 0);
       assert.equal(body.operations[0].record.fields.CD_preTradeNotes.value, 'SDK edit fixture');
     }
-    assert.ok(body.operations.every(o => o.operationType === 'update'));
+    assert.ok(body.operations.every(o => ['update', 'create'].includes(o.operationType)));
+    if (body.operations[0].record.recordType === 'CD_TradeNote') assert.equal(body.operations[0].record.fields.CD_title.value, 'SDK note');
     return route.fulfill({ status: 200, headers: { 'Access-Control-Allow-Origin': origin, 'Content-Type': 'application/json' }, json: { records: body.operations.map(o => ({ ...o.record, recordChangeTag: 'saved-tag' })) } });
   }
   if (url.origin !== origin) { external.push(url.origin + url.pathname); return route.abort(); }
@@ -333,9 +334,36 @@ try {
   await page.getByRole('tab', { name: 'Notes', exact: true }).click();
   await page.getByLabel('Search notes', { exact: true }).fill('weekly');
   assert.equal(await page.locator('.note-card').count(), 1);
+  await page.locator('.note-list-row').first().click();
+  await page.locator('#selected-note').getByRole('heading', { name: 'Weekly review', exact: true }).waitFor();
+  await page.locator('#selected-note').getByRole('button', { name: 'View trade', exact: true }).click();
+  await page.locator('#trade-detail-dialog').waitFor();
+  await page.locator('#trade-detail-dialog').getByRole('button', { name: 'Close details', exact: true }).click();
   await page.getByLabel('Search notes', { exact: true }).fill('does not exist');
   assert.equal(await page.locator('.note-card').count(), 0);
   await page.getByLabel('Search notes', { exact: true }).fill('');
+  await page.getByRole('button', { name: 'New note', exact: true }).click();
+  const noteEditor = page.locator('#note-editor-dialog');
+  await noteEditor.getByLabel('Title', { exact: true }).fill('Browser note');
+  await noteEditor.getByLabel('Note text', { exact: true }).fill('A new plain-text note.');
+  await noteEditor.getByLabel('Account (optional)', { exact: true }).selectOption({ index: 1 });
+  await noteEditor.getByRole('button', { name: 'Save demo note', exact: true }).click();
+  await noteEditor.waitFor({ state: 'hidden' });
+  await page.locator('#selected-note').getByRole('heading', { name: 'Browser note', exact: true }).waitFor();
+  await page.locator('#selected-note').getByRole('button', { name: 'Edit note', exact: true }).click();
+  await noteEditor.getByLabel('Note text', { exact: true }).fill('Edited note content <b>literal text</b>.');
+  await noteEditor.getByRole('button', { name: 'Save demo note', exact: true }).click();
+  await noteEditor.waitFor({ state: 'hidden' });
+  await page.locator('#selected-note').getByText('Edited note content <b>literal text</b>.', { exact: true }).waitFor();
+  assert.equal(await page.locator('#selected-note .note-document-content b').count(), 0);
+  await page.locator('#selected-note').getByRole('button', { name: 'Edit note', exact: true }).click();
+  await noteEditor.getByLabel('Title', { exact: true }).fill('Unsaved');
+  page.once('dialog', d => d.dismiss()); await noteEditor.getByRole('button', { name: 'Cancel', exact: true }).click();
+  assert.equal(await noteEditor.isVisible(), true);
+  await page.setViewportSize({ width: 390, height: 900 });
+  assert.ok(await noteEditor.evaluate(el => el.scrollWidth <= el.clientWidth + 1));
+  await page.screenshot({ path: join(screenshots, 'note-editor-mobile.png'), fullPage: true });
+  page.once('dialog', d => d.accept()); await noteEditor.getByRole('button', { name: 'Cancel', exact: true }).click();
   for (const theme of ['light', 'dark']) {
     if (await page.locator('html').getAttribute('data-theme') !== theme) await page.locator('#themeToggle').click();
     for (const width of [1440, 768, 390, 320]) {
@@ -435,7 +463,7 @@ try {
     const result = await page.evaluate(async ({ zone, config }) => {
       const { closeTransport, commitClose, planClose } = await import('/pulsefx/icloud/close-trade.mjs');
       const pilot = 'abcdef00-0000-4000-8000-000000000099';
-      const configuration = { ...config, closeTradePilotId: pilot, tradeEditingEnabled: true }, transport = closeTransport(configuration, fetch.bind(window));
+      const configuration = { ...config, closeTradePilotId: pilot, tradeEditingEnabled: true, noteEditingEnabled: true }, transport = closeTransport(configuration, fetch.bind(window));
       CloudKit.configure({ containers: [{ containerIdentifier: config.containerIdentifier, environment: config.environment, apiTokenAuth: { apiToken: config.apiToken, persist: false } }], services: { fetch: transport.fetch, logger: { info() {}, log() {}, warn() {}, error() {} } } });
       const snapshot = { collectionStatus: 'complete', accounts: [{ key: 'account', balance: 1000, currency: 'USD', archived: false, recordName: 'synthetic-account', recordChangeTag: 'account-tag', zone }], trades: [{ key: 'trade', id: pilot, recordType: 'CD_OpenTrade', recordName: 'synthetic-trade', recordChangeTag: 'trade-tag', zone, accountKey: 'account', linkStatus: 'linked', status: 'open', result: 'open', outcomeConsistent: true, startedAt: '2026-01-01T00:00:00Z' }] };
       const plan = planClose(snapshot, 'trade', { profitLoss: '25', result: 'win', closedAt: '2026-01-02T00:00:00Z' });
@@ -444,9 +472,17 @@ try {
       snapshot.trades[0].entryPrice = 1.1;
       const edit = planEdit(snapshot, 'trade', { entryPrice: '', slMoved: false, preTradeNotes: 'SDK edit fixture' });
       await commitEdit({ plan: edit, config: configuration, database: CloudKit.getDefaultContainer().privateCloudDatabase, selected: { requestZone: zone }, transport });
+      const { planNote, commitNote } = await import('/pulsefx/icloud/note-write.mjs');
+      const nativeZone = { ...zone, zoneName: 'com.apple.coredata.cloudkit.zone' };
+      const notesSnapshot = { ...snapshot, notesStatus: 'complete', notes: [] };
+      const newNote = planNote(notesSnapshot, null, { title: 'SDK note', body: 'SDK body' }, nativeZone, '12345678-1234-4234-8234-123456789abc');
+      await commitNote({ plan: newNote, config: configuration, database: CloudKit.getDefaultContainer().privateCloudDatabase, selected: { requestZone: nativeZone }, transport });
+      notesSnapshot.notes = [{ key: 'note', id: 'original', recordName: 'original-note', recordChangeTag: 'original-version', zone: nativeZone, title: 'Original', body: 'Original body', hasRichText: true }];
+      const updatedNote = planNote(notesSnapshot, 'note', { title: 'SDK note', body: 'SDK body', replaceFormatting: true }, nativeZone);
+      await commitNote({ plan: updatedNote, config: configuration, database: CloudKit.getDefaultContainer().privateCloudDatabase, selected: { requestZone: nativeZone }, transport });
       return true;
     }, { zone, config });
-    assert.equal(result, true); assert.equal(vendorModify, 2); assert.deepEqual(external, []);
+    assert.equal(result, true); assert.equal(vendorModify, 4); assert.deepEqual(external, []);
     useVendor = false;
     // MARK: - Bewust onthouden, herstellen en vergeten van een fictieve Apple-sessie
   await visit();

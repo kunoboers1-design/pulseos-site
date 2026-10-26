@@ -24,7 +24,7 @@ test('a notes query failure is reported separately without invalidating complete
   const db = { performQuery: async q => { if (q.recordType === 'CD_TradeNote') throw { serverErrorCode: 'BAD_REQUEST' }; return { hasErrors: false, records: sample().records.filter(r => r.recordType === q.recordType), moreComing: false }; } };
   const snapshot = await createReader({ database: db, context, includeNotes: true }).read({ zone, requestZone: zone });
   assert.equal(snapshot.collectionStatus, 'complete'); assert.equal(snapshot.notesStatus, 'partial'); assert.equal(snapshot.failures[0].type, 'CD_TradeNote');
-  assert.ok(DESIRED_KEYS.CD_TradeNote.includes('CD_body_ckAsset')); assert.ok(!DESIRED_KEYS.CD_TradeNote.includes('CD_richBodyData'));
+  assert.ok(DESIRED_KEYS.CD_TradeNote.includes('CD_body_ckAsset')); assert.ok(DESIRED_KEYS.CD_TradeNote.includes('CD_richBodyData'));
 });
 test('close updates trade and balance together, preserves unrelated fields and applies P&L once', () => {
   const snapshot = fixture(), p = planClose(snapshot, snapshot.trades.at(-1).key, input), updated = closeDemo(snapshot, p);
