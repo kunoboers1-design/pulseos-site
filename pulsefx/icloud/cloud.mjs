@@ -11,7 +11,16 @@ import { createReader, deadline, errorCode, isAuthError } from './reader.mjs';
 // MARK: - Veilige DOM-weergave
 const $ = id => document.getElementById(id);
 const node = (tag, text, className) => { const element = document.createElement(tag); if (text != null) element.textContent = text; if (className) element.className = className; return element; };
-const status = message => { $('status').textContent = message; };
+const status = message => {
+  $('status').textContent = message;
+  if (document.documentElement.dataset.icloudRestoring && $('restore-progress')) $('restore-progress').textContent = message;
+};
+function finishRestore(needsConnection = false) {
+  if (!document.documentElement.hasAttribute('data-icloud-restoring')) return;
+  document.documentElement.removeAttribute('data-icloud-restoring');
+  if (needsConnection) workspace.show('connection');
+  window.dispatchEvent(new Event('resize'));
+}
 const money = (value, currency) => value === null ? 'Unknown amount' : currency
   ? new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(value) : `${value} · currency unknown`;
 const utc = value => value ? `${new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC' }).format(new Date(value))} UTC` : 'Unknown date';
@@ -112,7 +121,7 @@ function endSession(message = 'Disconnected. Data and the remembered Apple sessi
   $('disconnect').hidden = true;
   $('apple-sign-in-button').hidden = true; $('apple-sign-out-button').hidden = true;
   $('start').hidden = false; $('start').disabled = false; $('start').textContent = 'Reload to reconnect';
-  status(message);
+  status(message); finishRestore(true);
 }
 async function listZones() {
   clearView();
@@ -136,6 +145,7 @@ async function listZones() {
   if (generation === state.generation && (document.body.hasAttribute('data-login-entry') || restoreSession)) {
     const matches = state.zones.map((item, index) => ({ item, index })).filter(({ item }) => item.zone.zoneName === 'com.apple.coredata.cloudkit.zone');
     if (matches.length === 1) { $('zone').value = String(matches[0].index); await readSelected(); }
+    else finishRestore(true);
   }
 }
 function acceptIdentity(identity) {
@@ -143,6 +153,8 @@ function acceptIdentity(identity) {
   if (typeof id !== 'string' || !id) { endSession('Apple returned no valid user identity. Data has been cleared.'); return; }
   if (state.identity === id) return;
   clearView(); state.identity = id; $('disconnect').hidden = false;
+  const url = new URL(location.href);
+  if (url.searchParams.has('restore')) { url.searchParams.delete('restore'); history.replaceState(null, '', url); }
   void listZones();
 }
 
@@ -162,7 +174,7 @@ let rememberSession = true, restoreSession = false;
 try {
   const saved = localStorage.getItem(rememberKey);
   rememberSession = saved !== 'false';
-  restoreSession = saved === 'true';
+  restoreSession = saved === 'true' && new URLSearchParams(location.search).get('restore') !== 'manual';
 } catch { rememberSession = false; }
 $('remember-icloud').checked = rememberSession;
 function forgetRememberedSession() {
@@ -206,7 +218,7 @@ async function start() {
     $('start').hidden = true;
     if (initialGeneration === state.generation) {
       if (identity) acceptIdentity(identity);
-      else status('Continue in Apple’s sign-in window using the button above. No data has been read.');
+      else { status('Continue in Apple’s sign-in window using the button above. No data has been read.'); finishRestore(true); }
     }
   } catch (error) { endSession(`Could not start the iCloud test. ${describe(errorCode(error))}`); }
 }
@@ -243,7 +255,7 @@ async function readSelected({ automatic = false } = {}) {
     const code = errorCode(error);
     if (isAuthError(code)) endSession(describe(code));
     else { state.stale = true; if (state.snapshot && !(automatic && ($('close-dialog').open || Boolean(document.getElementById('trade-detail-dialog')?.open)))) render(); status(describe(code)); }
-  } finally { if (generation === state.generation) busy(false); }
+  } finally { if (generation === state.generation) { busy(false); finishRestore(!state.snapshot); } }
 }
 
 // MARK: - Accounts, journal en datakwaliteit
@@ -347,6 +359,7 @@ if (demoMode) {
   const config = await response.json();
   if (!config.enabled) {
     $('configuration').textContent = 'Not configured. The site owner must enable this test and set the CloudKit token, environment and exact HTTPS origin in the deployment settings.';
+    finishRestore(true);
   } else if (config.containerIdentifier !== 'iCloud.PulseOS.FX' || !['development', 'production'].includes(config.environment)
     || config.origin !== location.origin || location.protocol !== 'https:' || typeof config.apiToken !== 'string' || !config.apiToken) {
     throw new Error('Invalid config');
@@ -360,6 +373,7 @@ if (demoMode) {
   }
 } catch {
   $('configuration').textContent = 'Configuration unavailable. This page needs the Cloudflare Pages Function and a matching HTTPS deployment. The demo remains available.';
+  finishRestore(true);
 }
 
 

@@ -48,7 +48,7 @@ window.CloudKit = { configure: settings => { persist = settings.containers[0].ap
 const browser = await chromium.launch({ headless: true });
 const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
 const errors = [], external = [];
-let vendorModify = 0, nativeLoginZone = false;
+let vendorModify = 0, nativeLoginZone = false, configDelay = 0;
 let enabled = false, useVendor = false, premiumState = 'disabled', premiumDelay = 0, premiumRequests = 0;
 await context.route('**/*', async route => {
   const url = new URL(route.request().url());
@@ -88,7 +88,7 @@ await context.route('**/*', async route => {
     await new Promise(resolve => setTimeout(resolve, premiumDelay));
     return route.fulfill({ json: { state: 'verified', expiresAt: Date.now() + 3600000, statistics } });
   }
-  if (url.pathname === '/api/pulsefx-config') return route.fulfill({ json: enabled ? config : { enabled: false }, headers: { 'Cache-Control': 'no-store' } });
+  if (url.pathname === '/api/pulsefx-config') { await new Promise(resolve => setTimeout(resolve, configDelay)); return route.fulfill({ json: enabled ? config : { enabled: false }, headers: { 'Cache-Control': 'no-store' } }); }
   let path = resolve(output, '.' + decodeURIComponent(url.pathname));
   if (!path.startsWith(output + '/')) return route.abort();
   if (url.pathname.endsWith('/')) path = join(path, 'index.html');
@@ -134,7 +134,13 @@ await page.getByRole('button', { name: 'Continue with Apple' }).click();
 await page.getByRole('button', { name: 'Test Apple sign in' }).click();
 await page.waitForURL(url => url.pathname === '/pulsefx/icloud/');
 assert.equal(await page.locator('#tab-open').getAttribute('aria-selected'), 'true');
+configDelay = 500;
 await page.reload();
+await page.locator('#icloud-restore').waitFor({ state: 'visible' });
+assert.equal(await page.locator('.cloud-layout').isVisible(), false);
+await page.screenshot({ path: join(screenshots, 'restoring-workspace.png') });
+await page.locator('#icloud-restore').waitFor({ state: 'hidden' });
+configDelay = 0;
 await page.waitForFunction(() => document.getElementById('workspace-toolbar').hidden === false);
 assert.equal(await page.locator('#tab-open').getAttribute('aria-selected'), 'true');
 await page.getByRole('tab', { name: 'Notes', exact: true }).click();
@@ -144,6 +150,18 @@ assert.equal(await page.locator('#tab-notes').getAttribute('aria-selected'), 'tr
 await page.getByRole('tab', { name: 'Settings', exact: true }).click();
 await page.locator('#disconnect').click();
 nativeLoginZone = false;
+// MARK: - Verlopen sessie verbergt de herstelstatus en toont de echte Apple-aanmelding
+await page.goto(origin + '/pulsefx/icloud/?view=connection');
+await page.getByRole('button', { name: 'Connect iCloud', exact: true }).waitFor();
+await page.evaluate(() => localStorage.setItem('pulsefx-remember-icloud', 'true'));
+await page.reload();
+await page.getByRole('button', { name: 'Test Apple sign in', exact: true }).waitFor();
+await page.locator('#icloud-restore').waitFor({ state: 'hidden' });
+assert.equal(await page.locator('#tab-connection').getAttribute('aria-selected'), 'true');
+await page.goto(origin + '/pulsefx/icloud/?view=connection&restore=manual');
+await page.getByRole('button', { name: 'Connect iCloud', exact: true }).waitFor();
+assert.equal(await page.locator('script[src*="cloudkit.com"]').count(), 0);
+await page.evaluate(() => localStorage.setItem('pulsefx-remember-icloud', 'false'));
 enabled = false;
 const visit = () => page.goto(origin + '/pulsefx/icloud/');
 const connect = async () => {

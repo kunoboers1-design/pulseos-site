@@ -7,6 +7,7 @@
   <meta name="referrer" content="no-referrer">
   <meta name="theme-color" content="#08080A">
   <script src="/theme.js"></script>
+  <script src="/pulsefx/icloud/restore-state.js"></script>
   <title>PulseFX — Trading workspace</title>
   <link rel="icon" href="/pulseos-logo.png">
   <link rel="stylesheet" href="/styles.css">
@@ -16,6 +17,16 @@
 </head>
 <body class="fx-web cloud-test">
   <a class="skip-link" href="#main">Skip to content</a>
+  <section id="icloud-restore" class="icloud-restore" aria-labelledby="restore-title" role="status" aria-live="polite">
+    <div class="restore-card">
+      <span class="restore-spinner" aria-hidden="true"></span>
+      <p class="fx-eyebrow">PULSEFX</p>
+      <h1 id="restore-title">Restoring your iCloud workspace…</h1>
+      <p>Your saved Apple session is being checked. Your accounts and trades will load again shortly.</p>
+      <p id="restore-progress">Preparing your connection…</p>
+      <a class="text-link" href="/pulsefx/icloud/?view=connection&amp;restore=manual">Open connection settings</a>
+    </div>
+  </section>
   <div class="cloud-layout">
     <header class="cloud-header"><a class="fx-brand" href="/pulsefx/app/">Pulse<span class="accent">FX</span></a><div class="cloud-header-actions"><div class="cloud-badges"><a class="tag" href="/pulsefx/access/logout">Lock website</a><span class="tag" id="access-capability">Read-only iCloud</span><span class="tag" id="environment">Not connected</span></div><button type="button" id="themeToggle" class="theme-toggle" data-theme-label aria-label="Switch to light mode">Light mode</button></div></header>
     <main id="main">
