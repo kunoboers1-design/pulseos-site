@@ -274,7 +274,8 @@ try {
   await page.getByRole('tab', { name: /Open trades/ }).click();
   assert.equal(await page.locator('.open-trade').count(), 2);
   await page.getByRole('tab', { name: /Open trades/ }).click();
-  await page.getByRole('button', { name: 'View trade', exact: true }).first().click();
+  assert.equal(await page.locator('.open-trade').first().getByRole('button').count(), 1);
+  await page.locator('.open-trade').first().getByRole('button', { name: 'Close trade', exact: true }).click();
   const detail = page.locator('#trade-detail-dialog');
   await detail.getByRole('heading', { name: 'Risk & reward', exact: true }).waitFor();
   for (const name of ['Strategy', 'Psychology', 'Notes', 'Summary', 'Details']) {
@@ -317,6 +318,7 @@ try {
 
   const first = page.locator('.open-trade').first();
   await first.getByRole('button', { name: 'Close trade', exact: true }).click();
+  await detail.getByRole('button', { name: 'Close trade', exact: true }).click();
   await page.getByLabel('Realized P&L · USD', { exact: true }).fill('124');
   await page.getByLabel('Final R (optional)', { exact: true }).fill('1');
   await page.getByRole('button', { name: 'Review balance change', exact: true }).click();

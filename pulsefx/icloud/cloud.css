@@ -535,3 +535,8 @@ html[data-icloud-restoring="true"] .icloud-restore { display: grid; min-height: 
 @media(max-width:420px) {
  .cloud-test .workspace-account-card > button { grid-column:1 / -1; grid-row:auto; justify-self:start; }
 }
+/* MARK: - Eén ingang naar alle tradeopties */
+/* Comment NL: De rij opent het detailvenster; sluiten wordt daar afzonderlijk bevestigd. */
+@media(min-width:901px) {
+ .cloud-test .open-trade-list .open-trade > button:last-child { grid-column:4; grid-row:1 / 3; align-self:center; min-height:38px; font-size:13px; }
+}

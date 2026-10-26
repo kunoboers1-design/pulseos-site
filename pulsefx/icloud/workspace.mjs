@@ -113,9 +113,7 @@ export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canC
       const account = data.accounts.find(a => a.key === t.accountKey), card = el('article', null, 'fx-card open-trade');
       const top = el('div', null, 'trade-heading'); top.append(el('h3', t.instrument || 'Unknown instrument'), el('span', t.direction || 'Direction unknown', 'tag')); card.append(top, el('p', account?.name || 'Unlinked account'), el('strong', `${t.lotSize ?? '—'} lots`, 'trade-lots'));
       card.append(el('small', `${date(t.startedAt)} · Risk ${t.riskPercent == null ? 'unknown' : `${t.riskPercent}%`}`));
-      card.append(button('View trade', () => openTradeDetail(t, getSnapshot(), () => openClose(t.key), { canEdit: () => canEdit(t), onSave: changes => onEdit(t.key, changes) })));
-      const enabled = t.recordType === 'CD_OpenTrade' && t.linkStatus === 'linked' && !stale;
-      card.append(button(enabled ? (canClose(t) ? 'Close trade' : 'Review close') : 'View closing requirements', () => openClose(t.key)));
+      card.append(button('Close trade', () => openTradeDetail(t, getSnapshot(), () => openClose(t.key), { canEdit: () => canEdit(t), onSave: changes => onEdit(t.key, changes) })));
       openList.append(card);
     }
     if (data && !trades.length) openList.append(el('div', 'No open trades match this view. Refresh after adding a trade in the native app.', 'workspace-empty'));

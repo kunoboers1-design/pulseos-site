@@ -47,11 +47,11 @@ export function openTradeDetail(trade, snapshot, onCloseTrade, options = {}) {
   section(panels[4], 'Trade summary', [['Instrument', trade.instrument], ['Account', account?.name || 'Unlinked account'], ['Status', trade.status], ['Direction', trade.direction], ['Lot size', trade.lotSize], ['Opened', date(trade.startedAt)], ['Closed', trade.closedAt ? date(trade.closedAt) : 'Still open'], ['Duration', duration], ['Account currency', trade.currency], ['Realized P/L', trade.status === 'open' ? 'Not realized' : money(trade.profitLoss)], ['Final R:R', trade.finalRR], ['Source', snapshot.source === 'demo' ? 'Fictional demo data' : 'Last loaded iCloud snapshot']]);
   const footer = make('footer', null, 'trade-detail-footer');
   const status = make('small', options.message || 'Changes are saved only when you choose Save changes.'); status.setAttribute('role', 'status'); footer.append(status);
-  const closeAction = action('Review close', () => { if (dirty) { status.textContent = 'Save or discard your edits before closing the trade.'; return; } dialog.close(); onCloseTrade(); }, 'text-button');
+  const closeAction = action('Close trade', () => { if (dirty) { status.textContent = 'Save or discard your edits before closing the trade.'; return; } dialog.close(); onCloseTrade(); }, 'text-button');
   const editable = trade.recordType === 'CD_OpenTrade' && trade.status === 'open' && trade.outcomeConsistent;
   if (editable && options.canEdit?.()) {
     const edit = action('Edit trade', () => {
-      edit.remove(); closeAction.hidden = true;
+      edit.remove();
       const controls = [];
       ['Details', 'Strategy', 'Psychology', 'Notes'].forEach((name, index) => {
         panels[index].replaceChildren();
@@ -87,7 +87,7 @@ export function openTradeDetail(trade, snapshot, onCloseTrade, options = {}) {
         }
         panels[index].append(card);
       });
-      panels[4].replaceChildren(make('p', 'Save changes to refresh the trade summary. Result and realized P/L are updated through Review close, together with the account balance.'));
+      panels[4].replaceChildren(make('p', 'Save changes to refresh the trade summary. Result and realized P/L are updated through Close trade, together with the account balance.'));
       const save = action(snapshot.source === 'demo' ? 'Save demo changes' : 'Save changes to iCloud', async () => {
         if (saving) return;
         if (!dirty) { status.textContent = 'No changes to save.'; return; }
@@ -102,7 +102,7 @@ export function openTradeDetail(trade, snapshot, onCloseTrade, options = {}) {
         } catch (error) { status.textContent = error.message; }
         finally { saving = false; disabled.forEach(([c, wasDisabled]) => c.disabled = wasDisabled); }
       }, 'hero-button primary-button');
-      footer.append(save); status.textContent = 'Edit your trade, then save. Result and P/L use Review close.'; select(0);
+      footer.append(save); status.textContent = 'Edit your trade, then save. Result and P/L use Close trade.'; select(0);
     }, 'hero-button primary-button');
     footer.append(edit);
   } else status.textContent = options.message || (editable ? 'iCloud editing is not enabled here yet. You can try editing in the demo.' : 'Edit this trade in the native app.');
