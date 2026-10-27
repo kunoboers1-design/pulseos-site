@@ -33,7 +33,7 @@ try {
   await page.getByRole('alert').waitFor(); assert.match(await page.getByRole('alert').innerText(), /not correct/);
   await page.getByLabel('Access password').fill('pulsefx-friends-preview');
   await page.getByRole('button', { name: 'Continue to PulseFX' }).click();
-  await page.waitForURL('**/pulsefx/icloud/?statistics=demo');
+  await page.waitForURL(url => url.pathname === '/pulsefx/icloud/' && url.searchParams.get('statistics') === 'demo');
   await page.locator('#premium-statistics').waitFor();
   await page.waitForFunction(() => document.querySelector('#premium-statistics')?.textContent.includes('Atlas'));
   assert.equal((await context.request.get(origin + '/api/pulsefx-config')).status(), 200);

@@ -1,3 +1,4 @@
+import { openAccountDetail } from './account-detail.mjs';
 import { planNote, commitNote, demoNote } from './note-write.mjs';
 import { planEdit, commitEdit, applyDemoEdit } from './edit-trade.mjs';
 import { mountAutoRefresh } from './auto-refresh.mjs';
@@ -265,7 +266,7 @@ async function readSelected({ automatic = false } = {}) {
     });
     if (generation !== state.generation) return;
     // Comment NL: Een tijdens de aanvraag geopend sluitformulier nooit overschrijven.
-    if (automatic && ($('close-dialog').open || Boolean(document.getElementById('trade-detail-dialog')?.open || document.getElementById('note-editor-dialog')?.open))) return;
+    if (automatic && ($('close-dialog').open || Boolean(document.getElementById('trade-detail-dialog')?.open || document.getElementById('account-detail-dialog')?.open || document.getElementById('note-editor-dialog')?.open))) return;
     if (snapshot.collectionStatus === 'partial' && state.snapshot?.collectionStatus === 'complete') {
       state.stale = true; render();
       status(`Refresh incomplete. Showing the previous fetch, now marked stale. ${snapshot.failures.map(f => `${f.type}: ${describe(f.code)}`).join(' ')}`);
@@ -280,7 +281,7 @@ async function readSelected({ automatic = false } = {}) {
     if (generation !== state.generation) return;
     const code = errorCode(error);
     if (isAuthError(code)) endSession(describe(code));
-    else { state.stale = true; if (state.snapshot && !(automatic && ($('close-dialog').open || Boolean(document.getElementById('trade-detail-dialog')?.open || document.getElementById('note-editor-dialog')?.open)))) render(); status(describe(code)); }
+    else { state.stale = true; if (state.snapshot && !(automatic && ($('close-dialog').open || Boolean(document.getElementById('trade-detail-dialog')?.open || document.getElementById('account-detail-dialog')?.open || document.getElementById('note-editor-dialog')?.open)))) render(); status(describe(code)); }
   } finally { if (generation === state.generation) { busy(false); finishRestore(!state.snapshot); } }
 }
 
@@ -312,8 +313,8 @@ function render(resetFilters = false) {
     element.classList.add('workspace-account-card');
     const details = node('details'); details.append(node('summary', 'Account details'));
     for (const line of [`Starting balance: ${money(a.startBalance, a.currency)}`, `Created: ${utc(a.createdAt)}`, `${trades.filter(t => t.status === 'open').length} open · ${trades.filter(t => t.status === 'closed').length} closed · ${trades.filter(t => !t.status).length} unknown`]) details.append(node('p', line));
-    const button = node('button', 'View trades', 'text-button'); button.type = 'button';
-    button.onclick = () => { $('account-filter').value = a.key; $('trade-status').value = 'all'; $('trade-model').value = 'all'; renderTrades(); workspace.show('journal'); $('account-filter').focus(); };
+    const button = node('button', 'View account', 'text-button'); button.type = 'button';
+    button.onclick = () => openAccountDetail(a, state.snapshot, { onTrade: t => workspace.openTrade(t), onNote: n => workspace.openNote(n), onJournal: () => { $('account-filter').value = a.key; $('trade-status').value = 'all'; $('trade-model').value = 'all'; renderTrades(); workspace.show('journal'); } });
     const counts = node('div', null, 'account-counts');
     counts.append(node('span', `${trades.filter(t => t.status === 'open').length} open`), node('span', `${trades.filter(t => t.status === 'closed').length} closed`));
     element.append(counts, details, button); return { kind: a.kind, element };
@@ -393,9 +394,12 @@ if (demoMode) {
   } else {
     state.config = config; $('environment').textContent = `${config.environment === 'production' ? 'Production' : 'Development'} · private`;
     $('configuration').textContent = `${config.environment === 'production' ? 'Production: reads the selected account’s live cloud records.' : 'Development: a separate dataset from the released apps.'} Nothing is loaded until you start and sign in through Apple.`;
-    if (config.closeTradePilotId) $('access-capability').textContent = 'Closing pilot · one test trade';
-    if (config.tradeEditingEnabled) $('access-capability').textContent = 'Trade editing enabled';
-    if (config.noteEditingEnabled) $('access-capability').textContent = config.tradeEditingEnabled ? 'Trade & note editing enabled' : 'Note editing enabled';
+    const capabilities = [];
+    if (config.tradeEditingEnabled) capabilities.push('Edit trades');
+    if (config.noteEditingEnabled) capabilities.push('Edit notes');
+    if (config.tradeClosingEnabled) capabilities.push('Close trades');
+    else if (config.closeTradePilotId) capabilities.push('Close one test trade');
+    $('access-capability').textContent = capabilities.length ? capabilities.join(' · ') : 'Read-only iCloud';
     $('start').disabled = false;
     if (restoreSession && !document.body.hasAttribute('data-login-entry')) await start();
   }
@@ -409,6 +413,6 @@ if (demoMode) {
 mountAutoRefresh({
   document, window,
   eligible: () => !demoMode && Boolean(state.identity && state.snapshot && state.networkActive)
-    && !state.busy && !($('close-dialog').open || Boolean(document.getElementById('trade-detail-dialog')?.open || document.getElementById('note-editor-dialog')?.open)) && navigator.onLine !== false,
+    && !state.busy && !($('close-dialog').open || Boolean(document.getElementById('trade-detail-dialog')?.open || document.getElementById('account-detail-dialog')?.open || document.getElementById('note-editor-dialog')?.open)) && navigator.onLine !== false,
   refresh: () => readSelected({ automatic: true }),
 });

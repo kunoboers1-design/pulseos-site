@@ -181,6 +181,7 @@ const read = async () => {
 try {
   await page.goto(origin + '/pulsefx/icloud/?statistics=demo#premium-statistics');
   await page.getByRole('tab', { name: 'Stats', exact: true }).click();
+  await page.locator('#stats-sections').getByRole('button', { name: 'Overview', exact: true }).click();
   await page.locator('#premium-statistics .stats-metrics').getByText('48 closed trades', { exact: true }).waitFor();
   assert.equal(premiumRequests, 0);
   await visit(); await page.getByText(/Not configured\. The site owner/).waitFor();
@@ -203,6 +204,7 @@ try {
   assert.equal(await page.locator('#accounts img').count(), 0);
   assert.equal(await page.evaluate(() => window.injected), undefined);
   await page.getByRole('tab', { name: 'Stats', exact: true }).click();
+  await page.locator('#stats-sections').getByRole('button', { name: 'Overview', exact: true }).click();
   await page.getByRole('button', { name: 'Trades', exact: true }).click();
   assert.ok(await page.locator('#trades td').evaluateAll(cells => cells.every(cell => cell.scrollWidth <= cell.clientWidth + 1)), 'Long user text must not overlap adjacent table cells');
   assert.match(await page.locator('#balances').textContent(), /€1,200.00/);
@@ -211,7 +213,10 @@ try {
   assert.equal(await page.evaluate(() => Object.keys(localStorage).filter(k => k !== 'pulsefx-remember-icloud').length + sessionStorage.length), 0);
   await page.getByRole('tab', { name: 'Accounts', exact: true }).click();
   await page.screenshot({ path: join(screenshots, 'connected-desktop.png'), fullPage: true });
-  await page.locator('#accounts button').first().click(); assert.equal(await page.locator('#trades tr').count(), 3);
+  await page.locator('#accounts button').first().click();
+  await page.locator('#account-detail-dialog').getByRole('tab', { name: 'Trades', exact: true }).click();
+  await page.getByRole('button', { name: 'Open trade journal', exact: true }).click();
+  assert.equal(await page.locator('#trades tr').count(), 3);
   await page.getByLabel('Record type', { exact: true }).selectOption('CD_OpenTrade');
   await page.getByText('No trades match these filters.').waitFor();
   await page.locator('#account-filter').selectOption('all'); assert.equal(await page.locator('#trades tr').count(), 1);
@@ -225,6 +230,7 @@ try {
   }
   // MARK: - Vriendenstatistieken gebruiken lokaal dezelfde snapshot
   await page.getByRole('tab', { name: 'Stats', exact: true }).click();
+  await page.locator('#stats-sections').getByRole('button', { name: 'Overview', exact: true }).click();
   const premium = page.locator('#premium-statistics');
   await premium.locator('.stats-metrics').getByText('5 closed trades', { exact: true }).waitFor();
   assert.equal(premiumRequests, 0);
@@ -277,7 +283,7 @@ try {
   assert.equal(await page.locator('.open-trade').first().getByRole('button').count(), 1);
   await page.locator('.open-trade').first().getByRole('button', { name: 'Close trade', exact: true }).click();
   const detail = page.locator('#trade-detail-dialog');
-  await detail.getByRole('heading', { name: 'Risk & reward', exact: true }).waitFor();
+  await detail.getByLabel('Entry', { exact: true }).waitFor();
   for (const name of ['Strategy', 'Psychology', 'Notes', 'Summary', 'Details']) {
     await detail.getByRole('tab', { name, exact: true }).click();
     assert.equal(await detail.getByRole('tab', { name, exact: true }).getAttribute('aria-selected'), 'true');
@@ -287,7 +293,6 @@ try {
     assert.ok(await detail.evaluate(el => el.scrollWidth <= el.clientWidth + 1));
     await page.screenshot({ path: join(screenshots, `trade-details-${width}.png`), fullPage: true });
   }
-  await detail.getByRole('button', { name: 'Edit trade', exact: true }).click();
   await detail.getByLabel('Entry', { exact: true }).fill('-1');
   await detail.getByRole('button', { name: 'Save demo changes', exact: true }).click();
   await detail.getByText('Entry is outside the allowed range.', { exact: true }).waitFor();
@@ -301,11 +306,14 @@ try {
   await page.screenshot({ path: join(screenshots, 'edit-notes-mobile.png'), fullPage: true });
   await detail.getByRole('button', { name: 'Save demo changes', exact: true }).click();
   await detail.getByText('Demo changes saved for this page.', { exact: true }).waitFor();
-  await detail.getByText('1.085', { exact: true }).waitFor();
+  await detail.getByRole('tab', { name: 'Details', exact: true }).click();
+  assert.equal(await detail.getByLabel('Entry', { exact: true }).inputValue(), '1.085');
   await detail.getByRole('tab', { name: 'Notes', exact: true }).click();
-  await detail.getByText('Edited note <script>safe text</script>', { exact: true }).waitFor();
+  assert.equal(await detail.getByLabel('Before the trade', { exact: true }).inputValue(), 'Edited note <script>safe text</script>');
   assert.equal(await detail.locator('script').count(), 0);
-  await detail.getByRole('button', { name: 'Edit trade', exact: true }).click();
+  await detail.getByRole('tab', { name: 'Summary', exact: true }).click();
+  await detail.getByText('Edited note <script>safe text</script>', { exact: true }).waitFor();
+  await detail.getByRole('tab', { name: 'Details', exact: true }).click();
   await detail.getByLabel('Entry', { exact: true }).fill('1.2');
   page.once('dialog', d => d.dismiss());
   await detail.getByRole('button', { name: 'Close details', exact: true }).click();
@@ -316,10 +324,40 @@ try {
   await page.screenshot({ path: join(screenshots, 'compact-open-trades.png'), fullPage: true });
   await page.getByRole('tab', { name: /Open trades/ }).click();
 
+  await page.getByRole('tab', { name: 'Accounts', exact: true }).click();
+  await page.getByRole('button', { name: 'View account', exact: true }).first().click();
+  const accountDetail = page.locator('#account-detail-dialog');
+  await accountDetail.getByRole('heading', { name: 'Performance · all time', exact: true }).waitFor();
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    assert.ok(await accountDetail.evaluate(el => el.scrollWidth <= el.clientWidth + 1));
+    await page.screenshot({ path: join(screenshots, `account-details-${width}.png`) });
+  }
+  await accountDetail.getByRole('tab', { name: 'Notes', exact: true }).click();
+  await accountDetail.getByRole('tab', { name: 'Trades', exact: true }).click();
+  await accountDetail.getByLabel('Account trade status').selectOption('open');
+  assert.equal(await accountDetail.locator('#account-panel-1 .account-detail-list button').count(), 1);
+  await accountDetail.locator('#account-panel-1 .account-detail-list button').click();
+  await detail.getByRole('button', { name: 'Close details', exact: true }).click();
+  await page.getByRole('tab', { name: /Open trades/ }).click();
   const first = page.locator('.open-trade').first();
   await first.getByRole('button', { name: 'Close trade', exact: true }).click();
   await detail.getByRole('button', { name: 'Close trade', exact: true }).click();
+  for (const width of [320, 390, 768, 1440]) {
+    await page.setViewportSize({ width, height: 800 });
+    const closeDialog = page.locator('#close-dialog');
+    assert.ok(await closeDialog.evaluate(el => el.scrollWidth <= el.clientWidth + 1), 'Close dialog must not overflow horizontally');
+    const box = await closeDialog.boundingBox();
+    assert.ok(box.height <= 800 && box.width <= width, 'Close dialog must fit viewport');
+    await closeDialog.getByRole('button', { name: 'Back to trade', exact: true }).scrollIntoViewIfNeeded();
+    await page.screenshot({ path: join(screenshots, `close-review-${width}.png`) });
+  }
+  await page.setViewportSize({ width: 1440, height: 1000 });
   await page.getByLabel('Realized P&L · USD', { exact: true }).fill('124');
+  await page.locator('#close-dialog').getByRole('button', { name: 'Back to trade', exact: true }).click();
+  assert.equal(await detail.isVisible(), true, 'Back returns to the same trade details');
+  await detail.getByRole('button', { name: 'Close trade', exact: true }).click();
+  assert.equal(await page.getByLabel('Realized P&L · USD', { exact: true }).inputValue(), '124');
   await page.getByLabel('Final R (optional)', { exact: true }).fill('1');
   await page.getByRole('button', { name: 'Review balance change', exact: true }).click();
   await page.getByText('$25,196.00 → $25,320.00', { exact: true }).waitFor();
@@ -332,6 +370,7 @@ try {
   await page.getByRole('tab', { name: 'Accounts', exact: true }).click();
   await page.locator('#accounts').getByText('$25,320.00', { exact: true }).waitFor();
   await page.getByRole('tab', { name: 'Stats', exact: true }).click();
+  await page.locator('#stats-sections').getByRole('button', { name: 'Overview', exact: true }).click();
   await page.locator('.stats-metrics').getByText('49 closed trades', { exact: true }).waitFor();
   await page.getByRole('tab', { name: 'Notes', exact: true }).click();
   await page.getByLabel('Search notes', { exact: true }).fill('weekly');
@@ -353,6 +392,11 @@ try {
   await noteEditor.waitFor({ state: 'hidden' });
   await page.locator('#selected-note').getByRole('heading', { name: 'Browser note', exact: true }).waitFor();
   await page.locator('#selected-note').getByRole('button', { name: 'Edit note', exact: true }).click();
+  assert.equal(await noteEditor.getByRole('button', { name: 'Save demo note', exact: true }).isDisabled(), true);
+  await noteEditor.getByLabel('Title', { exact: true }).fill('Temporary title');
+  assert.equal(await noteEditor.getByRole('button', { name: 'Save demo note', exact: true }).isEnabled(), true);
+  await noteEditor.getByLabel('Title', { exact: true }).fill('Browser note');
+  assert.equal(await noteEditor.getByRole('button', { name: 'Save demo note', exact: true }).isDisabled(), true);
   await noteEditor.getByLabel('Note text', { exact: true }).fill('Edited note content <b>literal text</b>.');
   await noteEditor.getByRole('button', { name: 'Save demo note', exact: true }).click();
   await noteEditor.waitFor({ state: 'hidden' });
@@ -386,6 +430,7 @@ try {
   await page.getByRole('button', { name: 'Reset accent color', exact: true }).click();
   assert.equal(await page.getByRole('button', { name: 'Forest Green', exact: true }).getAttribute('aria-pressed'), 'true');
   await page.getByRole('tab', { name: 'Stats', exact: true }).click();
+  await page.locator('#stats-sections').getByRole('button', { name: 'Overview', exact: true }).click();
   await page.getByRole('button', { name: 'Performance', exact: true }).click();
   await page.getByRole('heading', { name: 'Account ranking', exact: true }).waitFor();
   assert.ok(await page.locator('[data-stats-section=overview]').isHidden());
@@ -516,6 +561,25 @@ try {
   assert.equal(await page.locator('script[src*="cloudkit.com"]').count(), 0);
   assert.deepEqual(errors, []);
   }
+  await page.goto(origin + '/pulsefx/icloud/?workspace=demo&view=stats&section=timing&stats-metric=percent&stats-outcome=win');
+  await page.locator('[data-stats-section=timing]').waitFor();
+  assert.equal(await page.locator('#stats-metric').inputValue(), 'percent');
+  assert.equal(await page.locator('#stats-outcome').inputValue(), 'win');
+  await page.reload();
+  await page.locator('[data-stats-section=timing]').waitFor();
+  assert.equal(await page.locator('#stats-metric').inputValue(), 'percent');
+  await page.getByRole('button', { name: 'Reset filters', exact: true }).click();
+  assert.equal(await page.locator('#stats-metric').inputValue(), 'r');
+  assert.equal(await page.locator('#stats-outcome').inputValue(), 'all');
+  await page.getByRole('tab', { name: /^Notes/ }).click();
+  await page.getByRole('tab', { name: /^Stats/ }).click();
+  await page.locator('[data-stats-section=timing]').waitFor();
+  await page.goBack();
+  assert.equal(await page.getByRole('tab', { name: /^Notes/ }).getAttribute('aria-selected'), 'true');
+  await page.goForward();
+  await page.locator('[data-stats-section=timing]').waitFor();
+  assert.equal(await page.getByRole('tab', { name: /^Stats/ }).getAttribute('aria-selected'), 'true');
+  assert.equal(await page.locator('#stats-metric').inputValue(), 'r');
   console.log(`PASS: shared demo close/balance/stats, notes/search, SDK atomic-write fixture (when configured), disabled deployment, opt-in auth, filtering, currencies, XSS, partial/stale/empty data, session expiry, late responses, local friends statistics, filters, and responsive dark/light tabs. Screenshots: ${screenshots}`);
 } catch (error) {
   await page.screenshot({ path: join(screenshots, 'failure.png'), fullPage: true });

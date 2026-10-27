@@ -19,8 +19,10 @@ export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canC
   mountAppearance();
   const panels = { open: 'open-panel', accounts: 'accounts-panel', stats: 'premium-statistics', notes: 'notes-panel', connection: 'connection-panel' };
   const requestedView = new URLSearchParams(location.search).get('view');
-  const initialView = Object.hasOwn(panels, requestedView) ? requestedView : 'connection';
+  const initialView = Object.hasOwn(panels, requestedView) ? requestedView : (new URLSearchParams(location.search).get('statistics') === 'demo' || location.hash === '#premium-statistics') ? 'stats' : 'connection';
   let active = initialView, stale = false, pending = false, dialogKey = null;
+  // Comment NL: Sluitinvoer blijft alleen in geheugen zolang hetzelfde tradevenster openstaat.
+  const closeDrafts = new Map();
   const openFilter = select([['all', 'All accounts']]), noteFilter = select([['all', 'All accounts']]);
   const search = el('input'); search.type = 'search'; search.placeholder = 'Search notes';
   const noteKind = select([['note', 'Notes'], ['all', 'All notes'], ['pre', 'Pre-trade'], ['post', 'Post-trade']]);
@@ -38,16 +40,20 @@ export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canC
   function editNote(note) {
     openNoteEditor({ note, snapshot: getSnapshot(), canSave: canEditNotes, onSave: async (key, input, identity) => {
       const saved = await onSaveNote(key, input, identity);
-      noteFilter.value = 'all'; noteKind.value = 'note'; search.value = ''; notesView.select(saved.key); renderNotes();
+      // Comment NL: Behoud de context bij bewerken; maak de opgeslagen notitie zichtbaar als zij buiten het filter valt.
+      const row = noteRows(getSnapshot()).find(n => n.key === saved.key);
+      if (row && !matchesNote(row)) { noteFilter.value = 'all'; noteKind.value = 'note'; search.value = ''; }
+      notesView.select(saved.key); renderNotes();
       notesStatus.textContent = isDemo ? 'Demo note saved for this page.' : 'Note saved to iCloud and refreshed. Native sync may take a moment.';
     } });
   }
-  const notesView = mountNotesView({ list: notesList, detail: notesDetail, onEdit: editNote, canEdit: canEditNotes, onTrade: t => openTradeDetail(t, getSnapshot(), () => openClose(t.key), { canEdit: () => canEdit(t), onSave: changes => onEdit(t.key, changes) }) });
+  const notesView = mountNotesView({ list: notesList, detail: notesDetail, onEdit: editNote, canEdit: canEditNotes, onTrade: t => openTradeDetail(t, getSnapshot(), () => openClose(t.key), { startEditing: true, canEdit: () => canEdit(t), onSave: changes => onEdit(t.key, changes) }) });
   const demoReset = button('Reset demo data', onDemoReset); demoReset.hidden = !isDemo; $('workspace-demo-banner').append(demoReset);
   const sectionBar = $('stats-sections');
-  let statsSection = 'overview';
+  const requestedSection = new URLSearchParams(location.search).get('section');
+  let statsSection = ['overview','performance','timing','journal','trades','records'].includes(requestedSection) ? requestedSection : 'overview';
   for (const [key, label] of [['overview', 'Overview'], ['performance', 'Performance'], ['timing', 'Timing'], ['journal', 'Journal'], ['trades', 'Trades']]) {
-    const control = button(label, () => { statsSection = key; show('stats'); });
+    const control = button(label, () => { statsSection = key; show('stats', false, true); });
     control.dataset.section = key; sectionBar.append(control);
   }
   function updateStatsSections() {
@@ -64,7 +70,7 @@ export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canC
   }
   window.addEventListener('resize',updateStatsSections);
   new MutationObserver(updateStatsSections).observe($('premium-statistics'), { childList: true, subtree: true });
-  function show(name, focus = false) {
+  function show(name, focus = false, navigate = false) {
     if (name === 'journal') { statsSection = 'records'; name = 'stats'; }
 
     if (!panels[name]) return;
@@ -72,7 +78,8 @@ export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canC
     // Comment NL: Alleen de navigatie bewaren, nooit accountgegevens of Apple-tokens.
     if (!document.body.hasAttribute('data-login-entry')) {
       const url = new URL(location.href); url.searchParams.set('view', active);
-      history.replaceState(null, '', url);
+      if (active === 'stats') url.searchParams.set('section', statsSection);
+      if (url.href !== location.href) history[navigate ? 'pushState' : 'replaceState'](null, '', url);
     }
     for (const [key, id] of Object.entries(panels)) {
       $(id).hidden = key !== active;
@@ -89,13 +96,22 @@ export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canC
     if (focus) $(`tab-${name}`).focus();
   }
   for (const key of Object.keys(panels)) {
-    const tab = $(`tab-${key}`); tab.onclick = () => { if (key === 'stats') statsSection = 'overview'; show(key); };
+    const tab = $(`tab-${key}`); tab.onclick = () => show(key, false, true);
     tab.onkeydown = event => {
       const keys = Object.keys(panels), index = keys.indexOf(key);
       if (!['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(event.key)) return;
-      event.preventDefault(); show(keys[event.key === 'Home' ? 0 : event.key === 'End' ? keys.length - 1 : (index + (event.key === 'ArrowRight' ? 1 : -1) + keys.length) % keys.length], true);
+      event.preventDefault(); show(keys[event.key === 'Home' ? 0 : event.key === 'End' ? keys.length - 1 : (index + (event.key === 'ArrowRight' ? 1 : -1) + keys.length) % keys.length], true, true);
     };
   }
+  // Comment NL: Browsernavigatie herstelt het scherm zonder de iCloud-sessie opnieuw te starten.
+  window.addEventListener('popstate', () => {
+    const params = new URLSearchParams(location.search);
+    const view = params.get('view');
+    if (!Object.hasOwn(panels, view)) return;
+    const section = params.get('section');
+    if (['overview', 'performance', 'timing', 'journal', 'trades', 'records'].includes(section)) statsSection = section;
+    show(view);
+  });
   function populate(control, accounts) {
     const current = control.value; control.replaceChildren();
     for (const [value, name] of [['all', 'All accounts'], ['unlinked', 'Unlinked / standalone'], ...accounts.map(a => [a.key, a.name || 'Unnamed account'])]) {
@@ -113,17 +129,19 @@ export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canC
       const account = data.accounts.find(a => a.key === t.accountKey), card = el('article', null, 'fx-card open-trade');
       const top = el('div', null, 'trade-heading'); top.append(el('h3', t.instrument || 'Unknown instrument'), el('span', t.direction || 'Direction unknown', 'tag')); card.append(top, el('p', account?.name || 'Unlinked account'), el('strong', `${t.lotSize ?? '—'} lots`, 'trade-lots'));
       card.append(el('small', `${date(t.startedAt)} · Risk ${t.riskPercent == null ? 'unknown' : `${t.riskPercent}%`}`));
-      card.append(button('Close trade', () => openTradeDetail(t, getSnapshot(), () => openClose(t.key), { canEdit: () => canEdit(t), onSave: changes => onEdit(t.key, changes) })));
+      card.append(button('Close trade', () => openTradeDetail(t, getSnapshot(), () => openClose(t.key), { startEditing: true, canEdit: () => canEdit(t), onSave: changes => onEdit(t.key, changes) })));
       openList.append(card);
     }
     if (data && !trades.length) openList.append(el('div', 'No open trades match this view. Refresh after adding a trade in the native app.', 'workspace-empty'));
+  }
+  function matchesNote(n) {
+    return (noteFilter.value === 'all' || (noteFilter.value === 'unlinked' ? !n.accountKey : n.accountKey === noteFilter.value)) && (noteKind.value === 'all' || n.kind === noteKind.value) && `${n.title} ${n.body || ''}`.toLocaleLowerCase().includes(search.value.trim().toLocaleLowerCase());
   }
   function renderNotes() {
     const data = getSnapshot(); notesList.replaceChildren();
     newNote.hidden = !canEditNotes();
     const rows = noteRows(data);
-    const query = search.value.trim().toLocaleLowerCase();
-    const shown = rows.filter(n => (noteFilter.value === 'all' || (noteFilter.value === 'unlinked' ? !n.accountKey : n.accountKey === noteFilter.value)) && (noteKind.value === 'all' || n.kind === noteKind.value) && `${n.title} ${n.body || ''}`.toLocaleLowerCase().includes(query));
+    const shown = rows.filter(matchesNote);
     notesStatus.textContent = !data ? 'Connect iCloud and load your workspace to see notes.' : `${stale ? 'Stale snapshot. ' : ''}${shown.length} notes shown. ${data.notesStatus === 'complete' ? 'Plain-text notes loaded.' : 'Standalone notes are incomplete or unavailable. Check Settings / Data checks; this does not mean your notes are empty.'}`;
     notesView.render(shown, data);
   }
@@ -131,19 +149,22 @@ export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canC
     const data = getSnapshot(), trade = data?.trades.find(t => t.key === key); if (!trade) return;
     dialogKey = key; const account = data.accounts.find(a => a.key === trade.accountKey), dialog = $('close-dialog'); dialog.replaceChildren();
     const form = el('form'), title = el('h2', isDemo ? 'Close demo trade' : 'Close journal trade'); title.id = 'close-title';
+    const draft = closeDrafts.get(key);
     const outcome = select([['win', 'Win'], ['loss', 'Loss'], ['breakEven', 'Break-even']]);
     const pnl = el('input'); pnl.type = 'number'; pnl.step = 'any'; pnl.required = true;
     const rr = el('input'); rr.type = 'number'; rr.step = 'any';
     const when = el('input'); when.type = 'datetime-local'; when.required = true; when.value = new Date().toISOString().slice(0, 16);
+    if (draft) { outcome.value = draft.result; pnl.value = draft.pnl; rr.value = draft.rr; when.value = draft.when; }
+    else if (Number.isFinite(trade.finalRR)) rr.value = String(trade.finalRR);
     const message = el('p', null, 'cloud-notice'); message.setAttribute('role', 'status');
     const review = el('div', null, 'close-review'); review.hidden = true;
     const confirm = el('input'); confirm.type = 'checkbox'; confirm.id = 'close-confirm'; const confirmLabel = el('label', 'I checked the result and balance change.'); confirmLabel.htmlFor = confirm.id;
     const submit = el('button', 'Review balance change', 'hero-button primary-button'); submit.type = 'submit';
-    const cancel = button('Cancel', () => dialog.close());
+    const cancel = button('Back to trade', () => dialog.close());
     const allowed = canClose(trade) && !stale;
     const notice = isDemo ? 'Demo mode. This changes fictional data in this page only.' : allowed ? 'This updates your journal and account balance in iCloud. It does not close a broker order. Let your native apps finish syncing first.' : 'Saving a close is not enabled on this website yet. You can preview the balance change below; your trade will stay open.';
     form.append(title, el('p', `${trade.instrument || 'Trade'} · ${trade.lotSize ?? '—'} lots · ${account?.name || 'Unlinked'}`), el('p', notice), field('Result', outcome), field(`Realized P&L · ${account?.currency || 'unknown currency'}`, pnl), field('Final R (optional)', rr), field('Closed at · UTC', when), message, review, submit, cancel);
-    const invalidate = () => { review.hidden = true; review.replaceChildren(); confirm.checked = false; submit.textContent = 'Review balance change'; };
+    const invalidate = () => { closeDrafts.set(key, { result: outcome.value, pnl: pnl.value, rr: rr.value, when: when.value }); review.hidden = true; review.replaceChildren(); confirm.checked = false; submit.textContent = 'Review balance change'; };
     for (const c of [outcome, pnl, rr, when]) c.oninput = invalidate;
     let reviewed = null;
     form.onsubmit = async event => {
@@ -160,23 +181,26 @@ export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canC
         if (!allowed) { message.textContent = 'Preview only — your trade is still open. Web closing must be enabled before you can save.'; return; }
         if (!confirm.checked) { message.textContent = 'Confirm that you checked the result and balance change.'; confirm.focus(); return; }
         pending = true; submit.disabled = true; cancel.disabled = true; message.textContent = isDemo ? 'Updating demo…' : 'Saving once to iCloud…';
-        await onClose(plan); dialog.close();
+        await onClose(plan); closeDrafts.delete(key); dialog.close(); document.getElementById('trade-detail-dialog')?.close();
       } catch (error) { message.textContent = error.message; }
       finally { pending = false; submit.disabled = false; cancel.disabled = false; }
     };
     dialog.append(form); dialog.oncancel = event => { if (pending) event.preventDefault(); }; dialog.onclose = () => { dialogKey = null; dialog.replaceChildren(); };
+    document.getElementById('trade-detail-dialog')?.addEventListener('close', () => closeDrafts.delete(key), { once: true });
     dialog.showModal(); pnl.focus();
   }
   openFilter.onchange = renderOpen; for (const c of [noteFilter, noteKind, search]) c.oninput = renderNotes;
   show(initialView); renderOpen(); renderNotes();
   return {
     show,
+    openTrade(t) { openTradeDetail(t, getSnapshot(), () => openClose(t.key), { startEditing: true, canEdit: () => canEdit(t), onSave: changes => onEdit(t.key, changes) }); },
+    openNote(n) { noteFilter.value = n.accountKey || 'all'; noteKind.value = n.kind; search.value = ''; notesView.select(n.key); renderNotes(); show('notes'); },
     update(isStale = false, first = false) {
       stale = isStale; const data = getSnapshot(); populate(openFilter, data?.accounts || []); populate(noteFilter, data?.accounts || []);
       renderOpen(); renderNotes(); show(first && active === 'connection' ? 'open' : active);
       if (dialogKey && !pending) $('close-dialog').close();
     },
-    clear() { document.getElementById('note-editor-dialog')?.close(); document.getElementById('trade-detail-dialog')?.close(); if ($('close-dialog').open) $('close-dialog').close(); openFilter.value = 'all'; noteFilter.value = 'all'; noteKind.value = 'note'; search.value = ''; this.update(); show(active); },
+    clear() { document.getElementById('account-detail-dialog')?.close(); closeDrafts.clear(); document.getElementById('note-editor-dialog')?.close(); document.getElementById('trade-detail-dialog')?.close(); if ($('close-dialog').open) $('close-dialog').close(); openFilter.value = 'all'; noteFilter.value = 'all'; noteKind.value = 'note'; search.value = ''; this.update(); show(active); },
   };
 }
 

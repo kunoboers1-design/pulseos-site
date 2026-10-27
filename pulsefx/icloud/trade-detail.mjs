@@ -15,7 +15,7 @@ export function openTradeDetail(trade, snapshot, onCloseTrade, options = {}) {
   const minutes = Math.floor((end - start) / 60000);
   const duration = Number.isFinite(minutes) && minutes >= 0 ? `${Math.floor(minutes / 60)}h ${minutes % 60}m` : 'Unknown';
   const dialog = make('dialog', null, 'trade-detail-dialog'); dialog.id = 'trade-detail-dialog'; dialog.setAttribute('aria-labelledby', 'trade-detail-title');
-  let dirty = false, saving = false;
+  let dirty = false, saving = false, activeTab = 0, beginEditing;
   const changes = {};
   function requestClose() { if (!saving && (!dirty || confirm('Discard unsaved trade changes?'))) dialog.close(); }
   dialog.addEventListener('cancel', event => { event.preventDefault(); requestClose(); });
@@ -39,7 +39,7 @@ export function openTradeDetail(trade, snapshot, onCloseTrade, options = {}) {
     tab.onkeydown = e => { const keys = ['ArrowRight','ArrowLeft','Home','End']; if (!keys.includes(e.key)) return; e.preventDefault(); const next = e.key === 'Home' ? 0 : e.key === 'End' ? 4 : (index + (e.key === 'ArrowRight' ? 1 : 4)) % 5; select(next); nav.children[next].focus(); };
     nav.append(tab); panels.push(panel); body.append(panel);
   }
-  function select(index) { panels.forEach((p, i) => { p.hidden = index !== i; nav.children[i].setAttribute('aria-selected', String(index === i)); nav.children[i].tabIndex = index === i ? 0 : -1; }); }
+  function select(index) { activeTab = index; panels.forEach((p, i) => { p.hidden = index !== i; nav.children[i].setAttribute('aria-selected', String(index === i)); nav.children[i].tabIndex = index === i ? 0 : -1; }); }
   section(panels[0], 'Trade details', [['Result', trade.result], ['Direction', trade.direction], ['Account', account?.name || 'Unlinked account'], ['P/L', trade.status === 'open' ? 'Not realized · no live P/L' : money(trade.profitLoss)]]);
   section(panels[0], 'Risk & reward', [['Entry', trade.entryPrice], ['Stop loss', trade.stopLossPlacement], ['Close price', trade.actualExitPrice], ['Target R:R', trade.targetRR], ['Final R:R', trade.finalRR], ['Risk percentage', trade.riskPercent == null ? null : `${trade.riskPercent}%`], ['Stop loss (pips)', trade.stopLossPips], ['Pip value', trade.pipValue]]);
   section(panels[1], 'Strategy & execution', [['Trade type', trade.tradeTypeRaw], ['Session', sessionLabel(trade)], ['Setups', labels(trade, 'setup').join(', ')], ['Confluences', trade.confluences], ['Stop loss moved', trade.slMoved], ['Break-even hit', trade.breakEvenHitRaw], ['Weekend hold', trade.weekendHoldRaw]]);
@@ -48,16 +48,18 @@ export function openTradeDetail(trade, snapshot, onCloseTrade, options = {}) {
   section(panels[4], 'Trade summary', [['Instrument', trade.instrument], ['Account', account?.name || 'Unlinked account'], ['Status', trade.status], ['Direction', trade.direction], ['Lot size', trade.lotSize], ['Opened', date(trade.startedAt)], ['Closed', trade.closedAt ? date(trade.closedAt) : 'Still open'], ['Duration', duration], ['Account currency', trade.currency], ['Realized P/L', trade.status === 'open' ? 'Not realized' : money(trade.profitLoss)], ['Final R:R', trade.finalRR], ['Source', snapshot.source === 'demo' ? 'Fictional demo data' : 'Last loaded iCloud snapshot']]);
   const footer = make('footer', null, 'trade-detail-footer');
   const status = make('small', options.message || 'Take your time — nothing changes until you save or confirm.'); status.setAttribute('role', 'status'); footer.append(status);
-  const closeAction = action('Close trade', () => { if (dirty) { status.textContent = 'Save your changes first, then choose Close trade to review the result.'; return; } dialog.close(); onCloseTrade(); }, 'text-button');
+  const closeAction = action('Close trade', () => { if (dirty) { status.textContent = 'Save your changes first, then choose Close trade to review the result.'; return; } onCloseTrade(); }, 'text-button');
   const editable = trade.recordType === 'CD_OpenTrade' && trade.status === 'open' && trade.outcomeConsistent;
   if (editable && options.canEdit?.()) {
-    const edit = action('Edit trade', () => {
+    const edit = action('Edit trade', beginEditing = () => {
       edit.remove();
       const controls = [];
       ['Details', 'Strategy', 'Psychology', 'Notes'].forEach((name, index) => {
         panels[index].replaceChildren();
-        const card = make('section', null, 'trade-detail-card trade-edit-fields'); card.append(make('h3', name));
+        let card = make('section', null, 'trade-detail-card trade-edit-fields'); card.append(make('h3', name === 'Details' ? 'Trade details' : name));
+        panels[index].append(card);
         for (const [key, label, group, type, cloud] of EDIT_FIELDS.filter(f => f[2] === name)) {
+          if (key === 'entryPrice') { card = make('section', null, 'trade-detail-card trade-edit-fields'); card.append(make('h3', 'Risk & reward')); panels[index].append(card); }
           const wrap = make('div', null, 'cloud-field'), caption = make('label', label);
           let control;
           if (Array.isArray(type) || type === 'account' || type === 'boolean') {
@@ -86,9 +88,17 @@ export function openTradeDetail(trade, snapshot, onCloseTrade, options = {}) {
           if (control.disabled) wrap.append(make('small', 'Unsupported or invalid stored value. Edit this field in the native app.'));
           card.append(wrap); controls.push(control);
         }
-        panels[index].append(card);
       });
-      panels[4].replaceChildren(make('p', 'Save changes to refresh the trade summary. Result and realized P/L are updated through Close trade, together with the account balance.'));
+      function updateSummary() {
+        panels[4].replaceChildren();
+        section(panels[4], dirty ? 'Draft summary · not saved yet' : 'Trade summary', EDIT_FIELDS.map(([key, label,, type]) => {
+          const control = controls.find(c => c.id === `trade-edit-${key}`);
+          const current = control?.value;
+          return [label, type === 'account' ? snapshot.accounts.find(a => a.id === current)?.name || 'No account' : current];
+        }));
+        panels[4].append(make('p', 'Result and realized P/L are confirmed separately when you close the trade.'));
+      }
+      controls.forEach(c => c.addEventListener('input', updateSummary)); updateSummary();
       const save = action(snapshot.source === 'demo' ? 'Save demo changes' : 'Save changes to iCloud', async () => {
         if (saving) return;
         if (!dirty) { status.textContent = 'No changes to save.'; return; }
@@ -99,15 +109,17 @@ export function openTradeDetail(trade, snapshot, onCloseTrade, options = {}) {
           const result = await options.onSave({ ...changes });
           if (!dialog.isConnected) return;
           dirty = false; dialog.close();
-          openTradeDetail(result.trade, result.snapshot, onCloseTrade, { ...options, message: snapshot.source === 'demo' ? 'Demo changes saved for this page.' : 'Saved to iCloud and refreshed. Native sync may take a moment.' });
+          openTradeDetail(result.trade, result.snapshot, onCloseTrade, { ...options, initialTab: activeTab, message: snapshot.source === 'demo' ? 'Demo changes saved for this page.' : 'Saved to iCloud and refreshed. Native sync may take a moment.' });
         } catch (error) { status.textContent = error.message; }
         finally { saving = false; disabled.forEach(([c, wasDisabled]) => c.disabled = wasDisabled); }
       }, 'hero-button primary-button');
-      footer.append(save); status.textContent = 'Make your changes below. Save first, then close the trade when you’re ready.'; select(0);
+      footer.append(save); status.textContent = options.message || 'Make your changes below. Save first, then close the trade when you’re ready.'; select(activeTab);
     }, 'hero-button primary-button');
     footer.append(edit);
   } else status.textContent = options.message || (editable ? 'iCloud editing is not enabled here yet. You can try editing in the demo.' : 'Edit this trade in the native app.');
   if (trade.status === 'open') footer.append(closeAction);
   dialog.append(header, guide, nav, body, footer); document.body.append(dialog); select(0);
   dialog.addEventListener('close', () => dialog.remove(), { once: true }); dialog.showModal();
+  if (options.startEditing && beginEditing) beginEditing();
+  select(options.initialTab ?? 0);
 }

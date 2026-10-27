@@ -37,6 +37,12 @@ function lineChart(title, series, suffix = '', scatter = false, temporal = false
 export function mountMacStats(root) {
   let source=null, stale=false, demo=new URLSearchParams(location.search).get('statistics')==='demo';
   let opts={period:'all',accountKey:'all',instrument:'all',outcome:'all',metric:'r',slotHours:3}, result=null;
+  // Comment NL: Alleen algemene weergavekeuzes in de URL; geen account-ID's of handelsgegevens.
+  const query = new URLSearchParams(location.search);
+  for (const [key, choices] of Object.entries({ period:['all','week','month','ytd','custom'], metric:['r','percent'], outcome:['all','win','loss','breakEven'] })) {
+    if (choices.includes(query.get(`stats-${key}`))) opts[key] = query.get(`stats-${key}`);
+  }
+  for (const key of ['from','through']) if (/^\d{4}-\d{2}-\d{2}$/.test(query.get(`stats-${key}`) || '')) opts[key] = query.get(`stats-${key}`);
   let equity='r', calendar=dayKey(new Date()).slice(0,7), weekStart='Monday', comparisonMode='percent', selectedAccounts=[], notesFilter='all', sort='newest', display='table';
   const heading=el('div',null,'mac-header-title');
   const headingText=el('div'), screenTitle=el('h2','Overview'), subtitle=el('p','Headline performance and equity');
@@ -62,10 +68,10 @@ export function mountMacStats(root) {
     field(controls,'Instrument',[['All instruments','all'],...[...new Set((snapshot?.trades||[]).map(t=>t.instrument).filter(Boolean))].sort()],opts.instrument,v=>{opts.instrument=v;run();},'stats-instrument');
     field(controls,'Outcome',[['All outcomes','all'],['Wins','win'],['Losses','loss'],['Break-even','breakEven']],opts.outcome,v=>{opts.outcome=v;run();},'stats-outcome');
     field(controls,'Result metric',[['R multiple','r'],['Percentage','percent']],opts.metric,v=>{opts.metric=v;run();},'stats-metric');
-    controls.append(button('Export PDF',()=>window.print()));
+    controls.append(button('Reset filters',()=>{opts={period:'all',accountKey:'all',instrument:'all',outcome:'all',metric:'r',slotHours:3};populate();run();}),button('Export PDF',()=>window.print()));
     actions.querySelectorAll('[data-filter-action]').forEach(e=>e.remove());
     const recalculate=button('Calculate statistics',run);recalculate.dataset.filterAction='true';
-    const reset=button('Reset filters',()=>{opts={period:'all',accountKey:'all',instrument:'all',outcome:'all',metric:'r',slotHours:3};populate();run();});reset.dataset.filterAction='true';actions.append(recalculate,reset);
+    actions.append(recalculate);
   }
   function cards(parent, entries) { const grid=el('div',null,'cloud-grid stats-metrics'); for(const [label,value,note] of entries){const c=el('article',null,'fx-card');const symbol=svgEl('svg',{viewBox:'0 0 24 24',fill:'none',stroke:'currentColor','stroke-width':1.7,'aria-hidden':'true'});const paths={'Closed trades':'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18 M8 12l3 3 5-6','Win rate':'M12 2v4m0 12v4M2 12h4m12 0h4M12 5a7 7 0 1 0 0 14 7 7 0 0 0 0-14 M12 9v6m-3-3h6','Net result':'M4 3v17h17M7 15l4-6 4 3 6-7','Profit factor':'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18 M8 12h8 M12 7v1m0 8v1'};if(paths[label]){symbol.append(svgEl('path',{d:paths[label]}));const icon=el('span',null,'mac-metric-icon');icon.append(symbol);c.append(icon);c.classList.add('mac-headline');}c.append(el('span',label),el('strong',value));if(note)c.append(el('small',note));grid.append(c);}parent.append(grid); }
   function tradeTable(rows, parent) {
@@ -80,14 +86,23 @@ export function mountMacStats(root) {
     heading.append(title,el('p',`${rows.length} trades · Scroll horizontally for all fields`));header.append(heading,button('Close',()=>dialog.close()));dialog.append(header);
     tradeTable(rows,dialog);document.body.append(dialog);dialog.onclose=()=>dialog.remove();dialog.showModal();
   }
-  function breakdown(parent,title,rows,{pf='metricProfitFactor',initial='total',metricSelect=true}={}) {
+  function breakdown(parent,title,rows,{pf='metricProfitFactor',initial='total',metricSelect=true,preserveOrder=false}={}) {
     const box=el('section',null,'fx-card mac-breakdown');box.append(el('h3',title));const toolbar=el('div',null,'cloud-controls'),body=el('div');box.append(toolbar,body);parent.append(box);
-    const draw=key=>{body.replaceChildren();const sorted=[...rows].sort((a,b)=>(b[key]||0)-(a[key]||0));const max=Math.max(1,...sorted.map(r=>Math.abs(r[key]||0)).filter(Number.isFinite));
+    const draw=key=>{body.replaceChildren();const sorted=preserveOrder?[...rows]:[...rows].sort((a,b)=>(b[key]||0)-(a[key]||0));const max=Math.max(1,...sorted.map(r=>Math.abs(r[key]||0)).filter(Number.isFinite));
       for(const row of sorted){const b=button('',()=>drill(`${title} · ${row.label}`,row.records));b.className='mac-bar-row';b.append(el('span',row.label),el('strong',fmt(row[key],key==='winRate'?'':key==='count'||key===pf?'':unit())));if(key==='winRate')b.lastChild.textContent=fmt(row.winRate*100,'%');const bar=el('span',null,'mac-bar');bar.style.width=`${Number.isFinite(row[key])?Math.abs(row[key])/max*100:100}%`;bar.classList.toggle('negative',row[key]<0);b.append(bar,el('small',`${row.count} trades · ${fmt(row.winRate*100,'%')} wins · avg ${fmt(row.average,unit())} · PF ${fmt(row[pf])}`));body.append(b);}
       if(!rows.length)body.append(el('p','No matching journal values or trades.'));};
     if(metricSelect)field(toolbar,'Rank by',[['Net result','total'],['Average result','average'],['Win rate','winRate'],['Profit factor',pf],['Trade count','count']],initial,draw);draw(initial);return box;
   }
   function run() {
+    if (!document.body.hasAttribute('data-login-entry')) {
+      const url = new URL(location.href);
+      for (const key of ['period','metric','outcome','from','through']) {
+        const value = opts[key], fallback = {period:'all',metric:'r',outcome:'all'}[key];
+        if (value && value !== fallback && (!['from','through'].includes(key) || opts.period === 'custom')) url.searchParams.set(`stats-${key}`, value);
+        else url.searchParams.delete(`stats-${key}`);
+      }
+      history.replaceState(null, '', url);
+    }
     document.querySelectorAll('.mac-drilldown').forEach(d=>d.remove());
     output.replaceChildren(); result=null;
     if(!current()||stale&&!demo){status.textContent='Read a complete, fresh iCloud zone first. Previous statistics have been cleared.';return;}
@@ -114,7 +129,7 @@ export function mountMacStats(root) {
     const xy=(i,r)=>[220+Math.sin(i*Math.PI/3)*r,145-Math.cos(i*Math.PI/3)*r];
     for(const r of [30,60,90])svg.append(svgEl('polygon',{points:names.map((_,i)=>xy(i,r).join(',')).join(' '),class:'stats-zero',fill:'none'}));
     svg.append(svgEl('polygon',{points:result.profile.map((v,i)=>xy(i,v*90).join(',')).join(' '),class:'mac-radar'}));names.forEach((n,i)=>{const [x,y]=xy(i,125),t=svgEl('text',{x,y,'text-anchor':'middle'});t.textContent=n;svg.append(t);});radar.append(svg);sections.performance.append(radar);
-    breakdown(sections.performance,'Result distribution',result.distribution,{initial:'count',metricSelect:false});
+    breakdown(sections.performance,'Result distribution',result.distribution,{initial:'count',metricSelect:false,preserveOrder:true});
     sections.performance.append(lineChart('Target vs final R',[{label:'Target',points:result.target.map(t=>({value:t.target,x:t.target,date:t.trade.startedAt}))},{label:'Final',points:result.target.map(t=>({value:t.final,x:t.target,date:t.trade.startedAt}))}],'R',true));
     breakdown(sections.performance,'Target execution',['Reached or exceeded','Profitable, below target','Break even','Finished negative'].map((label,index)=>({label,...result.summarize(result.target.filter(t=>(t.trade.result==='win'&&t.final>=t.target?0:t.final>0?1:Math.abs(t.final)<.0001?2:3)===index).map(t=>t.trade))})),{initial:'count'});
     breakdown(sections.performance,'Pair ranking',result.byInstrument,{pf:'profitFactor'});breakdown(sections.performance,'Account ranking',result.byAccount,{pf:'profitFactor'});renderHeatmap(sections.overview);breakdown(sections.overview,'Setup × session',result.crossTab);renderMonthComparison(sections.overview);

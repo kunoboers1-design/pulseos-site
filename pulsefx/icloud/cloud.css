@@ -577,3 +577,9 @@ html[data-icloud-restoring="true"] .icloud-restore { display: grid; min-height: 
  .trade-detail-dialog .trade-detail-footer small { grid-column:1 / -1; }
  .trade-detail-dialog .trade-detail-footer button { width:100%; white-space:nowrap; }
 }
+/* MARK: - Accountdetails */
+.account-detail-list { display:grid; gap:8px; margin:14px 0; }
+.account-detail-list button { display:grid; grid-template-columns:1fr auto; gap:6px 14px; text-align:left; padding:12px 14px; min-height:52px; }
+.account-detail-list small { grid-column:1 / -1; color:var(--muted); }
+#account-detail-dialog select { min-height:44px; max-width:260px; }
+#account-detail-dialog .trade-detail-header button { margin-left:auto; }
