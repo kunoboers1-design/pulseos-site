@@ -26,6 +26,8 @@ export async function openLoginConnection(root) {
   const slot = document.getElementById('login-connection');
   const connectionMarker = document.createComment('connection'); connection.before(connectionMarker);
   const zoneMarker = document.createComment('zone'); zone.before(zoneMarker);
+  connection.querySelector('#remember-icloud').disabled = true;
+  connection.querySelector('#remember-icloud').checked = true;
   slot.replaceChildren(connection, zone);
   connection.querySelector('#connect-title').textContent = 'Sign in with iCloud';
   const details = document.createElement('details');
@@ -47,6 +49,7 @@ export async function openLoginConnection(root) {
     window.dispatchEvent(new Event('resize'));
   }, { once: true });
   await import('../icloud/cloud.mjs');
+  if (!start.disabled) connection.querySelector('#remember-icloud').disabled = false;
   const theme = document.createElement('script'); theme.src = '/theme.js'; document.head.append(theme);
   start.focus();
 }

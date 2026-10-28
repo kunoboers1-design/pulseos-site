@@ -299,7 +299,7 @@ function render(resetFilters = false) {
   const incomplete = data.collectionStatus !== 'complete';
   document.body.classList.toggle('workspace-demo', data.source === 'demo');
   $('quality').classList.toggle('warning', incomplete || state.stale || data.issues.length > 0);
-  $('quality').textContent = data.source === 'demo' ? 'Fictional workspace. No iCloud records have been read or changed.' : `${state.stale ? 'Stale results. The latest refresh did not complete. ' : ''}${incomplete ? 'Partial results: some queries failed. Balances are withheld. ' : 'Selected queries finished. '}${data.issues.length} data check(s) need review. This covers one zone and the requested record types. Photos and attachments are not loaded.`;
+  $('quality').textContent = data.source === 'demo' ? 'Fictional workspace. No iCloud records have been read or changed.' : `${state.stale ? 'Stale results. The latest refresh did not complete. ' : ''}${incomplete ? 'Partial results: some queries failed. Balances are withheld. ' : 'Selected queries finished. '}${data.issues.length} data check(s) need review. This covers one zone and the requested record types. Supported screenshots can be viewed in trade Notes; PencilKit handwriting is not rendered.`;
   $('coverage').replaceChildren(...data.coverage.map(c => card(c.type, String(c.received), c.complete ? 'All query pages received' : 'Incomplete query')));
   renderCombinedAccounts($('balances'), data);
   if (resetFilters) {

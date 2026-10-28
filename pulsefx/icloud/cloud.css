@@ -740,3 +740,5 @@ html[data-icloud-restoring="true"] .icloud-restore { display: grid; min-height: 
 .account-note-tile:hover, .account-note-tile:focus-visible { border-color: var(--accent); box-shadow: 0 0 16px color-mix(in srgb,var(--accent) 12%,transparent); }
 @media(max-width:640px) { .account-notes-grid { grid-template-columns: 1fr; } }
 @media(prefers-reduced-motion:reduce) { .cloud-test .account-note-tile { transition: none; } }
+/* Comment NL: Geldbedragen mogen op smalle telefoons niet midden in de decimalen afbreken. */
+@media(max-width:450px) { .account-overview-metrics { grid-template-columns: 1fr; } }

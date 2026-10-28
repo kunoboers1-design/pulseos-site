@@ -108,6 +108,7 @@ assert.equal(await page.locator('#start').isDisabled(), true);
 enabled = true;
 await page.goto(origin + '/pulsefx/login/');
 await page.getByRole('button', { name: 'Connect with iCloud' }).click();
+await page.waitForFunction(() => document.getElementById('remember-icloud')?.disabled === false);
 await page.getByLabel('Keep me signed in on this browser', { exact: true }).uncheck();
 await page.setViewportSize({ width: 375, height: 850 });
 assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
@@ -130,6 +131,7 @@ assert.match(await page.locator('#status').innerText(), /Disconnected/);
 nativeLoginZone = true;
 await page.goto(origin + '/pulsefx/login/');
 await page.getByRole('button', { name: 'Connect with iCloud' }).click();
+await page.waitForFunction(() => document.getElementById('remember-icloud')?.disabled === false);
 await page.getByLabel('Keep me signed in on this browser', { exact: true }).check();
 await page.getByRole('button', { name: 'Continue with Apple' }).click();
 await page.getByRole('button', { name: 'Test Apple sign in' }).click();
@@ -207,13 +209,13 @@ try {
   await page.locator('#stats-sections').getByRole('button', { name: 'Overview', exact: true }).click();
   await page.getByRole('button', { name: 'Trades', exact: true }).click();
   assert.ok(await page.locator('#trades td').evaluateAll(cells => cells.every(cell => cell.scrollWidth <= cell.clientWidth + 1)), 'Long user text must not overlap adjacent table cells');
-  assert.match(await page.locator('#balances').textContent(), /€1,200.00/);
-  assert.match(await page.locator('#balances').textContent(), /\$2,300.00/);
+  assert.match(await page.locator('#balances').textContent(), /2 accounts · 5 closed trades/);
+  assert.match(await page.locator('#accounts').textContent(), /2,300.00 USD/);
   assert.match(await page.locator('#trades').textContent(), /breakEven/);
   assert.equal(await page.evaluate(() => Object.keys(localStorage).filter(k => k !== 'pulsefx-remember-icloud').length + sessionStorage.length), 0);
   await page.getByRole('tab', { name: 'Accounts', exact: true }).click();
   await page.screenshot({ path: join(screenshots, 'connected-desktop.png'), fullPage: true });
-  await page.locator('#accounts button').first().click();
+  await page.locator('#accounts').getByRole('button', { name: 'View account', exact: true }).first().click();
   await page.locator('#account-detail-dialog').getByRole('tab', { name: 'Trades', exact: true }).click();
   await page.getByRole('button', { name: 'Open trade journal', exact: true }).click();
   assert.equal(await page.locator('#trades tr').count(), 3);
@@ -256,14 +258,14 @@ try {
   assert.equal((await page.locator('body').textContent()).includes('secret-user-value'), false);
   await page.evaluate(() => { testControl.fail = false; testControl.empty = true; });
   await page.getByRole('button', { name: 'Refresh selected zone' }).click();
-  await page.getByText('No known balances returned. This does not prove that your native data is empty.').waitFor();
+  await page.getByText('No closed trades yet.').waitFor();
   await page.getByRole('tab', { name: 'Settings', exact: true }).click();
   await page.getByRole('button', { name: 'Disconnect and clear data' }).click();
   assert.ok(await page.locator('#results').isHidden()); assert.equal(await page.locator('#accounts').textContent(), '');
 
   await connect(); await page.evaluate(() => { testControl.fail = true; }); await read();
   assert.match(await page.locator('#quality').textContent(), /Partial results/);
-  assert.match(await page.locator('#balances').textContent(), /Totals are unavailable/);
+  assert.match(await page.locator('#balances').textContent(), /Performance is unavailable/);
   await page.evaluate(() => { testControl.authLost = true; });
   await page.getByRole('button', { name: 'Refresh selected zone' }).click();
   await page.getByText(/The Apple account changed or signed out/).waitFor();
@@ -298,7 +300,7 @@ try {
   await detail.getByText('Entry is outside the allowed range.', { exact: true }).waitFor();
   await detail.getByLabel('Entry', { exact: true }).fill('1.085');
   await detail.getByRole('tab', { name: 'Strategy', exact: true }).click();
-  await detail.getByText('Additional journal fields', { exact: true }).click();
+  await detail.locator('#trade-detail-panel-1').getByText('Additional journal fields', { exact: true }).click();
   await detail.getByLabel('Custom session', { exact: true }).fill('London review');
   await detail.getByRole('tab', { name: 'Psychology', exact: true }).click();
   await detail.getByRole('combobox', { name: 'Emotion', exact: true }).selectOption('Calm');
@@ -313,7 +315,7 @@ try {
   assert.equal(await detail.getByLabel('Pre-trade', { exact: true }).inputValue(), 'Edited note <script>safe text</script>');
   assert.equal(await detail.locator('script').count(), 0);
   await detail.getByRole('tab', { name: 'Summary', exact: true }).click();
-  await detail.getByText('Edited note <script>safe text</script>', { exact: true }).waitFor();
+  await detail.getByRole('heading', { name: 'Close summary', exact: true }).waitFor();
   await detail.getByRole('tab', { name: 'Details', exact: true }).click();
   await detail.getByLabel('Entry', { exact: true }).fill('1.2');
   page.once('dialog', d => d.dismiss());
@@ -328,7 +330,7 @@ try {
   await page.getByRole('tab', { name: 'Accounts', exact: true }).click();
   await page.getByRole('button', { name: 'View account', exact: true }).first().click();
   const accountDetail = page.locator('#account-detail-dialog');
-  await accountDetail.getByRole('heading', { name: 'Performance · all time', exact: true }).waitFor();
+  await accountDetail.getByRole('heading', { name: 'Performance', exact: true }).waitFor();
   for (const width of [390, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     assert.ok(await accountDetail.evaluate(el => el.scrollWidth <= el.clientWidth + 1));
@@ -337,8 +339,8 @@ try {
   await accountDetail.getByRole('tab', { name: 'Notes', exact: true }).click();
   await accountDetail.getByRole('tab', { name: 'Trades', exact: true }).click();
   await accountDetail.getByLabel('Account trade status').selectOption('open');
-  assert.equal(await accountDetail.locator('#account-panel-1 .account-detail-list button').count(), 1);
-  await accountDetail.locator('#account-panel-1 .account-detail-list button').click();
+  assert.equal(await accountDetail.locator('#account-panel-1 .account-history-table button').count(), 1);
+  await accountDetail.locator('#account-panel-1 .account-history-table button').click();
   await detail.getByRole('button', { name: 'Close details', exact: true }).click();
   await page.getByRole('tab', { name: /Open trades/ }).click();
   const first = page.locator('.open-trade').first();
@@ -369,7 +371,7 @@ try {
   await page.locator('#close-dialog').waitFor({ state: 'hidden' });
   assert.equal(await page.locator('.open-trade').count(), 1);
   await page.getByRole('tab', { name: 'Accounts', exact: true }).click();
-  await page.locator('#accounts').getByText('$25,320.00', { exact: true }).waitFor();
+  await page.locator('#accounts').getByText('25,320.00 USD', { exact: true }).waitFor();
   await page.getByRole('tab', { name: 'Stats', exact: true }).click();
   await page.locator('#stats-sections').getByRole('button', { name: 'Overview', exact: true }).click();
   await page.locator('.stats-metrics').getByText('49 closed trades', { exact: true }).waitFor();
