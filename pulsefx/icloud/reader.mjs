@@ -5,7 +5,8 @@ const companions = names => names.flatMap(name => [name, `${name}_ckAsset`]);
 export const DESIRED_KEYS = Object.freeze({
   CD_Account: ['CD_id', 'CD_entityName', ...companions(['CD_name', 'CD_currencyRaw', 'CD_kindRaw']), 'CD_balance', 'CD_startBalance', 'CD_isArchived', 'CD_isFavorite', 'CD_createdAt', 'CD_archivedAt'],
   CD_Trade: ['CD_id', 'CD_entityName', 'CD_account', ...companions(['CD_pair', 'CD_outcomeRaw']), 'CD_lotSize', 'CD_riskPercent', 'CD_profitLoss', 'CD_stopLossPips', 'CD_pipValue', 'CD_createdAt', 'CD_closedAt'],
-  CD_OpenTrade: ['CD_id', 'CD_entityName', 'CD_linkedAccountId', ...companions(['CD_symbol', 'CD_statusRaw', 'CD_resultRaw', 'CD_directionRaw']), 'CD_lotSize', 'CD_riskPercent', 'CD_profitLoss', 'CD_finalRR', 'CD_entryPrice', 'CD_stopLossPlacement', 'CD_actualExitPrice', 'CD_openedAt', 'CD_closedAt', ...companions(['CD_preTradeNotes', 'CD_postTradeNotes', 'CD_sessionRaw', 'CD_sessionCustom', 'CD_emotionCustom', 'CD_emotionalStateRaw', 'CD_tradeTypeRaw', 'CD_setupTag', 'CD_mistakeTag', 'CD_setupsSelectedRaw', 'CD_mistakesSelectedRaw', 'CD_breakEvenHitRaw', 'CD_weekendHoldRaw']), 'CD_targetRR', 'CD_confluences', 'CD_slMoved'],
+  CD_OpenTrade: ['CD_id', 'CD_entityName', 'CD_linkedAccountId', ...companions(['CD_symbol', 'CD_statusRaw', 'CD_resultRaw', 'CD_directionRaw']), 'CD_lotSize', 'CD_riskPercent', 'CD_profitLoss', 'CD_finalRR', 'CD_entryPrice', 'CD_stopLossPlacement', 'CD_actualExitPrice', 'CD_openedAt', 'CD_closedAt', ...companions(['CD_preTradeNotes', 'CD_postTradeNotes', 'CD_sessionRaw', 'CD_sessionCustom', 'CD_emotionCustom', 'CD_emotionalStateRaw', 'CD_tradeTypeRaw', 'CD_setupTag', 'CD_mistakeTag', 'CD_timeframesSelectedRaw', 'CD_setupsSelectedRaw', 'CD_mistakesSelectedRaw', 'CD_breakEvenHitRaw', 'CD_weekendHoldRaw']), 'CD_confidenceRating', 'CD_tradeRating', 'CD_targetRR', 'CD_confluences', 'CD_slMoved'],
+  CD_TradeScreenshot: ['CD_id', 'CD_entityName', 'CD_trade', 'CD_label', 'CD_data', 'CD_data_ckAsset', 'CD_annotationData', 'CD_annotationData_ckAsset'],
   CD_TradeNote: ['CD_id', 'CD_entityName', 'CD_createdAt', 'CD_accountID', 'CD_tradeID', 'CD_richBodyData', 'CD_richBodyData_ckAsset', ...companions(['CD_title', 'CD_body'])],
 });
 const allowedErrors = new Set(['AUTHENTICATION_REQUIRED', 'AUTHENTICATION_FAILED', 'ACCESS_DENIED', 'ZONE_NOT_FOUND', 'UNKNOWN_ITEM', 'BAD_REQUEST', 'INVALID_ARGUMENTS', 'QUOTA_EXCEEDED', 'SERVICE_UNAVAILABLE', 'NETWORK_ERROR', 'REQUEST_RATE_LIMITED', 'CONFIGURATION_ERROR', 'MANAGED_ACCOUNT_RESTRICTED']);
@@ -84,7 +85,7 @@ export function createReader({ database, context, requestTimeout = 15000, maxPag
       const records = [], failures = [], coverage = [];
       let pages = 0;
       const started = Date.now();
-      for (const type of RECORD_TYPES.filter(type => includeNotes || type !== 'CD_TradeNote')) {
+      for (const type of RECORD_TYPES.filter(type => includeNotes || !['CD_TradeNote', 'CD_TradeScreenshot'].includes(type))) {
         const query = { recordType: type, filterBy: [{ fieldName: 'CD_entityName', comparator: 'EQUALS', fieldValue: { value: type.slice(3) } }] };
         const options = { zoneID: selected.requestZone, desiredKeys: DESIRED_KEYS[type], resultsLimit: 200, numbersAsStrings: false };
         let next = query, complete = false, count = 0;
@@ -119,7 +120,8 @@ export function createReader({ database, context, requestTimeout = 15000, maxPag
         coverage.push({ type, received: count, complete });
       }
       current();
-      return { ...mapSnapshot({ context, records, collectionStatus: failures.some(f => f.type !== 'CD_TradeNote') ? 'partial' : 'complete' }),
+      return { ...mapSnapshot({ context, records, collectionStatus: failures.some(f => !['CD_TradeNote', 'CD_TradeScreenshot'].includes(f.type)) ? 'partial' : 'complete' }),
+        screenshotsStatus: !includeNotes ? 'not-requested' : failures.some(f => f.type === 'CD_TradeScreenshot') ? 'partial' : 'complete',
         notesStatus: !includeNotes ? 'not-requested' : failures.some(f => f.type === 'CD_TradeNote') ? 'partial' : 'complete', fetchedAt: new Date().toISOString(), environment: context.environment, zone, failures, coverage, pages };
     },
   });

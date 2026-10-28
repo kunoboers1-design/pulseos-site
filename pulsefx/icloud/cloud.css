@@ -592,3 +592,151 @@ html[data-icloud-restoring="true"] .icloud-restore { display: grid; min-height: 
 :root[data-theme="light"] .cloud-test .trade-direction--long { color: #146b35; background: #e1f6e8; border-color: #94cba7; }
 :root[data-theme="light"] .cloud-test .trade-direction--short { color: #a62332; background: #ffe7ea; border-color: #e6a1aa; }
 :root[data-theme="light"] .cloud-test .trade-direction--unknown { color: #914600; background: #fff0de; border-color: #dfb580; }
+
+/* MARK: - Tradegloed volgt de accentkleur uit Settings */
+.cloud-test .open-trade-list .open-trade {
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .cloud-test .open-trade-list .open-trade:hover {
+    border-color: color-mix(in srgb, var(--accent) 65%, var(--line));
+    box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 18%, transparent), inset 0 0 24px color-mix(in srgb, var(--accent) 6%, transparent);
+  }
+}
+.cloud-test .open-trade-list .open-trade:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 18%, transparent), inset 0 0 24px color-mix(in srgb, var(--accent) 6%, transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .cloud-test .open-trade-list .open-trade { transition: none; }
+}
+
+/* MARK: - Venster sluiten blijft visueel los van de handelsactie */
+.cloud-test .trade-detail-header > .trade-dialog-dismiss {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; min-height: 40px; flex: 0 0 40px;
+  margin-left: auto; padding: 0; border-radius: 50%;
+  font-size: 26px; font-weight: 400; line-height: 1;
+}
+
+/* MARK: - Compacte Strategy-kaarten zoals op macOS */
+.strategy-fields .strategy-intro { grid-column: 1 / -1; margin: -8px 0 6px; font-size: 12px; }
+.strategy-fields > .cloud-field { padding: 14px; background: var(--surface-2, rgba(128,128,128,.08)); border-radius: 12px; min-width: 0; }
+.strategy-picker summary { cursor: pointer; color: var(--accent); overflow-wrap: anywhere; }
+.strategy-options { display: grid; gap: 8px; padding-top: 12px; }
+.strategy-options label { display: flex; align-items: center; gap: 8px; }
+.strategy-options input[type="checkbox"], .strategy-fields input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent); }
+.strategy-dots { display: flex; gap: 2px; }
+.strategy-dots button { border: 0; background: transparent; min-width: 32px; min-height: 36px; padding: 0; color: var(--muted); font-size: 20px; }
+.strategy-dots button.filled { color: var(--accent); }
+.strategy-additional { margin-top: 12px; }
+.strategy-additional > summary { cursor: pointer; color: var(--muted); font-size: 13px; }
+.psychology-stars button { font-size: 27px; }
+
+/* MARK: - Native trade-notities en screenshots */
+.native-trade-notes .cloud-field { grid-column: 1 / -1; border: 1px solid var(--line-strong); border-radius: 16px; overflow: hidden; gap: 0; }
+.native-trade-notes .cloud-field label { padding: 12px 16px; background: var(--surface); border-bottom: 1px solid var(--line-strong); }
+.native-trade-notes .cloud-field textarea { border: 0; border-radius: 0; padding: 16px; min-height: 140px; }
+.trade-screenshot-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 12px; }
+.trade-screenshot-grid figure { margin: 0; min-width: 0; }
+.trade-screenshot-grid img { width: 100%; height: 180px; object-fit: contain; }
+.screenshot-preview { width: 100%; padding: 8px; cursor: zoom-in; }
+.screenshot-viewer { max-width: min(1100px, 94vw); max-height: 92dvh; background: var(--surface); color: var(--text); border-radius: 18px; overflow: auto; }
+.screenshot-viewer img { display: block; max-width: 100%; max-height: 75dvh; object-fit: contain; }
+.screenshot-viewer > button { display: block; margin-left: auto; }
+
+/* MARK: - Native samenvatting */
+.trade-summary-status { padding: 16px; border-radius: 16px; background: color-mix(in srgb, #ff9500 10%, var(--surface-soft)); }
+.trade-summary-status.is-closed { background: var(--surface-soft); }
+.trade-summary-status p { margin: 10px 0 0; }
+.trade-summary-status .trade-summary-missing { color: #ff9500; }
+.trade-summary-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); background: var(--surface-soft); border-radius: 16px; padding: 16px 0; }
+.trade-summary-metrics > div { padding: 0 16px; display: grid; gap: 10px; min-width: 0; }
+.trade-summary-metrics > div + div { border-left: 1px solid var(--line-strong); }
+.trade-summary-metrics span { font-size: .72rem; text-transform: uppercase; color: var(--muted); }
+.trade-summary-metrics strong { font-size: clamp(.9rem, 1.6vw, 1.2rem); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.trade-summary-metrics .positive { color: var(--success); }
+.trade-summary-metrics .negative { color: var(--danger); }
+.trade-summary-metrics .accent { color: var(--accent); }
+.trade-summary-caption { font-size: .75rem; margin-bottom: 0; }
+@media (max-width: 520px) {
+  .trade-summary-metrics { grid-template-columns: 1fr; gap: 12px; }
+  .trade-summary-metrics > div { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .trade-summary-metrics > div + div { border-left: 0; border-top: 1px solid var(--line); padding-top: 12px; }
+}
+
+/* MARK: - Gecombineerde accountprestaties */
+.accounts-combined { padding: 22px; margin-bottom: 24px; }
+.accounts-combined h3 { margin: 0; }
+.accounts-combined > p { margin: 6px 0 22px; }
+.combined-layout { display: grid; grid-template-columns: 1fr 2fr; gap: 28px; align-items: center; }
+.combined-totals { display: grid; gap: 12px; border-right: 1px solid var(--line); }
+.combined-totals > strong { font-size: 2.6rem; font-variant-numeric: tabular-nums; }
+.combined-totals .positive { color: var(--success); }
+.combined-totals .negative { color: var(--danger); }
+.combined-chart { min-width: 0; }
+.combined-chart svg { display: block; width: 100%; height: auto; }
+@media (max-width: 640px) { .combined-layout { grid-template-columns: 1fr; gap: 14px; } .combined-totals { border-right: 0; } }
+
+/* MARK: - Accountfavorieten */
+.workspace-account-card { position: relative; }
+.workspace-account-card > :first-child { padding-right: 48px; }
+.cloud-test .account-favorite { position: absolute; top: 14px; right: 14px; width: 44px; height: 44px; padding: 0; border: 0; background: transparent; color: var(--muted); font-size: 26px; cursor: pointer; }
+.cloud-test .account-favorite[aria-pressed="true"] { color: #e5ac00; }
+.cloud-test .account-favorite:disabled { opacity: .4; cursor: default; }
+
+/* MARK: - Accountsaldo en R zoals native */
+.account-card-metrics { display: flex; align-items: start; justify-content: space-between; gap: 16px; margin: 16px 0; }
+.account-card-metrics > div { display: grid; gap: 6px; min-width: 0; }
+.account-card-metrics > div:last-child { text-align: right; flex-shrink: 0; }
+.account-card-metrics small { color: var(--muted); font-size: .75rem; }
+.account-card-metrics strong { font-size: 1.25rem; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.account-card-metrics .positive { color: var(--success); }
+.account-card-metrics .negative { color: var(--danger); }
+.workspace-account-card > span:first-child { font-weight: 650; }
+
+/* MARK: - Ruime native accountinspectie */
+#account-detail-dialog { width: min(1240px, calc(100vw - 32px)); max-width: none; height: calc(100dvh - 48px); max-height: calc(100dvh - 48px); }
+#account-detail-dialog .trade-detail-body { padding: 24px; }
+.account-overview-card > h3 { font-size: 1rem; }
+.account-overview-card > p { margin: 6px 0 20px; }
+.account-overview-metrics { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 12px; }
+.account-overview-metrics > div { display: grid; gap: 16px; padding: 20px 16px; border: 1px solid var(--line-strong); border-radius: 14px; background: var(--surface-soft); }
+.account-overview-metrics strong { font-size: 1.25rem; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.account-overview-metrics small, .account-overview-details small { color: var(--muted); }
+.account-overview-details { display: flex; gap: 28px; flex-wrap: wrap; border-top: 1px solid var(--line); margin-top: 20px; padding-top: 18px; }
+.account-overview-details > div { display: grid; gap: 7px; }
+.account-overview-card svg { display: block; width: 100%; height: auto; }
+@media(max-width:700px) { .account-overview-metrics { grid-template-columns: repeat(2,minmax(0,1fr)); } #account-detail-dialog .trade-detail-body { padding: 12px; } }
+@media(max-width:380px) { .account-overview-metrics { grid-template-columns: 1fr; } }
+
+/* MARK: - Native tradehistorie */
+.account-history > select { max-width: 260px; margin-bottom: 16px; }
+.account-history-scroll { overflow-x: auto; margin-bottom: 16px; }
+.account-history-table { width: 100%; border-collapse: collapse; font-size: .82rem; white-space: nowrap; }
+.account-history-table th { text-align: left; color: var(--muted); font-size: .72rem; font-weight: 600; padding: 12px; background: var(--surface-soft); }
+.account-history-table td { padding: 12px; border-bottom: 1px solid var(--line); height: auto; }
+.account-history-table td small { display: block; margin-top: 4px; color: var(--muted); font-size: .72rem; }
+.account-history-table td > button { padding: 0; min-height: 28px; border: 0; background: transparent; font-weight: 650; }
+.account-history-table th:nth-last-child(-n+3), .account-history-table td:nth-last-child(-n+3) { text-align: right; font-variant-numeric: tabular-nums; }
+.account-history-table .positive { color: var(--success); }
+.account-history-table .negative { color: var(--danger); }
+.account-history-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
+.account-history-table .history-result { border-radius: 100px; }
+
+/* MARK: - Accountnotities zoals op de Mac */
+.account-notes-card > p { margin: 6px 0 22px; }
+.account-notes-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
+.cloud-test .account-note-tile { display: flex; flex-direction: column; align-items: stretch; gap: 18px; text-align: left; padding: 20px; border: 1px solid var(--line-strong); border-radius: 18px; background: var(--surface-soft); color: var(--text); font: inherit; cursor: pointer; min-width: 0; transition: border-color .2s, box-shadow .2s; }
+.account-note-heading { display: flex; align-items: center; gap: 12px; }
+.account-note-heading > span:nth-child(2) { flex: 1; min-width: 0; }
+.account-note-heading strong { display: block; font-size: .95rem; overflow-wrap: anywhere; }
+.account-note-heading small { display: block; margin-top: 5px; color: var(--muted); font-size: .75rem; }
+.account-note-icon { display: grid; place-items: center; width: 36px; height: 36px; flex-shrink: 0; border-radius: 10px; color: var(--accent); background: color-mix(in srgb,var(--accent) 12%,transparent); font-size: 22px; }
+.account-note-arrow { color: var(--muted); font-size: 24px; }
+.account-note-excerpt { color: var(--muted); font-size: .85rem; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+.account-note-link { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--line-strong); color: var(--muted); font-size: .8rem; }
+.account-trade-notes > summary { cursor: pointer; padding: 16px 0; color: var(--muted); }
+.account-note-tile:hover, .account-note-tile:focus-visible { border-color: var(--accent); box-shadow: 0 0 16px color-mix(in srgb,var(--accent) 12%,transparent); }
+@media(max-width:640px) { .account-notes-grid { grid-template-columns: 1fr; } }
+@media(prefers-reduced-motion:reduce) { .cloud-test .account-note-tile { transition: none; } }

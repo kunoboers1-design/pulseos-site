@@ -1,3 +1,6 @@
+import { renderTradeSummary } from './trade-summary.mjs';
+import { appendScreenshots } from './screenshots.mjs';
+import { decorateStrategy } from './strategy-controls.mjs';
 import { EDIT_FIELDS } from './edit-trade.mjs';
 import { labels, sessionLabel, psychologyLabel } from './mac-statistics.mjs';
 
@@ -21,7 +24,9 @@ export function openTradeDetail(trade, snapshot, onCloseTrade, options = {}) {
   dialog.addEventListener('cancel', event => { event.preventDefault(); requestClose(); });
   const header = make('header', null, 'trade-detail-header');
   const heading = make('div'); const title = make('h2', trade.instrument || 'Trade'); title.id = 'trade-detail-title'; heading.append(title, make('small', `${date(trade.startedAt)} · local time`));
-  header.append(heading, make('span', (trade.status || 'Unknown').toUpperCase(), 'tag'), make('span', `${account?.name || 'Unlinked account'} · ${duration}`), make('strong', `${value(trade.lotSize)} lots`), action('Close details', requestClose));
+  const dismiss = action('×', requestClose, 'text-button trade-dialog-dismiss');
+  dismiss.setAttribute('aria-label', 'Close details'); dismiss.title = 'Close details';
+  header.append(heading, make('span', (trade.status || 'Unknown').toUpperCase(), 'tag'), make('span', `${account?.name || 'Unlinked account'} · ${duration}`), make('strong', `${value(trade.lotSize)} lots`), dismiss);
   const nav = make('div', null, 'trade-detail-tabs'); nav.setAttribute('role', 'tablist'); nav.setAttribute('aria-label', 'Trade detail sections');
   const body = make('div', null, 'trade-detail-body');
   const guide = make('p', 'Review your trade, add your notes, and close it when you’re ready.', 'trade-detail-guide');
@@ -42,10 +47,11 @@ export function openTradeDetail(trade, snapshot, onCloseTrade, options = {}) {
   function select(index) { activeTab = index; panels.forEach((p, i) => { p.hidden = index !== i; nav.children[i].setAttribute('aria-selected', String(index === i)); nav.children[i].tabIndex = index === i ? 0 : -1; }); }
   section(panels[0], 'Trade details', [['Result', trade.result], ['Direction', trade.direction], ['Account', account?.name || 'Unlinked account'], ['P/L', trade.status === 'open' ? 'Not realized · no live P/L' : money(trade.profitLoss)]]);
   section(panels[0], 'Risk & reward', [['Entry', trade.entryPrice], ['Stop loss', trade.stopLossPlacement], ['Close price', trade.actualExitPrice], ['Target R:R', trade.targetRR], ['Final R:R', trade.finalRR], ['Risk percentage', trade.riskPercent == null ? null : `${trade.riskPercent}%`], ['Stop loss (pips)', trade.stopLossPips], ['Pip value', trade.pipValue]]);
-  section(panels[1], 'Strategy & execution', [['Trade type', trade.tradeTypeRaw], ['Session', sessionLabel(trade)], ['Setups', labels(trade, 'setup').join(', ')], ['Confluences', trade.confluences], ['Stop loss moved', trade.slMoved], ['Break-even hit', trade.breakEvenHitRaw], ['Weekend hold', trade.weekendHoldRaw]]);
-  section(panels[2], 'Psychology & review', [['Emotional state', psychologyLabel(trade)], ['Mistakes', labels(trade, 'mistake').join(', ')]]);
+  section(panels[1], 'Strategy & execution', [['Setup', labels(trade, 'setup').join(', ')], ['Timeframe', trade.timeframesSelectedRaw], ['Mistake', labels(trade, 'mistake').join(', ')], ['Trade type', trade.tradeTypeRaw], ['Session', sessionLabel(trade)], ['Confluences', trade.confluences], ['Stop loss moved', trade.slMoved], ['Break-even hit', trade.breakEvenHitRaw], ['Weekend hold', trade.weekendHoldRaw]]);
+  section(panels[2], 'Psychology & review', [['Emotion', psychologyLabel(trade)], ['Confidence', trade.confidenceRating], ['Execution', trade.tradeRating]]);
   section(panels[3], 'Journal notes', [['Before the trade', note(trade.preTradeNotes)], ['After the trade', note(trade.postTradeNotes)]]);
-  section(panels[4], 'Trade summary', [['Instrument', trade.instrument], ['Account', account?.name || 'Unlinked account'], ['Status', trade.status], ['Direction', trade.direction], ['Lot size', trade.lotSize], ['Opened', date(trade.startedAt)], ['Closed', trade.closedAt ? date(trade.closedAt) : 'Still open'], ['Duration', duration], ['Account currency', trade.currency], ['Realized P/L', trade.status === 'open' ? 'Not realized' : money(trade.profitLoss)], ['Final R:R', trade.finalRR], ['Source', snapshot.source === 'demo' ? 'Fictional demo data' : 'Last loaded iCloud snapshot']]);
+  appendScreenshots(panels[3], trade, snapshot);
+  renderTradeSummary(panels[4], trade, account);
   const footer = make('footer', null, 'trade-detail-footer');
   const status = make('small', options.message || 'Take your time — nothing changes until you save or confirm.'); status.setAttribute('role', 'status'); footer.append(status);
   const closeAction = action('Close trade', () => { if (dirty) { status.textContent = 'Save your changes first, then choose Close trade to review the result.'; return; } onCloseTrade(); }, 'text-button');
@@ -58,7 +64,11 @@ export function openTradeDetail(trade, snapshot, onCloseTrade, options = {}) {
         panels[index].replaceChildren();
         let card = make('section', null, 'trade-detail-card trade-edit-fields'); card.append(make('h3', name === 'Details' ? 'Trade details' : name));
         panels[index].append(card);
+        if (name === 'Notes') { card.classList.add('native-trade-notes'); card.append(make('p', 'Keep your plan and post-trade lessons together.', 'strategy-intro')); }
+        if (name === 'Strategy') { card.classList.add('strategy-fields'); const intro = make('p', 'Capture the setup, timeframe and confluences behind the trade.', 'strategy-intro'); card.append(intro); }
+        if (name === 'Psychology') { card.classList.add('strategy-fields'); card.append(make('p', 'Reflect on emotion, confidence and execution quality.', 'strategy-intro')); }
         for (const [key, label, group, type, cloud] of EDIT_FIELDS.filter(f => f[2] === name)) {
+          if (key === 'sessionRaw' || key === 'emotionalStateRaw') { const extra = make('details', null, 'strategy-additional'); extra.append(make('summary', 'Additional journal fields')); card = make('section', null, 'trade-detail-card trade-edit-fields'); extra.append(card); panels[index].append(extra); }
           if (key === 'entryPrice') { card = make('section', null, 'trade-detail-card trade-edit-fields'); card.append(make('h3', 'Risk & reward')); panels[index].append(card); }
           const wrap = make('div', null, 'cloud-field'), caption = make('label', label);
           let control;
@@ -73,7 +83,7 @@ export function openTradeDetail(trade, snapshot, onCloseTrade, options = {}) {
             control.value = current;
           } else {
             control = make(type === 'note' ? 'textarea' : 'input');
-            if (type === 'note') { control.rows = 6; control.maxLength = 10000; }
+            if (type === 'note') { control.placeholder = key === 'preTradeNotes' ? 'Write your analysis before the trade…' : 'Write your review and lessons learned…'; control.rows = 5; control.maxLength = 10000; }
             else { control.type = ['text'].includes(type) ? 'text' : 'number'; if (control.type === 'number') control.step = type === 'integer' ? '1' : 'any'; else control.maxLength = 1000; }
             control.value = trade[key] == null ? '' : String(trade[key]);
           }
@@ -86,17 +96,15 @@ export function openTradeDetail(trade, snapshot, onCloseTrade, options = {}) {
           });
           wrap.append(caption, control);
           if (control.disabled) wrap.append(make('small', 'Unsupported or invalid stored value. Edit this field in the native app.'));
+          if (name === 'Strategy' || name === 'Psychology') decorateStrategy(key, control, wrap);
           card.append(wrap); controls.push(control);
         }
       });
+      appendScreenshots(panels[3], trade, snapshot);
       function updateSummary() {
-        panels[4].replaceChildren();
-        section(panels[4], dirty ? 'Draft summary · not saved yet' : 'Trade summary', EDIT_FIELDS.map(([key, label,, type]) => {
-          const control = controls.find(c => c.id === `trade-edit-${key}`);
-          const current = control?.value;
-          return [label, type === 'account' ? snapshot.accounts.find(a => a.id === current)?.name || 'No account' : current];
-        }));
-        panels[4].append(make('p', 'Result and realized P/L are confirmed separately when you close the trade.'));
+        const accountId = controls.find(c => c.id === 'trade-edit-accountReference')?.value;
+        const selectedAccount = snapshot.accounts.find(a => a.id === accountId);
+        renderTradeSummary(panels[4], trade, selectedAccount, dirty);
       }
       controls.forEach(c => c.addEventListener('input', updateSummary)); updateSummary();
       const save = action(snapshot.source === 'demo' ? 'Save demo changes' : 'Save changes to iCloud', async () => {

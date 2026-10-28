@@ -1,6 +1,7 @@
+import { screenshotSource } from './screenshots.mjs';
 // MARK: - Contract
 // Comment NL: Deze pure mapper verwerkt aangeleverde records; hij opent geen opslag of netwerk.
-export const RECORD_TYPES = Object.freeze(['CD_Account', 'CD_Trade', 'CD_OpenTrade', 'CD_TradeNote']);
+export const RECORD_TYPES = Object.freeze(['CD_Account', 'CD_Trade', 'CD_OpenTrade', 'CD_TradeNote', 'CD_TradeScreenshot']);
 const CURRENCIES = new Set('USD EUR GBP JPY AUD CAD CHF NZD CNY INR RUB ZAR BRL MXN TRY PLN CZK HUF SEK NOK DKK KRW TWD THB MYR IDR PHP VND HKD SGD AED SAR ILS'.split(' '));
 const KINDS = ['phase', 'funded', 'own', 'demo', 'ownCapital', 'externalCapital'];
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -262,11 +263,18 @@ export function mapSnapshot({ context, records, collectionStatus }) {
     if (matches.length === 1) { note.accountKey = matches[0].key; note.linkStatus = 'linked'; }
     else if (matches.length > 1) note.linkStatus = 'ambiguous';
   }
+  const screenshots = entries.filter(e => e.record.recordType === 'CD_TradeScreenshot').map(({ record, zone }) => {
+    const f = record.fields;
+    const matches = trades.filter(t => t.recordType === 'CD_OpenTrade' && t.recordName === (typeof f.CD_trade?.value === 'string' ? f.CD_trade.value : f.CD_trade?.value?.recordName) && t.zone.zoneName === zone.zoneName && t.zone.ownerRecordName === zone.ownerRecordName);
+    return { tradeKey: matches.length === 1 ? matches[0].key : null, src: screenshotSource(f),
+      label: typeof f.CD_label?.value === 'string' ? f.CD_label.value : '',
+      annotated: Boolean(f.CD_annotationData?.value || f.CD_annotationData_ckAsset?.value) };
+  });
   const summary = summarize(accounts, trades, issues);
   return {
     source: 'mapped-records', collectionStatus,
     quality: issues.length ? 'needs-review' : 'validated-input',
-    accounts, trades, notes, summary, issues, repeatedRecords,
+    accounts, trades, notes, screenshots, summary, issues, repeatedRecords,
   };
 }
 
@@ -274,14 +282,14 @@ export function mapSnapshot({ context, records, collectionStatus }) {
 // Comment NL: Ontbrekende waarden blijven onbekend; INT64-tellers zijn geen booleans.
 function journalFields(record, key, issues) {
   const result = {};
-  for (const name of ['sessionRaw', 'sessionCustom', 'emotionCustom', 'emotionalStateRaw', 'tradeTypeRaw', 'setupTag', 'mistakeTag', 'setupsSelectedRaw', 'mistakesSelectedRaw', 'breakEvenHitRaw', 'weekendHoldRaw']) {
+  for (const name of ['sessionRaw', 'sessionCustom', 'emotionCustom', 'emotionalStateRaw', 'tradeTypeRaw', 'setupTag', 'mistakeTag', 'timeframesSelectedRaw', 'setupsSelectedRaw', 'mistakesSelectedRaw', 'breakEvenHitRaw', 'weekendHoldRaw']) {
     result[name] = record.fields[`CD_${name}`] || record.fields[`CD_${name}_ckAsset`] ? noteText(record, `CD_${name}`, key, issues) : null;
   }
   result.targetRR = reader(record, key, issues).number('CD_targetRR', { optional: true });
-  for (const name of ['confluences', 'slMoved']) {
+  for (const name of ['confluences', 'slMoved', 'confidenceRating', 'tradeRating']) {
     const f = record.fields[`CD_${name}`]; result[name] = null;
     if (f?.value == null) continue;
-    const valid = (f.type == null || f.type === 'INT64') && (name === 'slMoved' ? [0,1,true,false].includes(f.value) : Number.isSafeInteger(f.value) && f.value >= 0);
+    const valid = (f.type == null || f.type === 'INT64') && (name === 'slMoved' ? [0,1,true,false].includes(f.value) : Number.isSafeInteger(f.value) && f.value >= 0 && (!['confidenceRating', 'tradeRating'].includes(name) || f.value <= 5));
     if (valid) result[name] = name === 'slMoved' ? Boolean(f.value) : f.value;
     else issue(issues, 'invalid-field-value', key, `CD_${name}`);
   }

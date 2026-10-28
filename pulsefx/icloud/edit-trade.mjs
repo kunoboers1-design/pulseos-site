@@ -12,21 +12,24 @@ export const EDIT_FIELDS = [
   ['actualExitPrice', 'Close price', 'Details', 'price'],
   ['targetRR', 'Target R:R', 'Details', 'positiveOptional'],
   ['finalRR', 'Final R:R', 'Details', 'number'],
+  ['setupsSelectedRaw', 'Setup', 'Strategy', 'text'],
+  ['timeframesSelectedRaw', 'Timeframe', 'Strategy', 'text'],
+  ['confluences', 'Confluences', 'Strategy', 'integer'],
+  ['mistakesSelectedRaw', 'Mistake', 'Strategy', 'text'],
+  ['slMoved', 'SL moved?', 'Strategy', 'boolean'],
   ['tradeTypeRaw', 'Trade type', 'Strategy', ['none', 'reversal', 'trend', 'range']],
   ['sessionRaw', 'Session', 'Strategy', ['none', 'newYork', 'london', 'tokyo', 'sydney']],
   ['sessionCustom', 'Custom session', 'Strategy', 'text'],
   ['setupTag', 'Setup tag', 'Strategy', 'text'],
-  ['setupsSelectedRaw', 'Setups (comma separated)', 'Strategy', 'text'],
-  ['confluences', 'Confluences', 'Strategy', 'integer'],
-  ['slMoved', 'Stop loss moved', 'Strategy', 'boolean'],
   ['breakEvenHitRaw', 'Break-even hit', 'Strategy', ['none', 'tpAfterBE', 'slAfterBE']],
   ['weekendHoldRaw', 'Weekend hold', 'Strategy', ['none', 'heldToTP', 'heldToSL']],
+  ['emotionCustom', 'Emotion', 'Psychology', 'text'],
+  ['confidenceRating', 'Confidence', 'Psychology', 'rating'],
+  ['tradeRating', 'Execution', 'Psychology', 'rating'],
   ['emotionalStateRaw', 'Emotional state', 'Psychology', ['none', 'calm', 'confident', 'anxious', 'frustrated', 'fomo', 'revenge']],
-  ['emotionCustom', 'Custom emotion', 'Psychology', 'text'],
   ['mistakeTag', 'Mistake tag', 'Psychology', 'text'],
-  ['mistakesSelectedRaw', 'Mistakes (comma separated)', 'Psychology', 'text'],
-  ['preTradeNotes', 'Before the trade', 'Notes', 'note'],
-  ['postTradeNotes', 'After the trade', 'Notes', 'note'],
+  ['preTradeNotes', 'Pre-trade', 'Notes', 'note'],
+  ['postTradeNotes', 'Post-trade', 'Notes', 'note'],
 ];
 export const EDIT_CLOUD_FIELDS = new Set(EDIT_FIELDS.map(([key,,,, cloud]) => `CD_${cloud || key}`));
 export function planEdit(snapshot, tradeKey, changes) {
@@ -60,6 +63,7 @@ export function planEdit(snapshot, tradeKey, changes) {
         if (v !== null && (!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(input) || !Number.isFinite(v) || Math.abs(v) > Number.MAX_SAFE_INTEGER)) throw new Error(`Enter a valid ${label}.`);
         if (type === 'positive' && !(v > 0) || ['price', 'positiveOptional'].includes(type) && v !== null && !(v > 0)
           || type === 'risk' && v !== null && (!(v > 0) || v > 100)
+          || type === 'rating' && (v === null || !Number.isInteger(v) || v < 0 || v > 5)
           || type === 'integer' && (v === null || !Number.isSafeInteger(v) || v < 0)) throw new Error(`${label} is outside the allowed range.`);
       }
     }

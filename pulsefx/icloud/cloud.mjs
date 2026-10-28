@@ -1,3 +1,6 @@
+import { realizedR } from '../app/statistics.mjs';
+import { isFavorite, saveFavorite } from './account-favorites.mjs';
+import { renderCombinedAccounts } from './combined-accounts.mjs';
 import { openAccountDetail } from './account-detail.mjs';
 import { planNote, commitNote, demoNote } from './note-write.mjs';
 import { planEdit, commitEdit, applyDemoEdit } from './edit-trade.mjs';
@@ -298,8 +301,7 @@ function render(resetFilters = false) {
   $('quality').classList.toggle('warning', incomplete || state.stale || data.issues.length > 0);
   $('quality').textContent = data.source === 'demo' ? 'Fictional workspace. No iCloud records have been read or changed.' : `${state.stale ? 'Stale results. The latest refresh did not complete. ' : ''}${incomplete ? 'Partial results: some queries failed. Balances are withheld. ' : 'Selected queries finished. '}${data.issues.length} data check(s) need review. This covers one zone and the requested record types. Photos and attachments are not loaded.`;
   $('coverage').replaceChildren(...data.coverage.map(c => card(c.type, String(c.received), c.complete ? 'All query pages received' : 'Incomplete query')));
-  $('balances').replaceChildren(...(incomplete ? [node('p', 'Totals are unavailable while the read is incomplete.')] : data.summary.balances.map(b => card(b.currency, money(b.balance, b.currency), `${b.accounts} accounts · ${b.archivedAccounts} archived · ${data.summary.excludedAccounts} accounts excluded overall${data.issues.length ? ' · review data checks before relying on totals' : ''}`))));
-  if (!incomplete && !data.summary.balances.length) $('balances').append(node('p', 'No known balances returned. This does not prove that your native data is empty.'));
+  renderCombinedAccounts($('balances'), data);
   if (resetFilters) {
     $('account-filter').replaceChildren(option('All accounts', 'all'), option('Unlinked or ambiguous', 'unlinked'), ...data.accounts.map(a => option(a.name || 'Unknown account', a.key)));
     $('trade-status').value = 'all'; $('trade-model').value = 'all'; $('archive').value = 'all';
@@ -311,20 +313,43 @@ function render(resetFilters = false) {
     const trades = data.trades.filter(t => t.accountKey === a.key);
     const element = card(a.name || 'Unknown account', money(a.balance, a.currency), `${({phase: 'Phase', funded: 'Funded', ownCapital: 'Own capital'})[a.kind] || a.kind || 'Unknown type'} · ${a.archived === true ? 'Archived' : a.archived === false ? 'Active' : 'Unknown archive status'}`);
     element.classList.add('workspace-account-card');
+    const closed = trades.filter(t => t.status === 'closed');
+    const resultR = closed.reduce((total, t) => total + (realizedR(t) ?? 0), 0);
+    const unknownR = closed.filter(t => realizedR(t) === null).length;
+    const balanceValue = element.querySelector('strong');
+    const kindText = element.querySelector('small');
+    element.insertBefore(kindText, balanceValue);
+    const metrics = node('div', null, 'account-card-metrics');
+    const balanceMetric = node('div'), resultMetric = node('div');
+    balanceValue.textContent = Number.isFinite(a.balance) && a.currency ? new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(a.balance) + ' ' + a.currency : 'Unknown';
+    balanceMetric.append(node('small', 'Balance'), balanceValue);
+    const resultValue = node('strong', data.collectionStatus === 'complete' ? (resultR >= 0 ? '+' : '') + resultR.toFixed(1) + 'R' : '—', resultR < 0 ? 'negative' : 'positive');
+    if (unknownR) resultValue.title = unknownR + ' trades have no calculable R and contribute 0R, matching the native app.';
+    resultMetric.append(node('small', 'Result'), resultValue);
+    metrics.append(balanceMetric, resultMetric); element.append(metrics);
+
+    const favorite = a.archived === false && isFavorite(a);
+    const star = node('button', favorite ? '★' : '☆', 'account-favorite'); star.type = 'button';
+    star.setAttribute('aria-label', (favorite ? 'Remove ' : 'Add ') + (a.name || 'account') + (favorite ? ' from favorites' : ' to favorites'));
+    star.setAttribute('aria-pressed', String(favorite));
+    star.title = 'Favorites changed here are saved in this browser only.';
+    star.disabled = a.archived !== false;
+    star.onclick = () => { if (saveFavorite(a, !favorite)) render(false); else { star.title = 'Browser storage is unavailable. Your favorite was not saved.'; star.setAttribute('aria-label', star.title); } };
+    element.append(star);
     const details = node('details'); details.append(node('summary', 'Account details'));
     for (const line of [`Starting balance: ${money(a.startBalance, a.currency)}`, `Created: ${utc(a.createdAt)}`, `${trades.filter(t => t.status === 'open').length} open · ${trades.filter(t => t.status === 'closed').length} closed · ${trades.filter(t => !t.status).length} unknown`]) details.append(node('p', line));
     const button = node('button', 'View account', 'text-button'); button.type = 'button';
     button.onclick = () => openAccountDetail(a, state.snapshot, { onTrade: t => workspace.openTrade(t), onNote: n => workspace.openNote(n), onJournal: () => { $('account-filter').value = a.key; $('trade-status').value = 'all'; $('trade-model').value = 'all'; renderTrades(); workspace.show('journal'); } });
     const counts = node('div', null, 'account-counts');
     counts.append(node('span', `${trades.filter(t => t.status === 'open').length} open`), node('span', `${trades.filter(t => t.status === 'closed').length} closed`));
-    element.append(counts, details, button); return { kind: a.kind, element };
+    element.append(counts, details, button); return { kind: a.kind, favorite, element };
   });
   $('accounts').replaceChildren();
-  for (const [kind, label] of [['phase', 'Phase'], ['funded', 'Funded'], ['ownCapital', 'Own capital'], ['other', 'Other accounts']]) {
-    const cards = accountCards.filter(c => kind === 'other' ? !['phase','funded','ownCapital'].includes(c.kind) : c.kind === kind);
+  for (const [kind, label] of [['favorites', 'Favorites'], ['phase', 'Phase'], ['funded', 'Funded'], ['ownCapital', 'Own capital'], ['other', 'Other accounts']]) {
+    const cards = accountCards.filter(c => kind === 'favorites' ? c.favorite : !c.favorite && (kind === 'other' ? !['phase','funded','ownCapital'].includes(c.kind) : c.kind === kind));
     if (!cards.length) continue;
     const group = node('section', null, 'account-group'), grid = node('div', null, 'cloud-grid');
-    grid.append(...cards.map(c => c.element)); group.append(node('h3', label), grid); $('accounts').append(group);
+    grid.append(...cards.map(c => c.element)); group.append(node('h3', label)); if (kind === 'favorites') group.append(node('p', 'Your quickest access accounts. Star changes are saved in this browser only.')); group.append(grid); $('accounts').append(group);
   }
   if (!accounts.length) $('accounts').append(node('p', 'No accounts in this view. Check the selected zone, environment and data checks.'));
   const counts = new Map();

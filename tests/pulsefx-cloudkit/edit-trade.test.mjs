@@ -79,3 +79,25 @@ test('conflicts or unknown responses are never retried automatically', async () 
   const database = { newRecordsBatch() { return { update() { return this; }, async commit() { calls++; return { hasErrors: true, errors: [{ serverErrorCode: 'CONFLICT' }] }; } }; } };
   await assert.rejects(commitEdit({ plan, config, database, selected: { requestZone: zone }, transport: { armEdit() {}, disarm() {} } }), /Save not confirmed/); assert.equal(calls, 1);
 });
+
+test('strategy timeframes round-trip through the native field without replacing other selections', () => {
+  const input = sample(), record = modern('timeframe-trade', uuid(98));
+  Object.assign(record.fields, fields({ CD_statusRaw: 'open', CD_resultRaw: 'open', CD_closedAt: null, CD_timeframesSelectedRaw: '4H,Custom period', CD_setupsSelectedRaw: 'BOS', CD_mistakesSelectedRaw: 'FOMO' }));
+  input.records.push(record);
+  const snapshot = mapSnapshot(input), trade = snapshot.trades.at(-1);
+  assert.equal(trade.timeframesSelectedRaw, '4H,Custom period');
+  const plan = planEdit(snapshot, trade.key, { timeframesSelectedRaw: '4H,Custom period,Daily' });
+  assert.deepEqual(plan.records[0].fields, { CD_timeframesSelectedRaw: { value: '4H,Custom period,Daily' } });
+  assert.equal(applyDemoEdit(snapshot, plan).trades.at(-1).setupsSelectedRaw, 'BOS');
+});
+
+test('psychology uses native emotion and rating fields and rejects out-of-range stars', () => {
+  const input = sample(), record = modern('psychology-trade', uuid(97));
+  Object.assign(record.fields, fields({ CD_statusRaw: 'open', CD_resultRaw: 'open', CD_closedAt: null, CD_confidenceRating: 4, CD_tradeRating: 2, CD_emotionCustom: 'Calm' }));
+  input.records.push(record);
+  const snapshot = mapSnapshot(input), trade = snapshot.trades.at(-1);
+  assert.equal(trade.confidenceRating, 4); assert.equal(trade.tradeRating, 2);
+  const plan = planEdit(snapshot, trade.key, { confidenceRating: '0', tradeRating: '5', emotionCustom: 'Confident' });
+  assert.deepEqual(plan.records[0].fields, { CD_confidenceRating: { value: 0 }, CD_tradeRating: { value: 5 }, CD_emotionCustom: { value: 'Confident' } });
+  for (const value of ['-1', '6', '2.5', '']) assert.throws(() => planEdit(snapshot, trade.key, { confidenceRating: value }));
+});

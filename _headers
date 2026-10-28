@@ -4,4 +4,4 @@
   Referrer-Policy: no-referrer
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
-  Content-Security-Policy: default-src 'none'; script-src 'self' https://cdn.apple-cloudkit.com; style-src 'self'; img-src 'self' data: https://cdn.apple-cloudkit.com; font-src 'self'; connect-src 'self' https://api.apple-cloudkit.com; frame-src https://*.apple.com https://*.icloud.com; frame-ancestors 'none'; base-uri 'none'; form-action 'none'; object-src 'none'
+  Content-Security-Policy: default-src 'none'; script-src 'self' https://cdn.apple-cloudkit.com; style-src 'self'; img-src 'self' data: https://cdn.apple-cloudkit.com https://*.icloud.com https://*.icloud-content.com; font-src 'self'; connect-src 'self' https://api.apple-cloudkit.com; frame-src https://*.apple.com https://*.icloud.com; frame-ancestors 'none'; base-uri 'none'; form-action 'none'; object-src 'none'
