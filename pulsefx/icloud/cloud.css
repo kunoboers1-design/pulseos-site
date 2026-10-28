@@ -583,3 +583,12 @@ html[data-icloud-restoring="true"] .icloud-restore { display: grid; min-height: 
 .account-detail-list small { grid-column:1 / -1; color:var(--muted); }
 #account-detail-dialog select { min-height:44px; max-width:260px; }
 #account-detail-dialog .trade-detail-header button { margin-left:auto; }
+
+/* MARK: - Vaste semantische richtingskleuren, onafhankelijk van de gekozen accentkleur */
+.cloud-test .trade-direction { font-weight: 700; border-radius: 999px; padding: 4px 9px; line-height: 1.2; }
+.cloud-test .trade-direction--long { color: #78e5a3; background: #143523; border-color: #287344; }
+.cloud-test .trade-direction--short { color: #ff9a9f; background: #401e24; border-color: #8c3b44; }
+.cloud-test .trade-direction--unknown { color: #ffc078; background: #3b2919; border-color: #865523; }
+:root[data-theme="light"] .cloud-test .trade-direction--long { color: #146b35; background: #e1f6e8; border-color: #94cba7; }
+:root[data-theme="light"] .cloud-test .trade-direction--short { color: #a62332; background: #ffe7ea; border-color: #e6a1aa; }
+:root[data-theme="light"] .cloud-test .trade-direction--unknown { color: #914600; background: #fff0de; border-color: #dfb580; }

@@ -127,7 +127,8 @@ export function mountWorkspace({ getSnapshot, onClose, onDemoReset, isDemo, canC
     openStatus.textContent = !data ? 'Connect iCloud and load your workspace to see open trades.' : `${stale ? 'Stale snapshot — refresh before taking action. ' : ''}${trades.length} open trades shown. ${data.collectionStatus !== 'complete' ? 'Incomplete read: other trades may be missing.' : 'No live market prices or unrealized P&L.'}`;
     for (const t of trades) {
       const account = data.accounts.find(a => a.key === t.accountKey), card = el('article', null, 'fx-card open-trade');
-      const top = el('div', null, 'trade-heading'); top.append(el('h3', t.instrument || 'Unknown instrument'), el('span', t.direction || 'Direction unknown', 'tag')); card.append(top, el('p', account?.name || 'Unlinked account'), el('strong', `${t.lotSize ?? '—'} lots`, 'trade-lots'));
+      const direction = ['long', 'short'].includes(t.direction) ? t.direction : 'unknown';
+      const top = el('div', null, 'trade-heading'); top.append(el('h3', t.instrument || 'Unknown instrument'), el('span', direction === 'unknown' ? 'Direction unknown' : direction === 'long' ? 'Long' : 'Short', `tag trade-direction trade-direction--${direction}`)); card.append(top, el('p', account?.name || 'Unlinked account'), el('strong', `${t.lotSize ?? '—'} lots`, 'trade-lots'));
       card.append(el('small', `${date(t.startedAt)} · Risk ${t.riskPercent == null ? 'unknown' : `${t.riskPercent}%`}`));
       card.append(button('Close trade', () => openTradeDetail(t, getSnapshot(), () => openClose(t.key), { startEditing: true, canEdit: () => canEdit(t), onSave: changes => onEdit(t.key, changes) })));
       openList.append(card);
