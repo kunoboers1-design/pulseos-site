@@ -6,7 +6,7 @@ import shutil
 
 ROOT = Path(__file__).resolve().parents[1]
 DEST = ROOT / "dist"
-PAGES = ("about", "privacy", "support", "pulsefx", "pulsehabits", "pulselift",
+PAGES = ("pulseosdashboard", "about", "privacy", "support", "pulsefx", "pulsehabits", "pulselift",
          "pulserecipes", "pulsereflect", "pulsesidequest", "pulsevinyl", "pulsewiish")
 ASSETS = {".html", ".css", ".js", ".mjs", ".png", ".jpg", ".jpeg", ".webp", ".svg", ".ico", ".woff", ".woff2"}
 
